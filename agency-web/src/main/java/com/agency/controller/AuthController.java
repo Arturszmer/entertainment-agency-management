@@ -1,5 +1,6 @@
 package com.agency.controller;
 
+import com.agency.auth.AdminInitializerDto;
 import com.agency.authentication.AuthenticationService;
 import com.agency.auth.AuthenticationRequest;
 import com.agency.auth.AuthenticationResponse;
@@ -15,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationService authService;
+
+    @PostMapping("/admini-initializer")
+    public ResponseEntity<AuthenticationResponse> adminInitialize(@RequestBody AdminInitializerDto request){
+        return ResponseEntity.ok(authService.adminInitialize(request));
+    }
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('ADMIN')")

@@ -6,4 +6,9 @@ public record RegistrationRequest(
         String password,
         RoleType roleType
 ) {
+    public static RegistrationRequest fromAdminInitializer(AdminInitializerDto admin){
+        return new RegistrationRequest(
+                admin.username(), admin.email(), admin.password(), RoleType.ADMIN
+        );
+    }
 }
