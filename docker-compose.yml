@@ -1,0 +1,28 @@
+services:
+  postgres:
+    container_name: agency-db
+    image: postgres
+    environment:
+      POSTGRES_USER: agency-user
+      POSTGRES_PASSWORD: agency-pass
+      POSTGRES_DB: agencydb
+    ports:
+    - "5434:5432"
+    volumes:
+    - postgres:/var/lib/postgres/data
+    networks:
+    - agency-network
+  event-paiger-app:
+    container_name: entertainment-agency
+    image: entertainment-agency-image
+    ports:
+      - "8081:8081"
+    networks:
+      - agency-network
+
+volumes:
+  postgres:
+
+networks:
+  agency-network:
+    external: true

@@ -1,0 +1,54 @@
+package com.agency.authentication;
+
+import com.agency.config.JwtService;
+import com.agency.auth.AuthenticationRequest;
+import com.agency.auth.AuthenticationResponse;
+import com.agency.auth.RegistrationRequest;
+import com.agency.user.model.UserProfile;
+import com.agency.user.repository.UserProfileRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class AuthenticationService {
+
+    private final UserProfileRepository userProfileRepository;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+    public AuthenticationResponse register(RegistrationRequest request){
+        UserProfile userProfile = UserProfile.create(
+                request.username(), request.email(), passwordEncoder.encode(request.password()), request.roleType()
+        );
+
+        UserProfile savedUser = userProfileRepository.save(userProfile);
+        String generatedToken = jwtService.generateToken(savedUser);
+        return new AuthenticationResponse(generatedToken);
+
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.usernameOrEmail(), request.password()));
+
+        UserProfile user = findUser(request.usernameOrEmail());
+        String generatedToken = jwtService.generateToken(user);
+
+        return new AuthenticationResponse(generatedToken);
+    }
+
+    private UserProfile findUser(String user) {
+        return userProfileRepository.findUserProfileByUsername(user)
+                .orElseGet(() -> userProfileRepository.findUserProfileByEmail(user)
+                        .orElseThrow(() -> new UsernameNotFoundException("User not found")));
+    }
+}
