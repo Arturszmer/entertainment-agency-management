@@ -29,7 +29,7 @@ jobs:
     - name: Verify is RSA keys exists
       run: |
         echo "check the folder:"
-        ls agency-web/src/main/resources
+        ls agency-web/src/main/resources/certs
         
     - name: Build with Maven
       run: mvn clean install
