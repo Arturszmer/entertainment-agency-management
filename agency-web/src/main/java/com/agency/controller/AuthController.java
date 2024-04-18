@@ -17,7 +17,7 @@ public class AuthController {
 
     private final AuthenticationService authService;
 
-    @PostMapping("/admini-initializer")
+    @PostMapping("/admin-initializer")
     public ResponseEntity<AuthenticationResponse> adminInitialize(@RequestBody AdminInitializerDto request){
         return ResponseEntity.ok(authService.adminInitialize(request));
     }

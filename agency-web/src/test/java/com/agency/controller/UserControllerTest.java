@@ -1,6 +1,7 @@
 package com.agency.controller;
 
 import com.agency.BaseIntegrationTestSettings;
+import com.agency.auth.AuthenticationRequest;
 import com.agency.auth.ChangePasswordRequest;
 import com.agency.auth.RegistrationRequest;
 import com.agency.auth.RoleType;
@@ -8,16 +9,19 @@ import com.agency.authentication.AuthenticationService;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @Sql(scripts = "/sql-init/user-profile-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
@@ -33,16 +37,17 @@ class UserControllerTest extends BaseIntegrationTestSettings {
 
     private static final String USER = "user";
     private static final String USER_EMAIL = "user@user.com";
+    private static final String PASSWORD = "password";
 
     @Test
-    @WithMockUser(password = "old-password")
+    @WithMockUser
     public void should_change_password() throws Exception {
 
         // given
         authenticationService.register(createUserProfileForTest());
 
         // when
-        postRequest("/user/change-password", getBodyToPasswordChange());
+        putRequest("/user/change-password", getBodyToPasswordChange());
 
         // then
         Optional<UserProfile> user = repository.findUserProfileByUsername(USER);
@@ -50,12 +55,53 @@ class UserControllerTest extends BaseIntegrationTestSettings {
         assertTrue(passwordEncoder.matches("new-password", user.get().getPassword()));
     }
 
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    public void should_block_user() throws Exception {
+        // given
+        String username = "userTest";
+
+        // when
+        putRequest("/user/block/" + username, "").andReturn();
+
+        // then
+        Optional<UserProfile> userProfileByUsername = repository.findUserProfileByUsername(username);
+
+        assertTrue(userProfileByUsername.isPresent());
+        assertFalse(userProfileByUsername.get().isAccountNonLocked());
+
+        AuthenticationRequest request = new AuthenticationRequest("userTest", PASSWORD);
+        String body = mapper.writeValueAsString(request);
+
+        assertThrows(ServletException.class, () ->
+            mockMvc.perform(MockMvcRequestBuilders
+                    .post("/api/auth/login")
+                    .content(body)
+                    .contentType(MediaType.APPLICATION_JSON)));
+    }
+
+    @Test
+    @WithMockUser(authorities = "ROLE_ADMIN")
+    public void should_unblock_user() throws Exception {
+        // given
+        String username = "userTestLocked";
+
+        // when
+        putRequest("/user/unblock/" + username, "").andReturn();
+
+        // then
+        Optional<UserProfile> userProfileByUsername = repository.findUserProfileByUsername(username);
+
+        assertTrue(userProfileByUsername.isPresent());
+        assertTrue(userProfileByUsername.get().isAccountNonLocked());
+    }
+
     private RegistrationRequest createUserProfileForTest() {
-        return new RegistrationRequest(USER, USER_EMAIL, "old-password", RoleType.USER);
+        return new RegistrationRequest(USER, USER_EMAIL, PASSWORD, RoleType.USER);
     }
 
     private String getBodyToPasswordChange() throws JsonProcessingException {
-        return mapper.writeValueAsString(new ChangePasswordRequest("old-password",
+        return mapper.writeValueAsString(new ChangePasswordRequest(PASSWORD,
                 "new-password", "new-password"));
     }
 

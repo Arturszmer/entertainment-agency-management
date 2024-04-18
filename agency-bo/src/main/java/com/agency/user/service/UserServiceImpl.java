@@ -36,6 +36,26 @@ public class UserServiceImpl implements UserService {
         log.info("Password for user: {} has been changed", user.getUsername());
     }
 
+    @Override
+    public void blockUser(String usernameOrEmail) {
+        UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User has not fount by username(or email): " + usernameOrEmail));
+
+        userProfile.lockUserAccount();
+        repository.save(userProfile);
+        log.info("User {} has been blocked succesfully", userProfile.getUsername());
+    }
+
+    @Override
+    public void unblockUser(String usernameOrEmail) {
+        UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new UsernameNotFoundException("User has not fount by username(or email): " + usernameOrEmail));
+
+        userProfile.unblockUserAccount();
+        repository.save(userProfile);
+        log.info("User {} has been unblocked succesfully", userProfile.getUsername());
+    }
+
     private void isNewPasswordMatches(String newPassword, String confirmationPassword) {
         if(!newPassword.equals(confirmationPassword)){
             throw new IllegalStateException("New password is not matched with confirmation password");

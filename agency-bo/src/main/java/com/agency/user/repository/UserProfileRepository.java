@@ -16,6 +16,8 @@ public interface UserProfileRepository extends JpaRepository<UserProfile, Long> 
 
     Optional<UserProfile> findUserProfileByEmail(String email);
 
+    Optional<UserProfile> findUserProfileByUsernameOrEmail(String username, String email);
+
     @Query("select u from UserProfile u join Role r on u.id = r.id where r.name = :roleType")
     Optional<UserProfile> findByRoleType(@Param("roleType") RoleType roleType);
 

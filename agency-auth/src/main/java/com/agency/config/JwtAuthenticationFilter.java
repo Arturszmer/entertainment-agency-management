@@ -11,6 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -24,6 +26,7 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -41,7 +44,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         authenticationToken = jwtService.decodeToken(jwtToken);
         if(authenticationToken != null && SecurityContextHolder.getContext().getAuthentication() == null){
             TokenClaims principal = jwtService.getTokenClaims(authenticationToken);
-
+            UserDetails userDetails = userDetailsService.loadUserByUsername(principal.getUsername());
+            if(!userDetails.isAccountNonLocked()){
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getWriter().write("User is blocked");
+                return;
+            }
             if(jwtService.isTokenExpired(authenticationToken)){
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         principal, null, principal.getAuthorities()
