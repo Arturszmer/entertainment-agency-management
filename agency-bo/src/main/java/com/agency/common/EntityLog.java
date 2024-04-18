@@ -10,7 +10,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @MappedSuperclass
 public abstract class EntityLog {
@@ -25,24 +25,24 @@ public abstract class EntityLog {
 
     @Column(name = "CREATION_TIMESTAMP", updatable = false)
     @CreatedDate
-    protected LocalDateTime creationTimestamp;
+    protected Instant creationTimestamp;
 
     @Column(name = "MODIFICATION_TIMESTAMP")
     @LastModifiedDate
-    protected LocalDateTime modificationTimestamp;
+    protected Instant modificationTimestamp;
 //
     @PrePersist
     public void prePersist(){
         this.createdBy = SecurityContextUsers.getUsernameFromAuthenticatedUser();
         this.modifiedBy = SecurityContextUsers.getUsernameFromAuthenticatedUser();
-        this.creationTimestamp = LocalDateTime.now();
-        this.modificationTimestamp = LocalDateTime.now();
+        this.creationTimestamp = Instant.now();
+        this.modificationTimestamp = Instant.now();
     }
 
     @PreUpdate
     public void preUpdate(){
         this.modifiedBy = SecurityContextUsers.getUsernameFromAuthenticatedUser();
-        this.modificationTimestamp = LocalDateTime.now();
+        this.modificationTimestamp = Instant.now();
     }
 
 }
