@@ -1,0 +1,30 @@
+name: Test pull-request
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Create RSA key files
+      run: |
+       echo "${{ secrets.RSA_PRIVATE_KEY }}" > private.pem
+       echo "${{ secrets.RSA_PUBLIC_KEY }}" > public.pem
+        mkdir -p agency-web/src/main/resources/certs
+        mv private.pem agency-web/src/main/resources/certs
+        mv public.pem agency-web/src/main/resources/certs
+
+    - name: Build with Maven
+      run: mvn clean install
