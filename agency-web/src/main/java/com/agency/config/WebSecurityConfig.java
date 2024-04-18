@@ -27,7 +27,7 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login", "/api/auth/admini-initializer").permitAll()
+                        .requestMatchers("/api/auth/login", "/api/auth/admin-initializer").permitAll()
                         .requestMatchers("/api/v1/**", "/api/auth/register").authenticated()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(server -> server.jwt(

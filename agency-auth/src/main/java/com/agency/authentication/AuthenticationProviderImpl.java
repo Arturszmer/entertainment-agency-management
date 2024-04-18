@@ -22,12 +22,21 @@ public class AuthenticationProviderImpl implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         UserProfile userDetails = loadUserToContext(authentication);
-        if(validCredentials(userDetails, authentication)){
+        if(validCredentials(userDetails, authentication) && isUserNotBlocked(userDetails)){
             return new UsernamePasswordAuthenticationToken(
                     userDetails, userDetails.getPassword(), userDetails.getAuthorities());
         } else {
             log.warn("LOGIN FAILED");
             throw new RuntimeException("LOGIN FAILED");
+        }
+    }
+
+    private boolean isUserNotBlocked(UserProfile userProfile) {
+        if (!userProfile.isAccountNonLocked()){
+            log.warn("User {} is blocked", userProfile.getUsername());
+            return false;
+        } else {
+            return true;
         }
     }
 

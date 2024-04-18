@@ -51,6 +51,9 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
                 inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "ID"))
     private List<Role> roles = new ArrayList<>();
 
+    @Column(name = "account_non_locked")
+    private boolean accountNonLocked = true;
+
     private UserProfile(String username,  String email, String password, RoleType roleType) {
         this.username = username;
         this.password = password;
@@ -86,7 +89,7 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.accountNonLocked;
     }
 
     @Override
@@ -107,4 +110,19 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
         password = newPassword;
     }
 
+    public void lockUserAccount() {
+        if(isAccountNonLocked()){
+            this.accountNonLocked = false;
+        } else {
+            throw new IllegalStateException("User is already blocked");
+        }
+    }
+
+    public void unblockUserAccount() {
+        if(!isAccountNonLocked()){
+            this.accountNonLocked = true;
+        } else {
+            throw new IllegalStateException("User is not blocked");
+        }
+    }
 }

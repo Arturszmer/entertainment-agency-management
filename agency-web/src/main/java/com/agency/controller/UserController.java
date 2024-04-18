@@ -4,10 +4,8 @@ import com.agency.auth.ChangePasswordRequest;
 import com.agency.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.security.Principal;
@@ -19,10 +17,24 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/change-password")
+    @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody ChangePasswordRequest request,
                                             Principal connectedUser) throws UserPrincipalNotFoundException {
         userService.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/block/{usernameOrEmail}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> blockUser(@PathVariable("usernameOrEmail") String usernameOrEmail){
+        userService.blockUser(usernameOrEmail);
+        return ResponseEntity.ok(String.format("User with email %s has been blocked", usernameOrEmail));
+    }
+
+    @PutMapping("/unblock/{usernameOrEmail}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> unblockUser(@PathVariable("usernameOrEmail") String usernameOrEmail) {
+        userService.unblockUser(usernameOrEmail);
+        return ResponseEntity.ok(String.format("User with email %s has been blocked", usernameOrEmail));
     }
 }
