@@ -25,11 +25,6 @@ jobs:
         mkdir -p agency-web/src/main/resources/certs
         mv private.pem agency-web/src/main/resources/certs
         mv public.pem agency-web/src/main/resources/certs
-        
-    - name: Verify is RSA keys exists
-      run: |
-        echo "check the folder:"
-        ls agency-web/src/main/resources/certs
-        
+
     - name: Build with Maven
       run: mvn clean install
