@@ -1,0 +1,19 @@
+package com.agency.dto.contractor;
+
+import com.agency.dto.AddressDto;
+import com.agency.dto.contract.ContractShortDto;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public record ContractorDto(
+        String name,
+        String lastName,
+        String pesel,
+        LocalDate birthDate,
+        AddressDto addressDto,
+        String phone,
+        String contractorDescribe,
+        List<ContractShortDto> contracts
+) {
+}

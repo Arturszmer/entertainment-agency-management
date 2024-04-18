@@ -1,12 +1,13 @@
 package com.agency.contractmanagement.model.contractor;
 
 import com.agency.common.BaseEntity;
-import com.agency.contractmanagement.model.contract.ContractOfPiece;
+import com.agency.contractmanagement.model.contract.Contract;
 import com.agency.user.model.Address;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -28,6 +29,6 @@ public class Contractor extends BaseEntity<Long> {
     private String phone;
     private String contractorType;
     @OneToMany
-    private List<ContractOfPiece> contractOfPiece;
+    private List<Contract> contractOfPiece = new ArrayList<>();
 
 }
