@@ -3,6 +3,7 @@ package com.agency;
 import com.agency.containers.PostgresSQLTestContainer;
 import com.agency.containers.GeocodingMockServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,7 @@ public abstract class BaseIntegrationTestSettings {
     static {
         POSTGRES_CONTAINER.start();
         REST_TEMPLATE_SERVER.start();
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @DynamicPropertySource
