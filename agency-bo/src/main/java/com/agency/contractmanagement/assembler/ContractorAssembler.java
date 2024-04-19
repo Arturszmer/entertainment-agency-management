@@ -17,7 +17,7 @@ public class ContractorAssembler {
     public static ContractorDto toDto(Contractor contractor) {
         return new ContractorDto(
                 contractor.getPublicId(),
-                contractor.getName(),
+                contractor.getFirstName(),
                 contractor.getLastName(),
                 contractor.getPesel(),
                 contractor.getBirthDate(),

@@ -19,6 +19,12 @@ public class ContractorModel {
         );
     }
 
+    public static ContractorCreateRequest contractorCreateCustomRequestBuild(String firstName, String lastName, String pesel){
+        return new ContractorCreateRequest(
+                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createAddressDto(), "500123456", "describe"
+        );
+    }
+
     private static AddressDto createAddressDto() {
         return new AddressDto(
                 "Warszawa", "Zwycięstwa", "00-001", "1", "1"

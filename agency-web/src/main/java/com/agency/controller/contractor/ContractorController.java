@@ -21,9 +21,9 @@ public class ContractorController {
         return ResponseEntity.ok(service.add(request));
     }
 
-    @PutMapping
-    public ResponseEntity<ContractorDto> edit(@RequestBody ContractorCreateRequest request){
-        return ResponseEntity.ok(service.edit(request));
+    @PutMapping("/{public-id}")
+    public ResponseEntity<ContractorDto> edit(@PathVariable("public-id") String publicId, @RequestBody ContractorCreateRequest request){
+        return ResponseEntity.ok(service.edit(publicId, request));
     }
 
     @DeleteMapping("/{public-id}")

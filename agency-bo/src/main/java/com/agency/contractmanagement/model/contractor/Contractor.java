@@ -28,8 +28,9 @@ import java.util.UUID;
 @Data
 public class Contractor extends BaseEntity<Long> {
 
+    @Column(name = "public_id", nullable = false)
     private UUID publicId;
-    private String name;
+    private String firstName;
     private String lastName;
     private String pesel;
     private LocalDate birthDate;
@@ -44,7 +45,7 @@ public class Contractor extends BaseEntity<Long> {
 
     public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String contractorType) {
         this.publicId = UUID.randomUUID();
-        this.name = name;
+        this.firstName = name;
         this.lastName = lastName;
         this.pesel = pesel;
         this.birthDate = birthDate;

@@ -30,7 +30,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
-    public ContractorDto edit(ContractorCreateRequest request) {
+    public ContractorDto edit(String publicId, ContractorCreateRequest request) {
         return null;
     }
 

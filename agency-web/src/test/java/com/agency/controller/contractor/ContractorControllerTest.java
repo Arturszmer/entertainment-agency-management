@@ -5,19 +5,24 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
-import com.agency.model.ContractorModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.UUID;
 
+import static com.agency.model.ContractorModel.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Transactional
 @WithMockUser(authorities = "CONTRACTOR_MANAGEMENT")
+@Sql(scripts = "/sql-init/contractor-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 class ContractorControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired
@@ -28,7 +33,7 @@ class ContractorControllerTest extends BaseIntegrationTestSettings {
     @Test
     public void should_add_new_contractor() throws Exception {
         // given
-        ContractorCreateRequest contractorCreateRequest = ContractorModel.contractorCreateRequestBuild();
+        ContractorCreateRequest contractorCreateRequest = contractorCreateRequestBuild();
         String body = mapper.writeValueAsString(contractorCreateRequest);
 
         // when
@@ -41,6 +46,24 @@ class ContractorControllerTest extends BaseIntegrationTestSettings {
         assertNotNull(contractor.get().getPublicId());
         assertTrue(contractorDto.contracts().isEmpty());
         assertEquals(contractorDto.publicId(), contractor.get().getPublicId());
+    }
+
+    @Test
+    public void should_edit_existing_contractor() throws Exception {
+        // given
+        String editedLastName = "Doe";
+        ContractorCreateRequest contractorCreateRequest = contractorCreateCustomRequestBuild(FIRST_NAME, editedLastName, PESEL);
+        String body = mapper.writeValueAsString(contractorCreateRequest);
+        String publicId = "fb75951a-fe54-11ee-92c8-0242ac120002";
+
+        // when
+        putRequest(urlPath + "/" + publicId, body).andReturn();
+
+        // then
+        Optional<Contractor> contractor = repository.findContractorByPublicId(UUID.fromString(publicId));
+        assertTrue(contractor.isPresent());
+        assertEquals(editedLastName, contractor.get().getLastName());
+
     }
 
 }
