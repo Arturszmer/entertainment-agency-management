@@ -5,12 +5,16 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
+import com.agency.exception.AgencyException;
 import com.agency.service.ContractorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+
+import static com.agency.contractmanagement.constant.ContractorLogsMessage.*;
+import static com.agency.exception.AgencyErrorResult.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,11 +26,11 @@ public class ContractorServiceImpl implements ContractorService {
     @Override
     public ContractorDto add(ContractorCreateRequest request) {
         if(repository.findByPesel(request.pesel()).isPresent()){
-            throw new IllegalStateException("The Contractor with given PESEL exist");
+            throw new AgencyException(CONTRACTOR_WITH_PESEL_EXISTS);
         }
 
         Contractor contractor = repository.save(ContractorAssembler.fromCreationRequest(request));
-        log.info("The Contractor with public id {} has been created succesfully.", contractor.getPublicId());
+        log.info(SUCCESSFULLY_CREATED, contractor.getPublicId());
 
         return ContractorAssembler.toDto(contractor);
     }
@@ -36,10 +40,10 @@ public class ContractorServiceImpl implements ContractorService {
         return repository.findContractorByPublicId(UUID.fromString(publicId)).map(contractor -> {
             contractor.updatePersonalData(request);
             Contractor save = repository.save(contractor);
-            log.info("Personal data for contractor with public id {} has been changed successfully.", publicId);
+            log.info(SUCCESSFULLY_UPDATED, publicId);
             return ContractorAssembler.toDto(save);
         }).orElseThrow(() ->
-                new RuntimeException(String.format("Contractor with public id %s does not exist.", publicId))
+                new AgencyException(CONTRACTOR_DOES_NOT_EXISTS, publicId)
         );
     }
 
@@ -48,9 +52,9 @@ public class ContractorServiceImpl implements ContractorService {
         repository.findContractorByPublicId(UUID.fromString(publicId)).ifPresent(contractor -> {
             if(contractor.getContract().isEmpty()){
                 repository.delete(contractor);
-                log.info("Contractor with public id {} has been deleted successfully.", publicId);
+                log.info(SUCCESSFULLY_DELETED, publicId);
             } else {
-                throw new RuntimeException("You cannot delete contractor with existing contracts");
+                throw new AgencyException(EXISTING_CONTRACT_EXCEPTION, publicId);
             }
         });
     }
