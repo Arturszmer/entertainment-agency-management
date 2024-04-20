@@ -3,11 +3,15 @@ package com.agency.contractmanagement.service;
 import com.agency.contractmanagement.assembler.ContractorAssembler;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorDto;
+import com.agency.dto.contractor.ShortContractorDto;
 import com.agency.exception.AgencyErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.service.ContractorSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,12 +30,13 @@ public class ContractorSearchServiceImpl implements ContractorSearchService {
     }
 
     @Override
-    public Page<ContractorDto> getContractorsShortInfo(int page, int size) {
-        return null;
-    }
+    public Page<ShortContractorDto> getContractorsShortInfo(int page, int size) {
+        Pageable pagesRequest = PageRequest.of(page, size);
+        List<ShortContractorDto> contractorDtos = repository.findAll().stream().map(ContractorAssembler::toShortContractorDto).toList();
+        int start = (int) pagesRequest.getOffset();
+        int end = Math.min(start + pagesRequest.getPageSize(), contractorDtos.size());
 
-    @Override
-    public List<ContractorDto> getContractorsByEvent(String eventId) {
-        return null;
+        List<ShortContractorDto> pageContent = contractorDtos.subList(start, end);
+        return new PageImpl<>(pageContent, pagesRequest, contractorDtos.size());
     }
 }

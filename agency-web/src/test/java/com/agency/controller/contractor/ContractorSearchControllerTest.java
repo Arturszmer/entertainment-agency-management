@@ -2,14 +2,16 @@ package com.agency.controller.contractor;
 
 import com.agency.BaseIntegrationTestSettings;
 import com.agency.dto.contractor.ContractorDto;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
 @Sql(scripts = "/sql-init/contractor-search-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
@@ -21,7 +23,7 @@ class ContractorSearchControllerTest extends BaseIntegrationTestSettings {
 
     @Test
     @WithMockUser(authorities = "CONTRACTOR_MANAGEMENT")
-    public void should_get_contractor_details() throws Exception {
+    void should_get_contractor_details() throws Exception {
         // given
 
         // when
@@ -31,6 +33,25 @@ class ContractorSearchControllerTest extends BaseIntegrationTestSettings {
         // then
         assertEquals(PUBLIC_ID_OF_EXISTING_CONTRACTOR_SEARCH, contractorDto.publicId().toString());
 
+    }
+
+    @Test
+    @WithMockUser(authorities = "CONTRACTORS_VIEW")
+    void should_get_all_contractors_pageable() throws Exception {
+        //given
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("page", "0");
+        params.add("size", "5");
+
+        // when
+        MvcResult mvcResult = getRequest(urlPath, params).andReturn();
+        String response = mvcResult.getResponse().getContentAsString();
+        JsonNode jsonNode = mapper.readTree(response);
+
+        JsonNode contentNode = jsonNode.get("content");
+
+        // then
+        assertEquals(5, contentNode.size());
     }
 
 }
