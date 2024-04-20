@@ -3,6 +3,7 @@ package com.agency.contractmanagement.service;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorCreateRequest;
+import com.agency.exception.AgencyException;
 import com.agency.service.ContractorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class ContractorServiceImplTest {
         when(repository.save(contractor)).thenReturn(contractor);
 
         // then
-        assertThrows(IllegalStateException.class, () -> service.add(contractorCreateRequest));
+        assertThrows(AgencyException.class, () -> service.add(contractorCreateRequest));
 
     }
 
