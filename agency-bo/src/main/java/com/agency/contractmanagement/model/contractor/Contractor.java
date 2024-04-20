@@ -27,22 +27,24 @@ import java.util.UUID;
 @Getter
 public class Contractor extends BaseEntity<Long> {
 
-    @Column(name = "public_id", nullable = false)
+    @Column(name = "public_id", nullable = false, unique = true)
     private UUID publicId;
     private String firstName;
     private String lastName;
+    @Column(name = "pesel", nullable = false, unique = true)
     private String pesel;
     private LocalDate birthDate;
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Setter
     private Address address;
     private String phone;
+    private String email;
     @Column(name = "contractor_description")
     private String contractorDescription;
     @OneToMany
     private List<Contract> contract = new ArrayList<>();
 
-    public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String contractorType) {
+    public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String email, String contractorType) {
         this.publicId = UUID.randomUUID();
         this.firstName = name;
         this.lastName = lastName;
@@ -50,6 +52,7 @@ public class Contractor extends BaseEntity<Long> {
         this.birthDate = birthDate;
         this.address = address;
         this.phone = phone;
+        this.email = email;
         this.contractorDescription = contractorType;
     }
 
@@ -60,6 +63,7 @@ public class Contractor extends BaseEntity<Long> {
         birthDate = request.birthDate();
         address.update(request.addressDto());
         phone = request.phone();
+        email = request.email();
         contractorDescription = request.contractorDescription();
     }
 }

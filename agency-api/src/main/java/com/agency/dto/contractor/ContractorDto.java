@@ -15,7 +15,8 @@ public record ContractorDto(
         LocalDate birthDate,
         AddressDto addressDto,
         String phone,
-        String contractorDescribe,
+        String email,
+        String contractorDescription,
         List<ContractShortDto> contracts
 ) {
 }

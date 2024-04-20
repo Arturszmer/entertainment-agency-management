@@ -15,13 +15,13 @@ public class ContractorModel {
 
     public static ContractorCreateRequest contractorCreateRequestBuild(){
         return new ContractorCreateRequest(
-                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createAddressDto(), "500123456", "describe"
+                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createAddressDto(), "500123456", "email@email.com", "describe"
         );
     }
 
     public static ContractorCreateRequest contractorCreateCustomRequestBuild(String firstName, String lastName, String pesel){
         return new ContractorCreateRequest(
-                firstName, lastName, pesel, BIRTH_DATE, createAddressDto(), "500123456", "describe"
+                firstName, lastName, pesel, BIRTH_DATE, createAddressDto(), "500123456", "email@email.com", "describe"
         );
     }
 
