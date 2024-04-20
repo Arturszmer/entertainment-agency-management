@@ -12,6 +12,7 @@ public record ContractorCreateRequest(
         @NonNull LocalDate birthDate,
         @NonNull AddressDto addressDto,
         String phone,
+        String email,
         String contractorDescription
 ) {
 }

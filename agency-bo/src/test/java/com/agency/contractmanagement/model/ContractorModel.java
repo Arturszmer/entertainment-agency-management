@@ -17,13 +17,13 @@ public class ContractorModel {
 
     public static ContractorCreateRequest contractorCreateRequestBuild(){
         return new ContractorCreateRequest(
-                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createAddressDto(), "500123456", "describe"
+                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createAddressDto(), "500123456", "email@email.com", "describe"
         );
     }
 
     public static Contractor contractorFromRequest(ContractorCreateRequest request){
         return new Contractor(request.firstName(), request.lastName(), request.pesel(), request.birthDate(),
-                UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.contractorDescription());
+                UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.email(), request.contractorDescription());
     }
 
     private static AddressDto createAddressDto() {
