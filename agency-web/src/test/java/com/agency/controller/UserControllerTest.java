@@ -16,12 +16,14 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Transactional
 @Sql(scripts = "/sql-init/user-profile-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
@@ -73,11 +75,16 @@ class UserControllerTest extends BaseIntegrationTestSettings {
         AuthenticationRequest request = new AuthenticationRequest("userTest", PASSWORD);
         String body = mapper.writeValueAsString(request);
 
-        assertThrows(ServletException.class, () ->
-            mockMvc.perform(MockMvcRequestBuilders
-                    .post("/api/auth/login")
-                    .content(body)
-                    .contentType(MediaType.APPLICATION_JSON)));
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/auth/login")
+                .content(body)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        assertTrue(responseBody.contains("LOGIN FAILED"));
+
     }
 
     @Test
