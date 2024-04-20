@@ -9,7 +9,6 @@ import com.agency.authentication.AuthenticationService;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
