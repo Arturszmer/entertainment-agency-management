@@ -12,6 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 
+import static com.agency.user.constant.UserLogsMessage.BLOCKED_SUCCESSFULLY;
+import static com.agency.user.constant.UserLogsMessage.PASSWORD_CHANGED;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -33,7 +36,7 @@ public class UserServiceImpl implements UserService {
         user.setNewPassword(passwordEncoder.encode(request.newPassword()));
 
         repository.save(user);
-        log.info("Password for user: {} has been changed", user.getUsername());
+        log.info(PASSWORD_CHANGED, user.getUsername());
     }
 
     @Override
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService {
 
         userProfile.lockUserAccount();
         repository.save(userProfile);
-        log.info("User {} has been blocked succesfully", userProfile.getUsername());
+        log.info(BLOCKED_SUCCESSFULLY, userProfile.getUsername());
     }
 
     @Override
@@ -53,7 +56,7 @@ public class UserServiceImpl implements UserService {
 
         userProfile.unblockUserAccount();
         repository.save(userProfile);
-        log.info("User {} has been unblocked succesfully", userProfile.getUsername());
+        log.info(BLOCKED_SUCCESSFULLY, userProfile.getUsername());
     }
 
     private void isNewPasswordMatches(String newPassword, String confirmationPassword) {
