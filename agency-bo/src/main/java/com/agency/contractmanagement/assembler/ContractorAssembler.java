@@ -10,8 +10,8 @@ import java.util.ArrayList;
 public class ContractorAssembler {
 
     public static Contractor fromCreationRequest(ContractorCreateRequest request){
-        return new Contractor(request.name(), request.lastName(), request.pesel(),
-                request.birthDate(), UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.contractorDescribe());
+        return new Contractor(request.firstName(), request.lastName(), request.pesel(),
+                request.birthDate(), UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.contractorDescription());
     }
 
     public static ContractorDto toDto(Contractor contractor) {
@@ -24,9 +24,9 @@ public class ContractorAssembler {
                 UserProfileAssembler.toDto(contractor.getAddress()),
                 contractor.getPhone(),
                 contractor.getContractorDescription(),
-                contractor.getContractOfPiece().isEmpty()
+                contractor.getContract().isEmpty()
                         ? new ArrayList<>()
-                        : contractor.getContractOfPiece().stream().map(ContractAssembler::toContractShortDto).toList()
+                        : contractor.getContract().stream().map(ContractAssembler::toContractShortDto).toList()
         );
     }
 }

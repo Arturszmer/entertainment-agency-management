@@ -19,6 +19,7 @@ class ContractorServiceImplTest {
     private ContractorService service;
 
     private final ContractorRepository repository = mock(ContractorRepository.class);
+    private final static String PUBLIC_ID_OF_EXISTING_CONTRACTOR = "fb75951a-fe54-11ee-92c8-0242ac120002";
 
     @BeforeEach
     void setup(){
@@ -38,6 +39,12 @@ class ContractorServiceImplTest {
 
     }
 
-
+    //TODO: add when create contracts for Contractors will be implemented
+    @Test
+    public void should_throw_an_exception_when_contractor_with_pesel_has_contracts() {
+        // given
+        // when
+        // then
+    }
 
 }

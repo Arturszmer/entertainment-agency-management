@@ -7,4 +7,4 @@ INSERT INTO contractor (
     public_id, first_name, last_modified, last_name, pesel, birth_date, address_id, phone, contractor_description)
 VALUES (
     CURRENT_TIMESTAMP, CURRENT_TIMESTAMP,
-    'admin', 'fb75951a-fe54-11ee-92c8-0242ac120002', 'firstName', CURRENT_TIMESTAMP, 'lastName', '81021758606', '1981-02-17', 1, '500123456', 'description');
+    'admin', 'fb75951a-fe54-11ee-92c8-0242ac120002', 'firstName', CURRENT_TIMESTAMP, 'lastName', '03260785766', '1981-02-17', 1, '500123456', 'description');

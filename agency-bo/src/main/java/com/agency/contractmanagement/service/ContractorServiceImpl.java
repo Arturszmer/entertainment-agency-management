@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -31,11 +33,25 @@ public class ContractorServiceImpl implements ContractorService {
 
     @Override
     public ContractorDto edit(String publicId, ContractorCreateRequest request) {
-        return null;
+        return repository.findContractorByPublicId(UUID.fromString(publicId)).map(contractor -> {
+            contractor.updatePersonalData(request);
+            Contractor save = repository.save(contractor);
+            log.info("Personal data for contractor with public id {} has been changed successfully.", publicId);
+            return ContractorAssembler.toDto(save);
+        }).orElseThrow(() ->
+                new RuntimeException(String.format("Contractor with public id %s does not exist.", publicId))
+        );
     }
 
     @Override
-    public void delete(String pesel) {
-
+    public void delete(String publicId) {
+        repository.findContractorByPublicId(UUID.fromString(publicId)).ifPresent(contractor -> {
+            if(contractor.getContract().isEmpty()){
+                repository.delete(contractor);
+                log.info("Contractor with public id {} has been deleted successfully.", publicId);
+            } else {
+                throw new RuntimeException("You cannot delete contractor with existing contracts");
+            }
+        });
     }
 }

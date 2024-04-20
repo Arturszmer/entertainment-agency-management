@@ -22,8 +22,8 @@ public class ContractorModel {
     }
 
     public static Contractor contractorFromRequest(ContractorCreateRequest request){
-        return new Contractor(request.name(), request.lastName(), request.pesel(), request.birthDate(),
-                UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.contractorDescribe());
+        return new Contractor(request.firstName(), request.lastName(), request.pesel(), request.birthDate(),
+                UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.contractorDescription());
     }
 
     private static AddressDto createAddressDto() {

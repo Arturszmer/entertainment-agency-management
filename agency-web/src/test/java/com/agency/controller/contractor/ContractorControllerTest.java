@@ -17,6 +17,7 @@ import java.util.UUID;
 
 import static com.agency.model.ContractorModel.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -29,6 +30,7 @@ class ContractorControllerTest extends BaseIntegrationTestSettings {
     ContractorRepository repository;
 
     private final static String urlPath = "/contractor";
+    private final static String PUBLIC_ID_OF_EXISTING_CONTRACTOR = "fb75951a-fe54-11ee-92c8-0242ac120002";
 
     @Test
     public void should_add_new_contractor() throws Exception {
@@ -52,17 +54,28 @@ class ContractorControllerTest extends BaseIntegrationTestSettings {
     public void should_edit_existing_contractor() throws Exception {
         // given
         String editedLastName = "Doe";
-        ContractorCreateRequest contractorCreateRequest = contractorCreateCustomRequestBuild(FIRST_NAME, editedLastName, PESEL);
+        String pesel = "03260785766";
+        ContractorCreateRequest contractorCreateRequest = contractorCreateCustomRequestBuild(FIRST_NAME, editedLastName, pesel);
         String body = mapper.writeValueAsString(contractorCreateRequest);
-        String publicId = "fb75951a-fe54-11ee-92c8-0242ac120002";
 
         // when
-        putRequest(urlPath + "/" + publicId, body).andReturn();
+        putRequest(urlPath + "/" + PUBLIC_ID_OF_EXISTING_CONTRACTOR, body);
 
         // then
-        Optional<Contractor> contractor = repository.findContractorByPublicId(UUID.fromString(publicId));
+        Optional<Contractor> contractor = repository.findContractorByPublicId(UUID.fromString(PUBLIC_ID_OF_EXISTING_CONTRACTOR));
         assertTrue(contractor.isPresent());
         assertEquals(editedLastName, contractor.get().getLastName());
+
+    }
+
+    @Test
+    public void should_delete_existing_contractor() throws Exception {
+        // given
+        // when
+        deleteRequest(urlPath + "/" + PUBLIC_ID_OF_EXISTING_CONTRACTOR);
+
+        // then
+        assertFalse(repository.findContractorByPublicId(UUID.fromString(PUBLIC_ID_OF_EXISTING_CONTRACTOR)).isPresent());
 
     }
 

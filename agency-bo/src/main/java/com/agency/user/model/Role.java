@@ -26,7 +26,7 @@ import static com.agency.user.model.Permission.*;
 public class Role extends BaseEntity<Long> {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name")
+    @Column(name = "firstName")
     private RoleType name;
 
     @Enumerated(EnumType.STRING)
