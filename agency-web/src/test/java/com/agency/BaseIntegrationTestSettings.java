@@ -1,9 +1,8 @@
 package com.agency;
 
 import com.agency.containers.PostgresSQLTestContainer;
-import com.agency.containers.GeocodingMockServer;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.WireMockServer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -27,7 +26,6 @@ public abstract class BaseIntegrationTestSettings {
 
     protected static final String BASIC_PATH = "/api/v1";
     private static final JdbcDatabaseContainer<?> POSTGRES_CONTAINER = PostgresSQLTestContainer.createServer();
-    private static final WireMockServer REST_TEMPLATE_SERVER = GeocodingMockServer.createServer();
 
     protected static final ObjectMapper mapper = new ObjectMapper();
 
@@ -36,7 +34,7 @@ public abstract class BaseIntegrationTestSettings {
 
     static {
         POSTGRES_CONTAINER.start();
-        REST_TEMPLATE_SERVER.start();
+        mapper.registerModule(new JavaTimeModule());
     }
 
     @DynamicPropertySource
@@ -75,4 +73,11 @@ public abstract class BaseIntegrationTestSettings {
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON));
     }
+
+    protected void deleteRequest(String url) throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .delete(BASIC_PATH + url)
+                .contentType(MediaType.APPLICATION_JSON));
+    }
+
 }

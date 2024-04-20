@@ -26,7 +26,7 @@ import static com.agency.user.model.Permission.*;
 public class Role extends BaseEntity<Long> {
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "name")
+    @Column(name = "firstName")
     private RoleType name;
 
     @Enumerated(EnumType.STRING)
@@ -36,7 +36,7 @@ public class Role extends BaseEntity<Long> {
     public Role(RoleType name) {
         this.name = name;
         switch (name) {
-            case ADMIN -> permissions.addAll(List.of(CONTRACT_MANAGEMENT, EVENT_MANAGEMENT, USER_MANAGEMENT));
+            case ADMIN -> permissions.addAll(List.of(Permission.values()));
             case MANAGER -> permissions.addAll(List.of(EVENT_MANAGEMENT, USER_MANAGEMENT));
             case USER -> permissions.add(USER_MANAGEMENT);
         }

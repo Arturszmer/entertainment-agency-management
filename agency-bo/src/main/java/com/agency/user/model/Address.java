@@ -1,6 +1,7 @@
 package com.agency.user.model;
 
 import com.agency.common.BaseEntity;
+import com.agency.dto.AddressDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -44,6 +45,14 @@ public class Address extends BaseEntity<Long> {
     @Override
     public int hashCode() {
         return Objects.hash(city, street, zipCode, houseNumber, apartmentNumber);
+    }
+
+    public void update(AddressDto addressDto) {
+        city = addressDto.city();
+        street = addressDto.street();
+        zipCode = addressDto.zipCode();
+        houseNumber = addressDto.houseNumber();
+        apartmentNumber = addressDto.apartmentNumber();
     }
 }
 
