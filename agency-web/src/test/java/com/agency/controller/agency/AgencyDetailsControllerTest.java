@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
 @WithMockUser(roles = "ADMIN")
+@Sql(scripts = "/sql-init/agency-details-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired
