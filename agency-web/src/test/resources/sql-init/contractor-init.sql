@@ -1,6 +1,6 @@
-insert into user_address (created_by, creation_timestamp, modification_timestamp, last_modified, apartment_number,
+insert into user_address (id, created_by, creation_timestamp, modification_timestamp, last_modified, apartment_number,
                           city, house_number, street, zip_code)
-values ('admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1', 'Warszawa', '1', 'Zwycięstwa', '00-001');
+values (1, 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1', 'Warszawa', '1', 'Zwycięstwa', '00-001');
 
 INSERT INTO contractor (
     creation_timestamp, modification_timestamp, created_by,

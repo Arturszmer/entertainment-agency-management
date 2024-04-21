@@ -26,7 +26,7 @@ public class ContractorModel {
                 UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.email(), request.contractorDescription());
     }
 
-    private static AddressDto createAddressDto() {
+    public static AddressDto createAddressDto() {
         return new AddressDto(
                 "Warszawa", "Zwycięstwa", "00-001", "1", "1"
         );
