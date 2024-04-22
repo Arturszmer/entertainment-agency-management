@@ -1,9 +1,9 @@
-package com.agency.dto.contract;
+package com.agency.dto.contractwork;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record ContractDto(
+public record ContractWorkDto(
         String contractNumber,
         LocalDate signDate,
         LocalDate startDate,
@@ -11,6 +11,7 @@ public record ContractDto(
         String subjectOftheContract,
         BigDecimal salary,
         String additionalInformation,
-        ContractType contractType
+        ContractType contractType,
+        boolean withCopyrights
 ) {
 }

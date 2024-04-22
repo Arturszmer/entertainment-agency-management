@@ -1,4 +1,4 @@
-package com.agency.dto.contract;
+package com.agency.dto.contractwork;
 
 import java.time.LocalDate;
 

@@ -1,32 +1,23 @@
 package com.agency.contractmanagement.model.contract;
 
 import com.agency.common.BaseEntity;
-import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.dto.contract.ContractType;
+import com.agency.dto.contractwork.ContractType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.MappedSuperclass;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@EqualsAndHashCode(callSuper = true)
-@Entity
-@Table(name = "contract")
+@MappedSuperclass
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-@Builder
-public class Contract extends BaseEntity<Long> {
+@Getter
+public abstract class AbstractContract extends BaseEntity<Long> {
 
     @Column(name = "contract_number", nullable = false)
     private String contractNumber;
@@ -42,9 +33,6 @@ public class Contract extends BaseEntity<Long> {
     private BigDecimal salary;
     @Column(name = "additional_information")
     private String additionalInformation;
-    @ManyToOne
-    @NonNull
-    private Contractor contractor;
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
 
