@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class ContractorControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired
-    ContractorRepository repository;
+    private ContractorRepository repository;
 
     private final static String urlPath = "/contractor";
     private final static String PUBLIC_ID_OF_EXISTING_CONTRACTOR = "fb75951a-fe54-11ee-92c8-0242ac120002";

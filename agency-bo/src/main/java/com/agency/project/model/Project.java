@@ -1,0 +1,57 @@
+package com.agency.project.model;
+
+import com.agency.contractmanagement.model.contract.AbstractContract;
+import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.dto.contractwork.ContractType;
+import com.agency.dto.project.ProjectCreateDto;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = "project")
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public class Project extends AbstractContract {
+
+    @Enumerated(EnumType.STRING)
+    private ProjectStatus status;
+
+    @OneToMany(mappedBy = "project")
+    private List<ContractWork> contracts = new ArrayList<>();
+
+    @Override
+    public ContractType getContractType() {
+        return ContractType.PROJECT;
+    }
+
+    private Project(String contractNumber,
+                   LocalDate signDate,
+                   LocalDate startDate,
+                   LocalDate endDate,
+                   String subjectOfTheContract,
+                   BigDecimal salary,
+                   String additionalInformation,
+                   ContractType contractType,
+                   ProjectStatus status) {
+        super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
+        this.status = status;
+    }
+
+    public static Project create(String contractNumber, ProjectCreateDto createDto){
+        return new Project(
+            contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
+                createDto.subjectOfTheContract(), createDto.salary(), createDto.additionalInformation(),
+                ContractType.PROJECT, ProjectStatus.DRAFT
+        );
+    }
+
+}

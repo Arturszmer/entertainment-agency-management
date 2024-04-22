@@ -1,7 +1,7 @@
 package com.agency.contractmanagement.model.contractor;
 
 import com.agency.common.BaseEntity;
-import com.agency.contractmanagement.model.contract.Contract;
+import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.user.model.Address;
 import jakarta.persistence.CascadeType;
@@ -41,8 +41,8 @@ public class Contractor extends BaseEntity<Long> {
     private String email;
     @Column(name = "contractor_description")
     private String contractorDescription;
-    @OneToMany
-    private List<Contract> contract = new ArrayList<>();
+    @OneToMany(mappedBy = "contractor")
+    private List<ContractWork> contract = new ArrayList<>();
 
     public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String email, String contractorType) {
         this.publicId = UUID.randomUUID();
