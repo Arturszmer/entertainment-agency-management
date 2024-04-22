@@ -1,4 +1,4 @@
-package com.agency.project.model;
+package com.agency.dto.project;
 
 public enum ProjectStatus {
 

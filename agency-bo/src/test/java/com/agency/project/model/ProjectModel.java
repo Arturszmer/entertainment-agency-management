@@ -18,8 +18,4 @@ public class ProjectModel {
         );
     }
 
-    public static Project getProject(){
-        return ProjectBuilder.builder()
-                .build();
-    }
 }

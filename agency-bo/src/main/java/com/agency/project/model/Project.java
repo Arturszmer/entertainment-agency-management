@@ -4,6 +4,9 @@ import com.agency.contractmanagement.model.contract.AbstractContract;
 import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.dto.contractwork.ContractType;
 import com.agency.dto.project.ProjectCreateDto;
+import com.agency.dto.project.ProjectStatus;
+import com.agency.exception.AgencyErrorResult;
+import com.agency.exception.AgencyException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -33,7 +36,7 @@ public class Project extends AbstractContract {
         return ContractType.PROJECT;
     }
 
-    private Project(String contractNumber,
+    protected Project(String contractNumber,
                    LocalDate signDate,
                    LocalDate startDate,
                    LocalDate endDate,
@@ -54,4 +57,10 @@ public class Project extends AbstractContract {
         );
     }
 
+    public void updateStatus(ProjectStatus updatedStatus) {
+        if(ProjectStatus.SIGNED == status || ProjectStatus.TERMINATED == status){
+            throw new AgencyException(AgencyErrorResult.PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS);
+        }
+        status = updatedStatus;
+    }
 }
