@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @WithMockUser(authorities = "CONTRACT_MANAGEMENT")
 @Sql(scripts = "/sql-init/project-contracts-controller-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/sql-init/project-contracts-controller-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @Transactional
 class ProjectContractsControllerTest extends BaseIntegrationTestSettings {
 
