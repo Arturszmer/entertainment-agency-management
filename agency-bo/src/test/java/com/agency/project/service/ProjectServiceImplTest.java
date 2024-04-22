@@ -20,17 +20,18 @@ class ProjectServiceImplTest {
 
     private ProjectService service;
     private final ProjectRepository repository = mock(ProjectRepository.class);
+    private final ContractNumberGenerator generator = mock(ContractNumberGenerator.class);
 
     @BeforeEach
     void setup(){
-        service = new ProjectServiceImpl(repository);
+        service = new ProjectServiceImpl(repository, generator);
     }
 
     @ParameterizedTest
     @EnumSource(value = ProjectStatus.class,
     names = {"SIGNED", "TERMINATED"},
     mode = EnumSource.Mode.INCLUDE)
-    public void should_throw_exception_when_status_of_updated_project_is_terminated_or_signed(ProjectStatus projectStatus) throws Exception {
+    public void should_throw_exception_when_status_of_updated_project_is_terminated_or_signed(ProjectStatus projectStatus){
         // given
         String contractNumber = "2024/STY/PRO1";
         Project project = ProjectBuilder.aProjectBuilder()

@@ -41,7 +41,7 @@ public class Contractor extends BaseEntity<Long> {
     private String email;
     @Column(name = "contractor_description")
     private String contractorDescription;
-    @OneToMany(mappedBy = "contractor")
+    @OneToMany(mappedBy = "contractor", cascade = CascadeType.PERSIST)
     private List<ContractWork> contract = new ArrayList<>();
 
     public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String email, String contractorType) {

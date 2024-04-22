@@ -6,6 +6,7 @@ import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectStatus;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -25,9 +26,10 @@ class ProjectControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired
     private ProjectRepository repository;
-    private final static String urlPath = "/project";
+    private static final String urlPath = "/project";
 
     @Test
+    @Order(1)
     public void should_add_project() throws Exception {
         // given
         ProjectCreateDto projectCreateDto = getProjectCreateDto();
@@ -45,7 +47,9 @@ class ProjectControllerTest extends BaseIntegrationTestSettings {
     }
 
     @Test
+    @Order(2)
     @Sql(scripts = "/sql-init/project-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql-init/project-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     public void should_update_project_status() throws Exception {
         // given
         String contractNumber = "2024/STY/PRO10";

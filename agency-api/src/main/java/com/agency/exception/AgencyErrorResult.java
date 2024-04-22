@@ -15,7 +15,9 @@ public enum AgencyErrorResult {
     ONLY_ONE_AGENCY_CAN_EXIST(HttpStatus.BAD_REQUEST, "Only one agency can exist in application."),
     AGENCY_NOT_INITIALIZED_EXCEPTION(HttpStatus.NOT_FOUND, "Agency does not exist, you must initialize the agency."),
     PROJECT_DOES_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "Project with contract number %s does not exist."),
-    PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS(HttpStatus.BAD_REQUEST, "Project with status SIGNED or TERMINATED cannot be change by this way. Use revert option.");
+    PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS(HttpStatus.BAD_REQUEST, "Project with status SIGNED or TERMINATED cannot be change by this way. Use revert option."),
+    CONTRACT_TYPE_DOES_NOT_EXIST(HttpStatus.NOT_FOUND, "Project with type %s does not exist."),
+    CANNOT_CREATE_CONTRACT_WORK_FOR_TERMINATED_PROJECT(HttpStatus.BAD_REQUEST, "Cannot create contract work for terminated Project.");
 
     private final HttpStatus status;
     private final String message;

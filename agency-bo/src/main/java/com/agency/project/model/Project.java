@@ -28,7 +28,7 @@ public class Project extends AbstractContract {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
-    @OneToMany(mappedBy = "project")
+    @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ContractWork> contracts = new ArrayList<>();
 
     @Override
@@ -62,5 +62,9 @@ public class Project extends AbstractContract {
             throw new AgencyException(AgencyErrorResult.PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS);
         }
         status = updatedStatus;
+    }
+
+    public void addContractWork(ContractWork contractWork) {
+        this.getContracts().add(contractWork);
     }
 }
