@@ -7,6 +7,8 @@ import com.agency.dto.contractwork.ContractWorkStatus;
 import com.agency.project.model.Project;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -34,6 +36,7 @@ public class ContractWork extends AbstractContract {
     private Contractor contractor;
     @ManyToOne
     private Project project;
+    @Enumerated(EnumType.STRING)
     private ContractWorkStatus status;
 
     protected ContractWork(String contractNumber,
