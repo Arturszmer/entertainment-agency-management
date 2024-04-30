@@ -68,4 +68,8 @@ public class AuthenticationService {
                 .orElseGet(() -> userProfileRepository.findUserProfileByEmail(user)
                         .orElseThrow(() -> new UsernameNotFoundException("User not found")));
     }
+
+    public Boolean isInitialized() {
+        return !userProfileRepository.findAll().isEmpty();
+    }
 }
