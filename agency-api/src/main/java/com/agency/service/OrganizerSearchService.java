@@ -8,4 +8,5 @@ public interface OrganizerSearchService {
 
     List<OrganizerDto> findAll();
     OrganizerDto findByPublicId(String publicId);
+    List<OrganizerDto> findByUsername();
 }
