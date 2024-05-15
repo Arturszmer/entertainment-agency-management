@@ -7,6 +7,6 @@ public interface ContractorService {
 
     ContractorDto add(ContractorCreateRequest request);
     ContractorDto edit(String publicId, ContractorCreateRequest request);
-    void delete(String pesel);
+    void delete(String publicId);
 
 }
