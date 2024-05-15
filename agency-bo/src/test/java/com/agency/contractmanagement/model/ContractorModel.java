@@ -3,7 +3,7 @@ package com.agency.contractmanagement.model;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dto.AddressDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
-import com.agency.user.assembler.UserProfileAssembler;
+import com.agency.user.assembler.AddressAssembler;
 
 import java.time.LocalDate;
 
@@ -23,7 +23,7 @@ public class ContractorModel {
 
     public static Contractor contractorFromRequest(ContractorCreateRequest request){
         return new Contractor(request.firstName(), request.lastName(), request.pesel(), request.birthDate(),
-                UserProfileAssembler.toEntity(request.addressDto()), request.phone(), request.email(), request.contractorDescription());
+                AddressAssembler.toEntity(request.addressDto()), request.phone(), request.email(), request.contractorDescription());
     }
 
     public static AddressDto createAddressDto() {
