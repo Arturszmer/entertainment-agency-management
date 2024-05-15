@@ -29,7 +29,7 @@ public class ContractorSearchController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAuthority('CONTRACTORS_VIEW')")
+    @PreAuthorize("hasAnyAuthority('CONTRACTORS_VIEW', 'CONTRACTOR_MANAGEMENT')")
     public ResponseEntity<Page<ShortContractorDto>> getContractorsShortInfo(@RequestParam("page") int page,
                                                                             @RequestParam("size") int size){
         return ResponseEntity.ok(service.getContractorsShortInfo(page, size));

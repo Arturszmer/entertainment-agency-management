@@ -1,9 +1,10 @@
 package com.agency.model;
 
-import com.agency.dto.AddressDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
 
 import java.time.LocalDate;
+
+import static com.agency.model.AddressModel.createDefaultAddressDto;
 
 public class ContractorModel {
 
@@ -15,19 +16,14 @@ public class ContractorModel {
 
     public static ContractorCreateRequest contractorCreateRequestBuild(){
         return new ContractorCreateRequest(
-                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createAddressDto(), "500123456", "email@email.com", "describe"
+                FIRST_NAME, LAST_NAME, PESEL, BIRTH_DATE, createDefaultAddressDto(), "500123456", "email@email.com", "describe"
         );
     }
 
     public static ContractorCreateRequest contractorCreateCustomRequestBuild(String firstName, String lastName, String pesel){
         return new ContractorCreateRequest(
-                firstName, lastName, pesel, BIRTH_DATE, createAddressDto(), "500123456", "email@email.com", "describe"
+                firstName, lastName, pesel, BIRTH_DATE, createDefaultAddressDto(), "500123456", "email@email.com", "describe"
         );
     }
 
-    private static AddressDto createAddressDto() {
-        return new AddressDto(
-                "Warszawa", "Zwycięstwa", "00-001", "1", "1"
-        );
-    }
 }
