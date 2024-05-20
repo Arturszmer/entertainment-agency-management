@@ -10,6 +10,7 @@ import com.agency.service.ContractorService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -36,6 +37,7 @@ public class ContractorServiceImpl implements ContractorService {
     }
 
     @Override
+    @Transactional
     public ContractorDto edit(String publicId, ContractorCreateRequest request) {
         return repository.findContractorByPublicId(UUID.fromString(publicId)).map(contractor -> {
             contractor.updatePersonalData(request);

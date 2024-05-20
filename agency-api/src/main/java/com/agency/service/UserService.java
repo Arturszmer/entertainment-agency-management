@@ -12,4 +12,7 @@ public interface UserService {
     void blockUser(String usernameOrEmail);
 
     void unblockUser(String usernameOrEmail);
+
+    String getLoggedUsername();
+
 }

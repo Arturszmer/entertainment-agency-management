@@ -2,6 +2,7 @@ package com.agency.user.service;
 
 import com.agency.auth.ChangePasswordRequest;
 import com.agency.service.UserService;
+import com.agency.user.helper.SecurityContextUsers;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +58,11 @@ public class UserServiceImpl implements UserService {
         userProfile.unblockUserAccount();
         repository.save(userProfile);
         log.info(BLOCKED_SUCCESSFULLY, userProfile.getUsername());
+    }
+
+    @Override
+    public String getLoggedUsername() {
+        return SecurityContextUsers.getUsernameFromAuthenticatedUser();
     }
 
     private void isNewPasswordMatches(String newPassword, String confirmationPassword) {

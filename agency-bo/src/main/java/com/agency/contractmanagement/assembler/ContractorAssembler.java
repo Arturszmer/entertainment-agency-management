@@ -24,8 +24,8 @@ public class ContractorAssembler {
                 contractor.getBirthDate(),
                 AddressAssembler.toDto(contractor.getAddress()),
                 contractor.getPhone(),
-                contractor.getContractorDescription(),
                 contractor.getEmail(),
+                contractor.getContractorDescription(),
                 contractor.getContract().isEmpty()
                         ? new ArrayList<>()
                         : contractor.getContract().stream().map(ContractAssembler::toContractShortDto).toList()
