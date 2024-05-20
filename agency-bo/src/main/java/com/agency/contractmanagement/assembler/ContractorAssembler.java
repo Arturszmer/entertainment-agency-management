@@ -32,7 +32,7 @@ public class ContractorAssembler {
         );
     }
 
-    public static ShortContractorDto toShortContractorDto(Contractor contractor){
+    public static ShortContractorDto toShortContractorDto(Contractor contractor) {
         return new ShortContractorDto(
                 contractor.getPublicId().toString(),
                 contractor.getFirstName(),

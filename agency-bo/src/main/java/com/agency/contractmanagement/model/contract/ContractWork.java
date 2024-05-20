@@ -12,6 +12,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,6 +27,7 @@ import static com.agency.dto.contractwork.ContractWorkStatus.DRAFT;
 @Entity
 @Table(name = "contract_work")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 @Getter
 public class ContractWork extends AbstractContract {
 
@@ -39,7 +41,7 @@ public class ContractWork extends AbstractContract {
     @Enumerated(EnumType.STRING)
     private ContractWorkStatus status;
 
-    protected ContractWork(String contractNumber,
+    public ContractWork(String contractNumber,
                         LocalDate signDate,
                         LocalDate startDate,
                         LocalDate endDate,

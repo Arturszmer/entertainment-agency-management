@@ -1,5 +1,8 @@
 package com.agency.contractmanagement.service;
 
+import com.agency.contractmanagement.model.ContractWorkBuilder;
+import com.agency.contractmanagement.model.ContractorBuilder;
+import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorCreateRequest;
@@ -8,7 +11,9 @@ import com.agency.service.ContractorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static com.agency.contractmanagement.model.ContractorModel.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,10 +46,18 @@ class ContractorServiceImplTest {
 
     //TODO: add when create contracts for Contractors will be implemented
     @Test
-    public void should_throw_an_exception_when_contractor_with_pesel_has_contracts() {
+    public void should_throw_an_exception_when_contractor_with_pesel_has_contracts_will_be_removed() {
         // given
-        // when
+        UUID publicId = UUID.randomUUID();
+        ContractWork contractWork = ContractWorkBuilder.aContractWorkBuilder()
+                .build();
+        Contractor contractor = ContractorBuilder.aContractorBuilder().withPublicId(publicId)
+                .withContracts(List.of(contractWork)).build();
+
+        when(repository.findContractorByPublicId(publicId)).thenReturn(Optional.of(contractor));
+
         // then
+        assertThrows(AgencyException.class, () -> service.delete(publicId.toString()));
     }
 
 }
