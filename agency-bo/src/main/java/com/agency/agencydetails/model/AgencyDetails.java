@@ -3,13 +3,9 @@ package com.agency.agencydetails.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.dto.agencydetails.AgencyDetailsDto;
-import com.agency.user.assembler.UserProfileAssembler;
+import com.agency.user.assembler.AddressAssembler;
 import com.agency.user.model.Address;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -46,7 +42,7 @@ public class AgencyDetails extends BaseEntity<Long> {
     public static AgencyDetails initialize(AgencyDetailsDto agencyDetailsDto){
         return new AgencyDetails(
                 agencyDetailsDto.name(), agencyDetailsDto.nip(), agencyDetailsDto.regon(), agencyDetailsDto.pesel(),
-                agencyDetailsDto.krsNumber(), UserProfileAssembler.toEntity(agencyDetailsDto.addressDto())
+                agencyDetailsDto.krsNumber(), AddressAssembler.toEntity(agencyDetailsDto.addressDto())
         );
     }
 
@@ -56,6 +52,6 @@ public class AgencyDetails extends BaseEntity<Long> {
         regon = agencyDetailsDto.regon();
         pesel = agencyDetailsDto.pesel();
         krsNumber = agencyDetailsDto.krsNumber();
-        address = UserProfileAssembler.toEntity(agencyDetailsDto.addressDto());
+        address = AddressAssembler.toEntity(agencyDetailsDto.addressDto());
     }
 }

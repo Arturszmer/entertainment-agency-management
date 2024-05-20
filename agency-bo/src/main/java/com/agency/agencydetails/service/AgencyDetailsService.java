@@ -5,16 +5,14 @@ import com.agency.agencydetails.repository.AgencyDetailsRepository;
 import com.agency.common.validators.PeselValidator;
 import com.agency.dto.agencydetails.AgencyDetailsDto;
 import com.agency.exception.AgencyException;
-import com.agency.user.assembler.UserProfileAssembler;
+import com.agency.user.assembler.AddressAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.agency.exception.AgencyErrorResult.AGENCY_NOT_INITIALIZED_EXCEPTION;
-import static com.agency.exception.AgencyErrorResult.ONLY_ONE_AGENCY_CAN_EXIST;
-import static com.agency.exception.AgencyErrorResult.PESEL_INVALID_EXCEPTION;
+import static com.agency.exception.AgencyErrorResult.*;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
@@ -56,6 +54,6 @@ public class AgencyDetailsService {
 
     private AgencyDetailsDto toDto(AgencyDetails agencyDetails) {
         return new AgencyDetailsDto(agencyDetails.getName(), agencyDetails.getNip(), agencyDetails.getRegon(), agencyDetails.getPesel(),
-                agencyDetails.getKrsNumber(), UserProfileAssembler.toDto(agencyDetails.getAddress()));
+                agencyDetails.getKrsNumber(), AddressAssembler.toDto(agencyDetails.getAddress()));
     }
 }

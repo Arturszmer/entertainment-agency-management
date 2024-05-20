@@ -37,4 +37,9 @@ public class UserController {
         userService.unblockUser(usernameOrEmail);
         return ResponseEntity.ok(String.format("User with email %s has been blocked", usernameOrEmail));
     }
+
+    @GetMapping("/username")
+    public ResponseEntity<String> getUsername(){
+        return ResponseEntity.ok(userService.getLoggedUsername());
+    }
 }
