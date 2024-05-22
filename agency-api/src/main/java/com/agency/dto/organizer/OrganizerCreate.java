@@ -1,6 +1,6 @@
 package com.agency.dto.organizer;
 
-import com.agency.dto.AddressDto;
+import com.agency.dto.address.AddressDto;
 
 public record OrganizerCreate(
         String organizerName,

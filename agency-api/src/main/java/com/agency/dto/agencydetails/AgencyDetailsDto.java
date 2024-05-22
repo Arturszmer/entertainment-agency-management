@@ -1,6 +1,6 @@
 package com.agency.dto.agencydetails;
 
-import com.agency.dto.AddressDto;
+import com.agency.dto.address.AddressDto;
 import org.springframework.lang.NonNull;
 
 public record AgencyDetailsDto(

@@ -3,7 +3,7 @@ package com.agency.controller.agency;
 import com.agency.BaseIntegrationTestSettings;
 import com.agency.agencydetails.model.AgencyDetails;
 import com.agency.agencydetails.repository.AgencyDetailsRepository;
-import com.agency.dto.AddressDto;
+import com.agency.dto.address.AddressDto;
 import com.agency.dto.agencydetails.AgencyDetailsDto;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
                 null,
                 null,
                 new AddressDto(
-                        "Warsza", "Zwycięstwa", "00-001", "1", "1"
+                        "Warsza", "Zwycięstwa", "mazowieckie", "00-001", "1", "1"
                 )
         );
     }
