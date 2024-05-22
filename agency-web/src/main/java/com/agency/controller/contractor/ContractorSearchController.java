@@ -31,7 +31,9 @@ public class ContractorSearchController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('CONTRACTORS_VIEW', 'CONTRACTOR_MANAGEMENT')")
     public ResponseEntity<Page<ShortContractorDto>> getContractorsShortInfo(@RequestParam("page") int page,
-                                                                            @RequestParam("size") int size){
-        return ResponseEntity.ok(service.getContractorsShortInfo(page, size));
+                                                                            @RequestParam("size") int size,
+                                                                            @RequestParam(required = false, value = "sort") String sort,
+                                                                            @RequestParam(required = false, value = "order") String order){
+        return ResponseEntity.ok(service.getContractorsShortInfo(page, size, sort, order));
     }
 }

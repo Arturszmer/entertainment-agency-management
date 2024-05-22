@@ -1,6 +1,6 @@
 package com.agency.dto.contractor;
 
-import com.agency.dto.AddressDto;
+import com.agency.dto.address.AddressDto;
 
 public record ShortContractorDto(String publicId,
                                  String firstName,

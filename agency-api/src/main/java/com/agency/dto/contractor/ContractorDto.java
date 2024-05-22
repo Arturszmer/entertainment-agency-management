@@ -1,6 +1,6 @@
 package com.agency.dto.contractor;
 
-import com.agency.dto.AddressDto;
+import com.agency.dto.address.AddressDto;
 import com.agency.dto.contractwork.ContractShortDto;
 
 import java.time.LocalDate;

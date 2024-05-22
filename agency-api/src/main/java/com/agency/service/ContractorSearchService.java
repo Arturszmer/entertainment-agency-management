@@ -7,5 +7,5 @@ import org.springframework.data.domain.Page;
 public interface ContractorSearchService {
 
     ContractorDto getContractorFullInfo(String publicId);
-    Page<ShortContractorDto> getContractorsShortInfo(int page, int size);
+    Page<ShortContractorDto> getContractorsShortInfo(int page, int size, String sort, String order);
 }
