@@ -1,6 +1,7 @@
-package com.agency.controller;
+package com.agency.controller.user;
 
 import com.agency.auth.ChangePasswordRequest;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +39,18 @@ public class UserController {
         return ResponseEntity.ok(String.format("User with email %s has been blocked", usernameOrEmail));
     }
 
+    @PutMapping("/edit")
+    public ResponseEntity<UserProfileDetailsDto> editUserDetails(@RequestBody UserProfileDetailsDto userProfileDetailsDto){
+        return ResponseEntity.ok(userService.changeUserDetails(userProfileDetailsDto));
+    }
+
     @GetMapping("/username")
     public ResponseEntity<String> getUsername(){
         return ResponseEntity.ok(userService.getLoggedUsername());
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<UserProfileDetailsDto> getDetails(){
+        return ResponseEntity.ok(userService.getUserDetails());
     }
 }

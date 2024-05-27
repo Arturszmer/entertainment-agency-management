@@ -5,7 +5,7 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorDto;
 import com.agency.dto.contractor.ShortContractorDto;
-import com.agency.exception.AgencyErrorResult;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.service.ContractorSearchService;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +25,7 @@ public class ContractorSearchServiceImpl implements ContractorSearchService {
     @Override
     public ContractorDto getContractorFullInfo(String publicId) {
         return ContractorAssembler.toDto(repository.findContractorByPublicId(UUID.fromString(publicId))
-                .orElseThrow(() -> new AgencyException(AgencyErrorResult.CONTRACTOR_DOES_NOT_EXISTS, publicId)));
+                .orElseThrow(() -> new AgencyException(ContractorErrorResult.CONTRACTOR_DOES_NOT_EXISTS, publicId)));
     }
 
     @Override

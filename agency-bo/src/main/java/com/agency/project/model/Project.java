@@ -5,7 +5,7 @@ import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.dto.contractwork.ContractType;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectStatus;
-import com.agency.exception.AgencyErrorResult;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -64,7 +64,7 @@ public class Project extends AbstractContract {
 
     public void updateStatus(ProjectStatus updatedStatus) {
         if(ProjectStatus.SIGNED == status || ProjectStatus.TERMINATED == status){
-            throw new AgencyException(AgencyErrorResult.PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS);
+            throw new AgencyException(ContractorErrorResult.PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS);
         }
         status = updatedStatus;
     }

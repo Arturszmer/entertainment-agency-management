@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.agency.exception.AgencyErrorResult.*;
+import static com.agency.exception.ContractorErrorResult.*;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service

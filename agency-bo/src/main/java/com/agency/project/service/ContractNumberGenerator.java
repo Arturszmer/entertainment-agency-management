@@ -2,7 +2,7 @@ package com.agency.project.service;
 
 import com.agency.contractmanagement.repository.ContractWorkRepository;
 import com.agency.dto.contractwork.ContractType;
-import com.agency.exception.AgencyErrorResult;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +36,7 @@ public class ContractNumberGenerator {
         return switch (contractType){
             case PROJECT -> projectRepository.getNumberOfContractsByYear(year);
             case CONTRACT_WORK -> contractWorkRepository.getNumberOfContractsByYear(year);
-            default -> throw new AgencyException(AgencyErrorResult.CONTRACT_TYPE_DOES_NOT_EXIST);
+            default -> throw new AgencyException(ContractorErrorResult.CONTRACT_TYPE_DOES_NOT_EXIST);
         };
     }
 
@@ -44,7 +44,7 @@ public class ContractNumberGenerator {
         return switch (contractType){
             case PROJECT -> "PRO";
             case CONTRACT_WORK -> "CON";
-            default -> throw new AgencyException(AgencyErrorResult.CONTRACT_TYPE_DOES_NOT_EXIST);
+            default -> throw new AgencyException(ContractorErrorResult.CONTRACT_TYPE_DOES_NOT_EXIST);
         };
     }
 }

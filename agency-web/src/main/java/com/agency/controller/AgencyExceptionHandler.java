@@ -22,14 +22,14 @@ public class AgencyExceptionHandler {
     public ResponseEntity<AgencyErrorResponseDto> handleAgencyException(final AgencyException exception){
         log.warn("Agency exception occur: ", exception);
         return ResponseEntity.status(exception.getStatus()).body(
-                new AgencyErrorResponseDto(exception.getStatus(), exception.getMessage()));
+                new AgencyErrorResponseDto(exception.getStatus(), exception.getErrorCode(), exception.getMessage()));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<AgencyErrorResponseDto> handleException(final RuntimeException exception){
         log.warn("Exception occur: ", exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new AgencyErrorResponseDto(HttpStatus.BAD_REQUEST, exception.getMessage()));
+                .body(new AgencyErrorResponseDto(HttpStatus.BAD_REQUEST, "ERR001", exception.getMessage()));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

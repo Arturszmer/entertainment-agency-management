@@ -2,6 +2,7 @@ package com.agency.user.model;
 
 import com.agency.auth.RoleType;
 import com.agency.common.BaseEntity;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -124,5 +125,12 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
         } else {
             throw new IllegalStateException("User is not blocked");
         }
+    }
+
+    public void updateUser(UserProfileDetailsDto userProfileDetailsDto) {
+        this.username = userProfileDetailsDto.username();
+        this.firstName = userProfileDetailsDto.firstName();
+        this.lastName = userProfileDetailsDto.lastName();
+        this.email = userProfileDetailsDto.email();
     }
 }
