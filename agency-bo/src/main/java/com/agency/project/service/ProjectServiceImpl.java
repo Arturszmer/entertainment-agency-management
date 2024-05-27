@@ -4,7 +4,7 @@ import com.agency.dto.contractwork.ContractType;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectStatus;
-import com.agency.exception.AgencyErrorResult;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.project.assembler.ProjectAssembler;
 import com.agency.project.model.Project;
@@ -35,7 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public ProjectDto updateStatus(String contractNumber, ProjectStatus status) {
         Project project = repository.findByContractNumber(contractNumber)
-                .orElseThrow(() -> new AgencyException(AgencyErrorResult.PROJECT_DOES_NOT_EXIST_EXCEPTION));
+                .orElseThrow(() -> new AgencyException(ContractorErrorResult.PROJECT_DOES_NOT_EXIST_EXCEPTION));
         ProjectStatus oldStatus = project.getStatus();
         project.updateStatus(status);
         Project projectWithUpdatedStatus = repository.save(project);

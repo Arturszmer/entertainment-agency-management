@@ -7,7 +7,7 @@ import com.agency.dto.contractwork.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectStatus;
-import com.agency.exception.AgencyErrorResult;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.project.assembler.ProjectAssembler;
 import com.agency.project.model.Project;
@@ -33,12 +33,12 @@ public class ProjectContractsServiceImpl implements ProjectContractsService {
     @Transactional
     public ProjectDto createContract(ContractWorkCreateDto contractWorkCreateDto) {
         Project project = repository.findByContractNumber(contractWorkCreateDto.projectContractNumber())
-                .orElseThrow(() -> new AgencyException(AgencyErrorResult.PROJECT_DOES_NOT_EXIST_EXCEPTION));
+                .orElseThrow(() -> new AgencyException(ContractorErrorResult.PROJECT_DOES_NOT_EXIST_EXCEPTION));
 
         validateProjectStatus(project.getStatus());
 
         Contractor contractor = contractorRepository.findContractorByPublicId(UUID.fromString(contractWorkCreateDto.contractorPublicId()))
-                .orElseThrow(() -> new AgencyException(AgencyErrorResult.CONTRACTOR_DOES_NOT_EXISTS));
+                .orElseThrow(() -> new AgencyException(ContractorErrorResult.CONTRACTOR_DOES_NOT_EXISTS));
 
         String contractWorkNumber = numberGenerator.generateContractNumber(contractWorkCreateDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
         ContractWork contractWork = ContractWork.create(contractWorkNumber, contractWorkCreateDto, contractor, project);
@@ -49,7 +49,7 @@ public class ProjectContractsServiceImpl implements ProjectContractsService {
 
     private void validateProjectStatus(ProjectStatus status) {
         if(ProjectStatus.TERMINATED == status){
-            throw new AgencyException(AgencyErrorResult.ONLY_ONE_AGENCY_CAN_EXIST);
+            throw new AgencyException(ContractorErrorResult.ONLY_ONE_AGENCY_CAN_EXIST);
         }
     }
 }

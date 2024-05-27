@@ -1,20 +1,22 @@
 package com.agency.user.service;
 
 import com.agency.auth.ChangePasswordRequest;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
+import com.agency.exception.AgencyException;
 import com.agency.service.UserService;
+import com.agency.user.assembler.UserAssembler;
 import com.agency.user.helper.SecurityContextUsers;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 
-import static com.agency.user.constant.UserLogsMessage.BLOCKED_SUCCESSFULLY;
-import static com.agency.user.constant.UserLogsMessage.PASSWORD_CHANGED;
+import static com.agency.exception.UserExceptionResult.*;
+import static com.agency.user.constant.UserLogsMessage.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,10 +31,11 @@ public class UserServiceImpl implements UserService {
         String username = principal.getName();
 
         UserProfile user = repository.findUserProfileByUsername(username)
-                .orElseThrow(() ->  new UsernameNotFoundException(String.format("User %s is not found", username)));
+                .orElseThrow(() ->  new AgencyException(USER_NOT_FOUND, username));
 
         isCurrentPasswordCorrect(request.currentPassword(), user);
         isNewPasswordMatches(request.newPassword(), request.confirmationPassword());
+        isNewPasswordDifferentThanCurrent(request.currentPassword(), request.newPassword());
 
         user.setNewPassword(passwordEncoder.encode(request.newPassword()));
 
@@ -43,7 +46,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void blockUser(String usernameOrEmail) {
         UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User has not fount by username(or email): " + usernameOrEmail));
+                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, usernameOrEmail));
 
         userProfile.lockUserAccount();
         repository.save(userProfile);
@@ -53,11 +56,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void unblockUser(String usernameOrEmail) {
         UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("User has not fount by username(or email): " + usernameOrEmail));
+                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, usernameOrEmail));
 
         userProfile.unblockUserAccount();
         repository.save(userProfile);
-        log.info(BLOCKED_SUCCESSFULLY, userProfile.getUsername());
+        log.info(UNBLOCKED_SUCCESSFULLY, userProfile.getUsername());
     }
 
     @Override
@@ -65,15 +68,41 @@ public class UserServiceImpl implements UserService {
         return SecurityContextUsers.getUsernameFromAuthenticatedUser();
     }
 
+    @Override
+    public UserProfileDetailsDto getUserDetails() {
+        String username = SecurityContextUsers.getUsernameFromAuthenticatedUser();
+        UserProfile userProfile = repository.findUserProfileByUsername(username)
+                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+        log.info("User details of: {} has been fetched", userProfile.getUsername());
+        return UserAssembler.toUserProfileDetailsDto(userProfile);
+    }
+
+    @Override
+    public UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto) {
+        String username = SecurityContextUsers.getUsernameFromAuthenticatedUser();
+        UserProfile userProfile = repository.findUserProfileByUsername(username)
+                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+        userProfile.updateUser(userProfileDetailsDto);
+        UserProfile updatedUser = repository.save(userProfile);
+        log.info("User details of: {} has been updated", userProfile.getUsername());
+        return UserAssembler.toUserProfileDetailsDto(updatedUser);
+    }
+
     private void isNewPasswordMatches(String newPassword, String confirmationPassword) {
         if(!newPassword.equals(confirmationPassword)){
-            throw new IllegalStateException("New password is not matched with confirmation password");
+            throw new AgencyException(NEW_PASSWORD_DOES_NOT_MATCH);
         }
     }
 
     private void isCurrentPasswordCorrect(String currentPassword, UserProfile user){
         if(!passwordEncoder.matches(currentPassword, user.getPassword())){
-            throw new IllegalStateException("The current password is incorrect");
+            throw new AgencyException(CURRENT_PASSWORD_DOES_NOT_MATCH);
+        }
+    }
+
+    private void isNewPasswordDifferentThanCurrent(String currentPassword, String newPassword) {
+        if(currentPassword.equals(newPassword)){
+            throw new AgencyException(NEW_PASSWORD_MUST_BE_DIFFERENT_THAN_CURRENT);
         }
     }
 }

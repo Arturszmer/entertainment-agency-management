@@ -1,4 +1,4 @@
-package com.agency.controller;
+package com.agency.controller.user;
 
 import com.agency.auth.AdminInitializerDto;
 import com.agency.authentication.AuthenticationService;

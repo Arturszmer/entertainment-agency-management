@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static com.agency.contractmanagement.constant.ContractorLogsMessage.*;
-import static com.agency.exception.AgencyErrorResult.*;
+import static com.agency.exception.ContractorErrorResult.*;
 
 @Service
 @RequiredArgsConstructor
