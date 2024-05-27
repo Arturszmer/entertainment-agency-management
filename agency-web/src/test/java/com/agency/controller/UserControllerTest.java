@@ -6,6 +6,7 @@ import com.agency.auth.ChangePasswordRequest;
 import com.agency.auth.RegistrationRequest;
 import com.agency.auth.RoleType;
 import com.agency.authentication.AuthenticationService;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -18,9 +19,11 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.LinkedMultiValueMap;
 
 import java.util.Optional;
 
+import static com.agency.model.UserDetailsModel.defaultUserDetails;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -100,6 +103,43 @@ class UserControllerTest extends BaseIntegrationTestSettings {
 
         assertTrue(userProfileByUsername.isPresent());
         assertTrue(userProfileByUsername.get().isAccountNonLocked());
+    }
+
+    @Test
+    @WithMockUser(username = "userTest")
+    void should_get_user_details() throws Exception {
+        // given
+        // when
+        MvcResult mvcResult = getRequest("/user/details", new LinkedMultiValueMap<>()).andReturn();
+
+        // then
+        UserProfileDetailsDto userProfileDetailsDto = mapper.readValue(mvcResult.getResponse().getContentAsString(), UserProfileDetailsDto.class);
+        assertEquals("userTest", userProfileDetailsDto.username());
+        assertEquals("test@example.com", userProfileDetailsDto.email());
+        assertEquals("userTest", userProfileDetailsDto.firstName());
+        assertEquals("user", userProfileDetailsDto.lastName());
+    }
+
+    @Test
+    @WithMockUser(username = "admin")
+    void should_change_user_details() throws Exception {
+        // given
+        UserProfileDetailsDto user = defaultUserDetails();
+        Optional<UserProfile> userBeforeEdition = repository.findUserProfileByUsername(user.username());
+        assertTrue(userBeforeEdition.isPresent());
+        assertNotEquals(userBeforeEdition.get().getFirstName(), user.firstName());
+        assertNotEquals(userBeforeEdition.get().getLastName(), user.lastName());
+
+        // when - change firstName and lastName
+        putRequest("/user/edit", mapper.writeValueAsString(user)).andReturn();
+
+        // then
+        Optional<UserProfile> editedUser = repository.findUserProfileByUsername(user.username());
+
+        assertTrue(editedUser.isPresent());
+        assertEquals(user.firstName(), editedUser.get().getFirstName());
+        assertEquals(user.lastName(), editedUser.get().getLastName());
+
     }
 
     private RegistrationRequest createUserProfileForTest() {
