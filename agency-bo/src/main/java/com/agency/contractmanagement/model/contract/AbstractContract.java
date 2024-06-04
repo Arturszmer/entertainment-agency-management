@@ -1,7 +1,7 @@
 package com.agency.contractmanagement.model.contract;
 
 import com.agency.common.BaseEntity;
-import com.agency.dto.contractwork.ContractType;
+import com.agency.dict.contract.ContractType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

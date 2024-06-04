@@ -1,4 +1,4 @@
-package com.agency.dto.contractwork;
+package com.agency.dict.contract;
 
 public enum ContractType {
 

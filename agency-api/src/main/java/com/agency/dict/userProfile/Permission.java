@@ -1,13 +1,17 @@
-package com.agency.user.model;
+package com.agency.dict.userProfile;
 
 public enum Permission {
 
     CONTRACT_MANAGEMENT,
+    CONTRACT_VIEW,
     EVENT_MANAGEMENT,
+    EVENT_VIEW,
     USER_MANAGEMENT,
+    USER_VIEW,
     CONTRACTOR_MANAGEMENT,
     CONTRACTORS_VIEW,
     PROJECT_MANAGEMENT,
+    PROJECT_VIEW,
     ORGANIZER_MANAGEMENT,
     ORGANIZER_VIEW
 

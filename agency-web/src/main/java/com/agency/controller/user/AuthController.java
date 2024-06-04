@@ -1,10 +1,8 @@
 package com.agency.controller.user;
 
-import com.agency.auth.AdminInitializerDto;
+import com.agency.auth.*;
 import com.agency.authentication.AuthenticationService;
-import com.agency.auth.AuthenticationRequest;
-import com.agency.auth.AuthenticationResponse;
-import com.agency.auth.RegistrationRequest;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +28,19 @@ public class AuthController {
 
     @PostMapping("/register")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegistrationRequest request){
+    public ResponseEntity<UserProfileDetailsDto> register(@RequestBody CreateUserRequest request){
         return ResponseEntity.ok(authService.register(request));
     }
 
     @PostMapping(value = "/login", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(authService.authenticate(request));
+    }
+
+    @PutMapping("/reset-password/{username}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> resetPassword(@PathVariable("username") String username){
+        authService.resetPassword(username);
+        return ResponseEntity.ok(String.format("User %s password has been reset successfully", username));
     }
 }

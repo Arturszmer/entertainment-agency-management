@@ -1,10 +1,8 @@
 package com.agency.controller;
 
 import com.agency.BaseIntegrationTestSettings;
-import com.agency.auth.AdminInitializerDto;
-import com.agency.auth.AuthenticationResponse;
-import com.agency.auth.RegistrationRequest;
-import com.agency.auth.RoleType;
+import com.agency.auth.*;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.user.model.Role;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
@@ -67,7 +65,7 @@ class AuthControllerTest extends BaseIntegrationTestSettings {
     public void should_register_new_user() throws Exception {
         // given
         String username = "user-auth-controller";
-        RegistrationRequest request = new RegistrationRequest(username, "user@user.pl", "password", RoleType.USER);
+        CreateUserRequest request = new CreateUserRequest(username, "user@user.pl", "FirstName", "LastName", RoleType.USER);
         String body = mapper.writeValueAsString(request);
 
         // when
@@ -76,10 +74,10 @@ class AuthControllerTest extends BaseIntegrationTestSettings {
                 .content(body)
                 .contentType(MediaType.APPLICATION_JSON)).andReturn();
 
-        AuthenticationResponse authenticationResponse = mapper.readValue(mvcResult.getResponse().getContentAsString(), AuthenticationResponse.class);
+        UserProfileDetailsDto userProfileDetailsDto = mapper.readValue(mvcResult.getResponse().getContentAsString(), UserProfileDetailsDto.class);
 
         // then
-        assertNotNull(authenticationResponse.accessToken());
+        assertEquals(username, userProfileDetailsDto.username());
         assertEquals(200, mvcResult.getResponse().getStatus());
         assertTrue(repository.findUserProfileByUsername(username).isPresent());
     }

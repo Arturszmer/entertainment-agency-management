@@ -4,6 +4,7 @@ import com.agency.auth.ChangePasswordRequest;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +14,7 @@ import java.security.Principal;
 
 @RestController
 @RequestMapping("api/v1/user")
+@Slf4j
 @RequiredArgsConstructor
 public class UserController {
 
@@ -27,21 +29,28 @@ public class UserController {
 
     @PutMapping("/block/{usernameOrEmail}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> blockUser(@PathVariable("usernameOrEmail") String usernameOrEmail){
+    public ResponseEntity<Void> blockUser(@PathVariable("usernameOrEmail") String usernameOrEmail){
         userService.blockUser(usernameOrEmail);
-        return ResponseEntity.ok(String.format("User with email %s has been blocked", usernameOrEmail));
+        log.info("User with email {} has been blocked", usernameOrEmail);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/unblock/{usernameOrEmail}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> unblockUser(@PathVariable("usernameOrEmail") String usernameOrEmail) {
+    public ResponseEntity<Void> unblockUser(@PathVariable("usernameOrEmail") String usernameOrEmail) {
         userService.unblockUser(usernameOrEmail);
-        return ResponseEntity.ok(String.format("User with email %s has been blocked", usernameOrEmail));
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/edit-user/{username}")
+    @PreAuthorize("hasAuthority('USER_MANAGEMENT')")
+    public ResponseEntity<UserProfileDetailsDto> editUserByUsername(@PathVariable("username") String currentUsername, @RequestBody UserProfileDetailsDto userProfileDetailsDto){
+        return ResponseEntity.ok(userService.changeUserDetails(userProfileDetailsDto, currentUsername));
     }
 
     @PutMapping("/edit")
     public ResponseEntity<UserProfileDetailsDto> editUserDetails(@RequestBody UserProfileDetailsDto userProfileDetailsDto){
-        return ResponseEntity.ok(userService.changeUserDetails(userProfileDetailsDto));
+        return ResponseEntity.ok(userService.changeCurrentUserDetails(userProfileDetailsDto));
     }
 
     @GetMapping("/username")

@@ -10,6 +10,7 @@ import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,10 +48,16 @@ public class UserServiceImpl implements UserService {
     public void blockUser(String usernameOrEmail) {
         UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, usernameOrEmail));
-
+        isUserCurrentlyLogged(userProfile.getUsername());
         userProfile.lockUserAccount();
         repository.save(userProfile);
         log.info(BLOCKED_SUCCESSFULLY, userProfile.getUsername());
+    }
+
+    private void isUserCurrentlyLogged(String username) {
+        if(username.equals(SecurityContextUsers.getUsernameFromAuthenticatedUser())){
+            throw new AgencyException(CANNOT_BLOCK_YOURSELF);
+        }
     }
 
     @Override
@@ -78,8 +85,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto) {
+    public UserProfileDetailsDto changeCurrentUserDetails(UserProfileDetailsDto userProfileDetailsDto) {
         String username = SecurityContextUsers.getUsernameFromAuthenticatedUser();
+        return editUserDetails(userProfileDetailsDto, username);
+    }
+
+    @Override
+    public UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto, String currentUsername) {
+        return editUserDetails(userProfileDetailsDto, currentUsername);
+    }
+
+    @NotNull
+    private UserProfileDetailsDto editUserDetails(UserProfileDetailsDto userProfileDetailsDto, String username) {
         UserProfile userProfile = repository.findUserProfileByUsername(username)
                 .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
         userProfile.updateUser(userProfileDetailsDto);

@@ -29,7 +29,7 @@ public class AgencyExceptionHandler {
     public ResponseEntity<AgencyErrorResponseDto> handleException(final RuntimeException exception){
         log.warn("Exception occur: ", exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new AgencyErrorResponseDto(HttpStatus.BAD_REQUEST, "ERR001", exception.getMessage()));
+                .body(new AgencyErrorResponseDto(HttpStatus.BAD_REQUEST, "ERR001", "It was unexpected error, contact with Administrator"));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

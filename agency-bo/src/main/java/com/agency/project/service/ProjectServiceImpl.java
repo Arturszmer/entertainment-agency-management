@@ -1,9 +1,9 @@
 package com.agency.project.service;
 
-import com.agency.dto.contractwork.ContractType;
+import com.agency.dict.contract.ContractType;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectDto;
-import com.agency.dto.project.ProjectStatus;
+import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.project.assembler.ProjectAssembler;

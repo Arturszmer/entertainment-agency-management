@@ -1,4 +1,4 @@
-package com.agency.dto.project;
+package com.agency.dict.project;
 
 public enum ProjectStatus {
 

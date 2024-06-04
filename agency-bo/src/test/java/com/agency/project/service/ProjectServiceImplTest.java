@@ -1,6 +1,6 @@
 package com.agency.project.service;
 
-import com.agency.dto.project.ProjectStatus;
+import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.AgencyException;
 import com.agency.project.model.Project;
 import com.agency.project.model.ProjectBuilder;

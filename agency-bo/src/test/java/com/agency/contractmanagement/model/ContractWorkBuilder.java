@@ -2,15 +2,15 @@ package com.agency.contractmanagement.model;
 
 import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.dto.contractwork.ContractType;
-import com.agency.dto.contractwork.ContractWorkStatus;
+import com.agency.dict.contract.ContractType;
+import com.agency.dict.contract.ContractWorkStatus;
 import com.agency.project.model.Project;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.agency.dto.contractwork.ContractType.CONTRACT_WORK;
-import static com.agency.dto.contractwork.ContractWorkStatus.DRAFT;
+import static com.agency.dict.contract.ContractType.CONTRACT_WORK;
+import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
 
 public class ContractWorkBuilder {
 
