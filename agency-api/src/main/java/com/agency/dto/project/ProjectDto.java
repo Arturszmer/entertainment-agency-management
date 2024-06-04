@@ -2,7 +2,7 @@ package com.agency.dto.project;
 
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.agency.dto.contractwork.ContractShortDto;
-import com.agency.dto.contractwork.ContractType;
+import com.agency.dict.contract.ContractType;
 
 import java.util.List;
 

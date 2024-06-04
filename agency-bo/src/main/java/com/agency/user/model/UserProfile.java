@@ -1,8 +1,10 @@
 package com.agency.user.model;
 
+import com.agency.auth.CreateUserRequest;
 import com.agency.auth.RoleType;
 import com.agency.common.BaseEntity;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
+import com.agency.exception.AgencyException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,6 +24,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Stream;
+
+import static com.agency.exception.UserExceptionResult.USER_IS_ALREADY_BLOCKED;
+import static com.agency.exception.UserExceptionResult.USER_IS_NOT_BLOCKED;
 
 @Entity
 @Table(name = "user_profile")
@@ -51,6 +56,9 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
                 joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "ID"),
                 inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "ID"))
     private List<Role> roles = new ArrayList<>();
+//    @Column(name = "role")
+//    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+//    private Role role;
 
     @Column(name = "account_non_locked")
     private boolean accountNonLocked = true;
@@ -62,11 +70,26 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
         addRole(new Role(roleType));
     }
 
+    private UserProfile(String username, String firstName, String lastName, String email, String password, RoleType roleType) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        addRole(new Role(roleType));
+    }
+
     public static UserProfile create(String username,
                                      String email,
                                      String password,
                                      RoleType roleType){
         return new UserProfile(username, email, password, roleType);
+    }
+
+    public static UserProfile create(CreateUserRequest request, String tempPassword){
+        return new UserProfile(request.username(),
+                request.firstName(), request.lastName(), request.email(),
+                tempPassword, request.roleType());
     }
 
 
@@ -115,7 +138,7 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
         if(isAccountNonLocked()){
             this.accountNonLocked = false;
         } else {
-            throw new IllegalStateException("User is already blocked");
+            throw new AgencyException(USER_IS_ALREADY_BLOCKED);
         }
     }
 
@@ -123,7 +146,7 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
         if(!isAccountNonLocked()){
             this.accountNonLocked = true;
         } else {
-            throw new IllegalStateException("User is not blocked");
+            throw new AgencyException(USER_IS_NOT_BLOCKED);
         }
     }
 
@@ -132,5 +155,9 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
         this.firstName = userProfileDetailsDto.firstName();
         this.lastName = userProfileDetailsDto.lastName();
         this.email = userProfileDetailsDto.email();
+    }
+
+    public Role getRole(){
+        return getRoles().get(0);
     }
 }

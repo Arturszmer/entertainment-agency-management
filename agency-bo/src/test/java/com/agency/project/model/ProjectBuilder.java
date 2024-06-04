@@ -1,8 +1,8 @@
 package com.agency.project.model;
 
 import com.agency.contractmanagement.model.contract.ContractWork;
-import com.agency.dto.contractwork.ContractType;
-import com.agency.dto.project.ProjectStatus;
+import com.agency.dict.contract.ContractType;
+import com.agency.dict.project.ProjectStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

@@ -1,5 +1,7 @@
 package com.agency.dto.contractwork;
 
+import com.agency.dict.contract.ContractType;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 

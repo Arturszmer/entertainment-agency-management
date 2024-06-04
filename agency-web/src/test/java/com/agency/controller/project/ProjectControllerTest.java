@@ -3,7 +3,7 @@ package com.agency.controller.project;
 import com.agency.BaseIntegrationTestSettings;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectDto;
-import com.agency.dto.project.ProjectStatus;
+import com.agency.dict.project.ProjectStatus;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;
 import org.junit.jupiter.api.Order;

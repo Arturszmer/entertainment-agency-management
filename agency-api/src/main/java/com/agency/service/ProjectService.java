@@ -2,7 +2,7 @@ package com.agency.service;
 
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectDto;
-import com.agency.dto.project.ProjectStatus;
+import com.agency.dict.project.ProjectStatus;
 
 public interface ProjectService {
 

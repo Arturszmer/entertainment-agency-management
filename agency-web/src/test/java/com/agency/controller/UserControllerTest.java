@@ -1,15 +1,13 @@
 package com.agency.controller;
 
 import com.agency.BaseIntegrationTestSettings;
-import com.agency.auth.AuthenticationRequest;
-import com.agency.auth.ChangePasswordRequest;
-import com.agency.auth.RegistrationRequest;
-import com.agency.auth.RoleType;
+import com.agency.auth.*;
 import com.agency.authentication.AuthenticationService;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -48,7 +46,7 @@ class UserControllerTest extends BaseIntegrationTestSettings {
     public void should_change_password() throws Exception {
 
         // given
-        authenticationService.register(createUserProfileForTest());
+        authenticationService.register(createUserProfileForTest(USER, USER_EMAIL));
 
         // when
         putRequest("/user/change-password", getBodyToPasswordChange());
@@ -56,14 +54,17 @@ class UserControllerTest extends BaseIntegrationTestSettings {
         // then
         Optional<UserProfile> user = repository.findUserProfileByUsername(USER);
         assertTrue(user.isPresent());
-        assertTrue(passwordEncoder.matches("new-password", user.get().getPassword()));
+        assertTrue(passwordEncoder.matches("Agency2024", user.get().getPassword()));
     }
 
     @Test
+    @Order(1)
     @WithMockUser(authorities = "ROLE_ADMIN")
     public void should_block_user() throws Exception {
         // given
-        String username = "userTest";
+        String username = "USER2";
+        String email = "USER2@email.pl";
+        authenticationService.register(createUserProfileForTest(username, email));
 
         // when
         putRequest("/user/block/" + username, "").andReturn();
@@ -74,7 +75,7 @@ class UserControllerTest extends BaseIntegrationTestSettings {
         assertTrue(userProfileByUsername.isPresent());
         assertFalse(userProfileByUsername.get().isAccountNonLocked());
 
-        AuthenticationRequest request = new AuthenticationRequest("userTest", PASSWORD);
+        AuthenticationRequest request = new AuthenticationRequest(username, PASSWORD);
         String body = mapper.writeValueAsString(request);
 
         MvcResult result = mockMvc.perform(MockMvcRequestBuilders
@@ -85,11 +86,12 @@ class UserControllerTest extends BaseIntegrationTestSettings {
                 .andReturn();
 
         String responseBody = result.getResponse().getContentAsString();
-        assertTrue(responseBody.contains("LOGIN FAILED"));
+        assertTrue(responseBody.contains("ERR001"));
 
     }
 
     @Test
+    @Order(2)
     @WithMockUser(authorities = "ROLE_ADMIN")
     public void should_unblock_user() throws Exception {
         // given
@@ -142,8 +144,8 @@ class UserControllerTest extends BaseIntegrationTestSettings {
 
     }
 
-    private RegistrationRequest createUserProfileForTest() {
-        return new RegistrationRequest(USER, USER_EMAIL, PASSWORD, RoleType.USER);
+    private CreateUserRequest createUserProfileForTest(String username, String email) {
+        return new CreateUserRequest(username, email, "FirstName", "LastName", RoleType.USER);
     }
 
     private String getBodyToPasswordChange() throws JsonProcessingException {

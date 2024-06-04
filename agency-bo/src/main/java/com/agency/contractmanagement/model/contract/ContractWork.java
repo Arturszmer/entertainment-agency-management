@@ -1,9 +1,9 @@
 package com.agency.contractmanagement.model.contract;
 
 import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.dto.contractwork.ContractType;
+import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
-import com.agency.dto.contractwork.ContractWorkStatus;
+import com.agency.dict.contract.ContractWorkStatus;
 import com.agency.project.model.Project;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -21,8 +21,8 @@ import org.springframework.lang.NonNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import static com.agency.dto.contractwork.ContractType.CONTRACT_WORK;
-import static com.agency.dto.contractwork.ContractWorkStatus.DRAFT;
+import static com.agency.dict.contract.ContractType.CONTRACT_WORK;
+import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
 
 @Entity
 @Table(name = "contract_work")

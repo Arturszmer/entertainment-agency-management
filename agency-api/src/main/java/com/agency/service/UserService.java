@@ -18,5 +18,7 @@ public interface UserService {
 
     UserProfileDetailsDto getUserDetails();
 
-    UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto);
+    UserProfileDetailsDto changeCurrentUserDetails(UserProfileDetailsDto userProfileDetailsDto);
+
+    UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto, String currentUsername);
 }

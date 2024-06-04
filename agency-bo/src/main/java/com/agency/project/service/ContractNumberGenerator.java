@@ -1,7 +1,7 @@
 package com.agency.project.service;
 
 import com.agency.contractmanagement.repository.ContractWorkRepository;
-import com.agency.dto.contractwork.ContractType;
+import com.agency.dict.contract.ContractType;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.project.repository.ProjectRepository;

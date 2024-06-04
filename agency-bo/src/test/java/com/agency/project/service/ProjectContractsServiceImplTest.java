@@ -2,7 +2,7 @@ package com.agency.project.service;
 
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
-import com.agency.dto.project.ProjectStatus;
+import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.AgencyException;
 import com.agency.project.model.Project;
 import com.agency.project.model.ProjectBuilder;

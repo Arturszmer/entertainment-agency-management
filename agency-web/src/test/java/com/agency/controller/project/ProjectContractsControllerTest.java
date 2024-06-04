@@ -6,7 +6,7 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractWorkRepository;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
-import com.agency.dto.contractwork.ContractWorkStatus;
+import com.agency.dict.contract.ContractWorkStatus;
 import com.agency.dto.project.ProjectDto;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;

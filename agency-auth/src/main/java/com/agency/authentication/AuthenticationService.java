@@ -2,6 +2,9 @@ package com.agency.authentication;
 
 import com.agency.auth.*;
 import com.agency.config.JwtService;
+import com.agency.dto.userprofile.UserProfileDetailsDto;
+import com.agency.exception.AgencyException;
+import com.agency.user.assembler.UserAssembler;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +17,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.agency.exception.UserExceptionResult.USER_NOT_FOUND;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -23,6 +28,7 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private static final String STARTED_PASSWORD = "Agency2024";
     private static final String ADMIN_STATEMENT_EXC = "Admin user exists, you cannot create another one";
 
     @Transactional
@@ -33,12 +39,20 @@ public class AuthenticationService {
         return createUser(RegistrationRequest.fromAdminInitializer(request));
     }
 
-    public AuthenticationResponse register(RegistrationRequest request){
+    public UserProfileDetailsDto register(CreateUserRequest request){
         if(request.roleType() == RoleType.ADMIN){
             throw new IllegalStateException(ADMIN_STATEMENT_EXC);
         }
 
         return createUser(request);
+    }
+
+    public void resetPassword(String username) {
+        UserProfile userProfile = userProfileRepository.findUserProfileByUsername(username)
+                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+        userProfile.setNewPassword(passwordEncoder.encode(STARTED_PASSWORD));
+        userProfileRepository.save(userProfile);
+        log.info("Password for user {} has been reset successfully.", username);
     }
 
     @NotNull
@@ -50,6 +64,14 @@ public class AuthenticationService {
         UserProfile savedUser = userProfileRepository.save(userProfile);
         String generatedToken = jwtService.generateToken(savedUser);
         return new AuthenticationResponse(generatedToken);
+    }
+
+    private UserProfileDetailsDto createUser(CreateUserRequest request){
+//        String tempPassword = UUID.randomUUID().toString().substring(0, 13);
+        UserProfile userProfile = UserProfile.create(request, passwordEncoder.encode(STARTED_PASSWORD));
+
+        UserProfile savedUser = userProfileRepository.save(userProfile);
+        return UserAssembler.toUserProfileDetailsDto(savedUser);
     }
 
     public AuthenticationResponse authenticate(AuthenticationRequest request) {

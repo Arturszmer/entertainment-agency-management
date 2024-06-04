@@ -2,6 +2,7 @@ package com.agency.user.model;
 
 import com.agency.auth.RoleType;
 import com.agency.common.BaseEntity;
+import com.agency.dict.userProfile.Permission;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,7 +16,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.agency.user.model.Permission.*;
+import static com.agency.dict.userProfile.Permission.*;
 
 @Entity
 @Table(name = "role")
@@ -37,8 +38,9 @@ public class Role extends BaseEntity<Long> {
         this.name = name;
         switch (name) {
             case ADMIN -> permissions.addAll(List.of(Permission.values()));
-            case MANAGER -> permissions.addAll(List.of(EVENT_MANAGEMENT, USER_MANAGEMENT, ORGANIZER_MANAGEMENT, ORGANIZER_VIEW));
-            case USER -> permissions.add(USER_MANAGEMENT);
+            case MANAGER -> permissions.addAll(List.of(EVENT_MANAGEMENT,
+                    CONTRACTORS_VIEW, PROJECT_MANAGEMENT, PROJECT_VIEW, ORGANIZER_MANAGEMENT, ORGANIZER_VIEW));
+            case USER -> permissions.add(ORGANIZER_VIEW);
         }
     }
 }
