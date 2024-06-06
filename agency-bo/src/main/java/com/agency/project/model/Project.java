@@ -7,11 +7,13 @@ import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
+import com.agency.organizer.model.Organizer;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,6 +37,9 @@ public class Project extends AbstractContract {
 
     @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ContractWork> contracts = new ArrayList<>();
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private Organizer organizer;
 
     @Override
     public ContractType getContractType() {

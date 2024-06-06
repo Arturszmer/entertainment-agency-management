@@ -20,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static com.agency.exception.AgencyExceptionResult.ONLY_ONE_AGENCY_CAN_EXIST;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -49,7 +51,7 @@ public class ProjectContractsServiceImpl implements ProjectContractsService {
 
     private void validateProjectStatus(ProjectStatus status) {
         if(ProjectStatus.TERMINATED == status){
-            throw new AgencyException(ContractorErrorResult.ONLY_ONE_AGENCY_CAN_EXIST);
+            throw new AgencyException(ONLY_ONE_AGENCY_CAN_EXIST);
         }
     }
 }
