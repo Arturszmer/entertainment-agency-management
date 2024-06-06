@@ -24,4 +24,9 @@ public class AgencyDetailsController {
     ResponseEntity<AgencyDetailsDto> updateAgencyDetails(@RequestBody AgencyDetailsDto agencyDetailsDto){
         return ResponseEntity.ok(service.updateAgencyDetails(agencyDetailsDto));
     }
+
+    @GetMapping
+    ResponseEntity<AgencyDetailsDto> getAgencyDetails(){
+        return ResponseEntity.ok(service.getAgencyDetails());
+    }
 }

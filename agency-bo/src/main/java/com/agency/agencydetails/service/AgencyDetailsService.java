@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-import static com.agency.exception.ContractorErrorResult.*;
+import static com.agency.exception.AgencyExceptionResult.AGENCY_NOT_INITIALIZED_EXCEPTION;
+import static com.agency.exception.AgencyExceptionResult.ONLY_ONE_AGENCY_CAN_EXIST;
+import static com.agency.exception.ContractorErrorResult.PESEL_INVALID_EXCEPTION;
 import static org.springframework.util.StringUtils.hasText;
 
 @Service
@@ -44,9 +46,15 @@ public class AgencyDetailsService {
         }).orElseThrow(() -> new AgencyException(AGENCY_NOT_INITIALIZED_EXCEPTION));
     }
 
+    public AgencyDetailsDto getAgencyDetails() {
+        return repository.findAll().stream().findFirst()
+                .map(this::toDto)
+                .orElseThrow(() -> new AgencyException(AGENCY_NOT_INITIALIZED_EXCEPTION));
+    }
+
     private static void validatePeselIfExists(AgencyDetailsDto agencyDetailsDto) {
         if(hasText(agencyDetailsDto.pesel())){
-            if(new PeselValidator().validate(agencyDetailsDto.pesel())) {
+            if(!new PeselValidator().validate(agencyDetailsDto.pesel())) {
                 throw new AgencyException(PESEL_INVALID_EXCEPTION);
             }
         }
