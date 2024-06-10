@@ -1,14 +1,17 @@
 package com.agency.controller.organizer;
 
 import com.agency.dto.organizer.OrganizerDto;
+import com.agency.dto.organizer.OrganizerSearchResultDto;
 import com.agency.service.OrganizerSearchService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -29,8 +32,11 @@ public class OrganizerSearchController {
 
 
     @GetMapping
-    public ResponseEntity<List<OrganizerDto>> getAllOrganizers() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<Page<OrganizerSearchResultDto>> getAllOrganizers(@RequestParam("page") int page,
+                                                                           @RequestParam("size") int size,
+                                                                           @RequestParam(required = false, value = "sort") String sort,
+                                                                           @RequestParam(required = false, value = "order") String order) {
+        return ResponseEntity.ok(service.findAll(page, size, sort, order));
     }
 
     @GetMapping("/my-organizers")
