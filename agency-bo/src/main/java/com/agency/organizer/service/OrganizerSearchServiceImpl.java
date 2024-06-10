@@ -1,12 +1,18 @@
 package com.agency.organizer.service;
 
 import com.agency.dto.organizer.OrganizerDto;
+import com.agency.dto.organizer.OrganizerSearchResultDto;
 import com.agency.organizer.assembler.OrganizerAssembler;
+import com.agency.organizer.model.Organizer;
 import com.agency.organizer.repository.OrganizerRepository;
+import com.agency.search.SortableConfig;
 import com.agency.service.OrganizerSearchService;
 import com.agency.user.helper.SecurityContextUsers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +24,29 @@ import java.util.UUID;
 public class OrganizerSearchServiceImpl implements OrganizerSearchService {
 
     private final OrganizerRepository repository;
+    private final SortableConfig sortableConfig;
+
 
     @Override
-    public List<OrganizerDto> findAll() {
-        return repository.findAll().stream()
-                .map(OrganizerAssembler::toDto)
-                .toList();
+    public Page<OrganizerSearchResultDto> findAll(int page, int size, String sort, String order) {
+        String mappedSort = mapAddressSortColumn(sort);
+        Pageable pagesRequest = sortableConfig.getPageable(page, size, mappedSort, order);
+        Page<Organizer> organizersPage = repository.findAll(pagesRequest);
+        List<OrganizerSearchResultDto> organizersDto = organizersPage.getContent().stream().map(OrganizerAssembler::mapToSearchResult).toList();
+
+        return new PageImpl<>(organizersDto, pagesRequest, organizersPage.getTotalElements());
+    }
+
+    private String mapAddressSortColumn(String sort) {
+        if(sort != null){
+            return switch (sort) {
+                case "voivodeship" -> "address.voivodeship";
+                case "city" -> "address.city";
+                default -> sort;
+            };
+        } else {
+          return null;
+        }
     }
 
     @Override

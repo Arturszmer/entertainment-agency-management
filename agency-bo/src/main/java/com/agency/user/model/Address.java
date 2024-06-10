@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.Objects;
 
@@ -57,6 +58,12 @@ public class Address extends BaseEntity<Long> {
         zipCode = addressDto.zipCode();
         houseNumber = addressDto.houseNumber();
         apartmentNumber = addressDto.apartmentNumber();
+    }
+
+    public String getStreetWithNumber() {
+        return StringUtils.hasText(apartmentNumber)
+                ? String.format("%s %s/%s", street, houseNumber, apartmentNumber)
+                : String.format("%s %s", street, houseNumber);
     }
 }
 

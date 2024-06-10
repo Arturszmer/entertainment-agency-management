@@ -39,6 +39,7 @@ public class Organizer extends BaseEntity<Long> {
     @Setter
     private Address address;
     @Column(name = "notes", length = 1000)
+    @Setter
     private String notes;
 
     public Organizer(String notes, Address address, String telephone, String email, String organizerName) {
@@ -54,5 +55,16 @@ public class Organizer extends BaseEntity<Long> {
     public static Organizer createOrganizer(OrganizerCreate create){
         return new Organizer(create.notes(),
                 AddressAssembler.toEntity(create.addressDto()), create.telephone(), create.email(), create.organizerName());
+    }
+
+    public void updateOrganizer(OrganizerCreate toUpdate) {
+        this.organizerName = toUpdate.organizerName();
+        this.email = toUpdate.email();
+        this.telephone = toUpdate.telephone();
+        this.address = AddressAssembler.toEntity(toUpdate.addressDto());
+    }
+
+    public void assignNewUser(String username) {
+        this.username = username;
     }
 }
