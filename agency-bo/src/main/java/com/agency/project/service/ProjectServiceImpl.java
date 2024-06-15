@@ -6,6 +6,9 @@ import com.agency.dto.project.ProjectDto;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
+import com.agency.exception.OrganizerErrorResult;
+import com.agency.organizer.model.Organizer;
+import com.agency.organizer.repository.OrganizerRepository;
 import com.agency.project.assembler.ProjectAssembler;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;
@@ -15,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,11 +27,14 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository repository;
     private final ContractNumberGenerator numberGenerator;
+    private final OrganizerRepository organizerRepository;
 
     @Override
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
         String contractNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
-        Project project = repository.save(Project.create(contractNumber, projectCreateDto));
+        Organizer organizer = organizerRepository.findOrganizerByPublicId(UUID.fromString(projectCreateDto.organizerPublicId()))
+                .orElseThrow(() -> new AgencyException(OrganizerErrorResult.ORGANIZER_NOT_FOUND));
+        Project project = repository.save(Project.create(contractNumber, projectCreateDto, organizer));
         log.info("New project with contract number {} and DRAFT status has been created.", contractNumber);
         return ProjectAssembler.toDto(project);
     }

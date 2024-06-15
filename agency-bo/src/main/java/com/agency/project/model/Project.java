@@ -2,19 +2,14 @@ package com.agency.project.model;
 
 import com.agency.contractmanagement.model.contract.AbstractContract;
 import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
 import com.agency.organizer.model.Organizer;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -38,8 +33,16 @@ public class Project extends AbstractContract {
     @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<ContractWork> contracts = new ArrayList<>();
 
+    @ManyToMany
+    private List<Contractor> contractors = new ArrayList<>();
+
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Organizer organizer;
+
+    /*
+    If it's true organizer should be null, and the owner of the project is agency
+     */
+    private boolean isInternal;
 
     @Override
     public ContractType getContractType() {
@@ -57,13 +60,29 @@ public class Project extends AbstractContract {
                    ProjectStatus status) {
         super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.status = status;
+        this.isInternal = true;
     }
 
-    public static Project create(String contractNumber, ProjectCreateDto createDto){
+    protected Project(String contractNumber,
+                      LocalDate signDate,
+                      LocalDate startDate,
+                      LocalDate endDate,
+                      String subjectOfTheContract,
+                      BigDecimal salary,
+                      String additionalInformation,
+                      ContractType contractType,
+                      ProjectStatus status,
+                      Organizer organizer) {
+        super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
+        this.status = status;
+        this.organizer = organizer;
+    }
+
+    public static Project create(String contractNumber, ProjectCreateDto createDto, Organizer organizer){
         return new Project(
             contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
                 createDto.subjectOfTheContract(), createDto.salary(), createDto.additionalInformation(),
-                ContractType.PROJECT, ProjectStatus.DRAFT
+                ContractType.PROJECT, ProjectStatus.DRAFT, organizer
         );
     }
 
