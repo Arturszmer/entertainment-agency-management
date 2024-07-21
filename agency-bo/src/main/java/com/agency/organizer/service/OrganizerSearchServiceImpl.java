@@ -37,18 +37,6 @@ public class OrganizerSearchServiceImpl implements OrganizerSearchService {
         return new PageImpl<>(organizersDto, pagesRequest, organizersPage.getTotalElements());
     }
 
-    private String mapAddressSortColumn(String sort) {
-        if(sort != null){
-            return switch (sort) {
-                case "voivodeship" -> "address.voivodeship";
-                case "city" -> "address.city";
-                default -> sort;
-            };
-        } else {
-          return null;
-        }
-    }
-
     @Override
     public OrganizerDto findByPublicId(String publicId) {
         return OrganizerAssembler.toDto(repository.findOrganizerByPublicId(UUID.fromString(publicId))
@@ -60,6 +48,28 @@ public class OrganizerSearchServiceImpl implements OrganizerSearchService {
         return repository.findAllByUsername(SecurityContextUsers.getUsernameFromAuthenticatedUser()).stream()
                 .map(OrganizerAssembler::toDto)
                 .toList();
+    }
+
+    @Override
+    public Page<OrganizerSearchResultDto> findAllByOrganizerName(int page, int size, String sort, String order, String organizerName) {
+        String mappedSort = mapAddressSortColumn(sort);
+        Pageable pagesRequest = sortableConfig.getPageable(page, size, mappedSort, order);
+        Page<Organizer> organizersPage = repository.findAllByOrganizerName(organizerName, pagesRequest);
+        List<OrganizerSearchResultDto> organizersDto = organizersPage.stream().map(OrganizerAssembler::mapToSearchResult).toList();
+
+        return new PageImpl<>(organizersDto, pagesRequest, organizersPage.getTotalElements());
+    }
+
+    private String mapAddressSortColumn(String sort) {
+        if(sort != null){
+            return switch (sort) {
+                case "voivodeship" -> "address.voivodeship";
+                case "city" -> "address.city";
+                default -> sort;
+            };
+        } else {
+          return null;
+        }
     }
 
 }

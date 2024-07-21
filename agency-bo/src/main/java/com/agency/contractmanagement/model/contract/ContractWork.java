@@ -66,7 +66,7 @@ public class ContractWork extends AbstractContract {
                 createDto.contractDetailsDto().signDate(),
                 createDto.contractDetailsDto().startDate(),
                 createDto.contractDetailsDto().endDate(),
-                createDto.contractDetailsDto().subjectOfTheContract(),
+                createDto.contractDetailsDto().projectSubject(),
                 createDto.contractDetailsDto().salary(),
                 createDto.contractDetailsDto().additionalInformation(),
                 CONTRACT_WORK,

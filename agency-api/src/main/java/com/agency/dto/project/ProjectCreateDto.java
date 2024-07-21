@@ -1,6 +1,7 @@
 package com.agency.dto.project;
 
 import com.agency.dto.contractor.ContractorDto;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -10,10 +11,12 @@ public record ProjectCreateDto(
         LocalDate signDate,
         LocalDate startDate,
         LocalDate endDate,
-        String subjectOfTheContract,
+        String projectSubject,
         BigDecimal salary,
         String additionalInformation,
         String organizerPublicId,
-        List<ContractorDto> contractorsDto
+        List<ContractorDto> contractorsDto,
+        @JsonProperty(value = "isInternal")
+        boolean isInternal
 ) {
 }

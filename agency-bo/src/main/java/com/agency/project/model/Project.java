@@ -36,7 +36,7 @@ public class Project extends AbstractContract {
     @ManyToMany
     private List<Contractor> contractors = new ArrayList<>();
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     private Organizer organizer;
 
     /*
@@ -57,32 +57,18 @@ public class Project extends AbstractContract {
                    BigDecimal salary,
                    String additionalInformation,
                    ContractType contractType,
-                   ProjectStatus status) {
+                   ProjectStatus status,
+                   boolean isInternal) {
         super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.status = status;
-        this.isInternal = true;
+        this.isInternal = isInternal;
     }
 
-    protected Project(String contractNumber,
-                      LocalDate signDate,
-                      LocalDate startDate,
-                      LocalDate endDate,
-                      String subjectOfTheContract,
-                      BigDecimal salary,
-                      String additionalInformation,
-                      ContractType contractType,
-                      ProjectStatus status,
-                      Organizer organizer) {
-        super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
-        this.status = status;
-        this.organizer = organizer;
-    }
-
-    public static Project create(String contractNumber, ProjectCreateDto createDto, Organizer organizer){
+    public static Project create(String contractNumber, ProjectCreateDto createDto){
         return new Project(
             contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
-                createDto.subjectOfTheContract(), createDto.salary(), createDto.additionalInformation(),
-                ContractType.PROJECT, ProjectStatus.DRAFT, organizer
+                createDto.projectSubject(), createDto.salary(), createDto.additionalInformation(),
+                ContractType.PROJECT, ProjectStatus.DRAFT, createDto.isInternal()
         );
     }
 
@@ -95,5 +81,9 @@ public class Project extends AbstractContract {
 
     public void addContractWork(ContractWork contractWork) {
         this.getContracts().add(contractWork);
+    }
+
+    public void addOrganizer(Organizer organizer) {
+        this.organizer = organizer;
     }
 }

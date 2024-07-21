@@ -31,12 +31,19 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
-        String contractNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
-        Organizer organizer = organizerRepository.findOrganizerByPublicId(UUID.fromString(projectCreateDto.organizerPublicId()))
-                .orElseThrow(() -> new AgencyException(OrganizerErrorResult.ORGANIZER_NOT_FOUND));
-        Project project = repository.save(Project.create(contractNumber, projectCreateDto, organizer));
-        log.info("New project with contract number {} and DRAFT status has been created.", contractNumber);
+        String projectNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
+        Project project = Project.create(projectNumber, projectCreateDto);
+        if(!projectCreateDto.isInternal()){
+          project.addOrganizer(addOrganizer(projectCreateDto.organizerPublicId()));
+        }
+        repository.save(project);
+        log.info("New project with contract number {} and DRAFT status has been created.", projectNumber);
         return ProjectAssembler.toDto(project);
+    }
+
+    private Organizer addOrganizer(String organizerPublicId) {
+        return organizerRepository.findOrganizerByPublicId(UUID.fromString(organizerPublicId))
+                .orElseThrow(() -> new AgencyException(OrganizerErrorResult.ORGANIZER_NOT_FOUND));
     }
 
     @Override
