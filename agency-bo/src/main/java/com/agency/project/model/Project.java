@@ -1,15 +1,19 @@
 package com.agency.project.model;
 
 import com.agency.contractmanagement.model.contract.AbstractContract;
-import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dict.contract.ContractType;
-import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dict.project.ProjectStatus;
-import com.agency.exception.ContractorErrorResult;
+import com.agency.dto.project.ProjectCreateDto;
 import com.agency.exception.AgencyException;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.organizer.model.Organizer;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,9 +33,6 @@ public class Project extends AbstractContract {
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
-
-    @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<ContractWork> contracts = new ArrayList<>();
 
     @ManyToMany
     private List<Contractor> contractors = new ArrayList<>();
@@ -77,10 +78,6 @@ public class Project extends AbstractContract {
             throw new AgencyException(ContractorErrorResult.PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS);
         }
         status = updatedStatus;
-    }
-
-    public void addContractWork(ContractWork contractWork) {
-        this.getContracts().add(contractWork);
     }
 
     public void addOrganizer(Organizer organizer) {

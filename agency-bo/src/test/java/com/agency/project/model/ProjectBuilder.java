@@ -20,6 +20,7 @@ public class ProjectBuilder extends Project {
     private ContractType contractType;
     private ProjectStatus status;
     private List<ContractWork> contracts;
+    private boolean isInternal;
 
     public static ProjectBuilder aProjectBuilder(){
         return new ProjectBuilder();
@@ -45,7 +46,8 @@ public class ProjectBuilder extends Project {
                 salary,
                 additionalInformation,
                 contractType,
-                status
+                status,
+                isInternal
         );
     }
 

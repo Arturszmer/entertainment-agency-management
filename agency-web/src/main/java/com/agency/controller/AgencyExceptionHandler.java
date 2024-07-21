@@ -7,27 +7,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 @Slf4j
 public class AgencyExceptionHandler {
 
     @ExceptionHandler(AgencyException.class)
     public ResponseEntity<AgencyErrorResponseDto> handleAgencyException(final AgencyException exception){
-        log.warn("Agency exception occur: ", exception);
+        log.warn("Agency exception occur: {}", exception.getMessage(), exception);
         return ResponseEntity.status(exception.getStatus()).body(
                 new AgencyErrorResponseDto(exception.getStatus(), exception.getErrorCode(), exception.getMessage()));
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<AgencyErrorResponseDto> handleException(final RuntimeException exception){
-        log.warn("Exception occur: ", exception);
+        log.warn("Exception occur: {}", exception.getMessage(), exception);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new AgencyErrorResponseDto(HttpStatus.BAD_REQUEST, "ERR001", "It was unexpected error, contact with Administrator"));
     }

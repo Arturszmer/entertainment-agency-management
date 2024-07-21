@@ -1,12 +1,9 @@
 package com.agency.project.assembler;
 
-import com.agency.contractmanagement.assembler.ContractAssembler;
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
 import com.agency.project.model.Project;
-
-import java.util.ArrayList;
 
 public class ProjectAssembler {
 
@@ -22,12 +19,8 @@ public class ProjectAssembler {
         return new ProjectDto(
                 project.getContractNumber(),
                 basicContractDetailsDto,
+                project.getStatus(),
                 project.getContractType(),
-                project.getContracts() == null
-                        ? new ArrayList<>()
-                        : project.getContracts().stream()
-                        .map(ContractAssembler::toContractShortDto)
-                        .toList(),
                 project.isInternal(),
                 getOrganizerName(project)
         );

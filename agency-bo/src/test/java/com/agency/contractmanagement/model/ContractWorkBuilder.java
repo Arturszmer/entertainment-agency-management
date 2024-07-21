@@ -4,7 +4,6 @@ import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.contract.ContractWorkStatus;
-import com.agency.project.model.Project;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -23,8 +22,8 @@ public class ContractWorkBuilder {
     private String additionalInformation;
     private ContractType contractType = CONTRACT_WORK; // Default value as per the create method
     private boolean withCopyrights;
+    private String projectNumber;
     private Contractor contractor;
-    private Project project;
     private ContractWorkStatus status = DRAFT; // Default value as per the create method
 
     public static ContractWorkBuilder aContractWorkBuilder() {
@@ -81,8 +80,8 @@ public class ContractWorkBuilder {
         return this;
     }
 
-    public ContractWorkBuilder withProject(Project project) {
-        this.project = project;
+    public ContractWorkBuilder withProject(String projectNumber) {
+        this.projectNumber = projectNumber;
         return this;
     }
 
@@ -93,7 +92,7 @@ public class ContractWorkBuilder {
 
     public ContractWork build() {
         return new ContractWork(
-                contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType, withCopyrights, contractor, project, status
+                contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType, withCopyrights, projectNumber, contractor, status
         );
     }
 }

@@ -43,7 +43,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private Organizer addOrganizer(String organizerPublicId) {
         return organizerRepository.findOrganizerByPublicId(UUID.fromString(organizerPublicId))
-                .orElseThrow(() -> new AgencyException(OrganizerErrorResult.ORGANIZER_NOT_FOUND));
+                .orElseThrow(() -> new AgencyException(OrganizerErrorResult.ORGANIZER_NOT_FOUND, organizerPublicId));
     }
 
     @Override

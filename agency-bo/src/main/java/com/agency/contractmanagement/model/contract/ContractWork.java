@@ -6,6 +6,7 @@ import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dict.contract.ContractWorkStatus;
 import com.agency.project.model.Project;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -33,11 +34,11 @@ public class ContractWork extends AbstractContract {
 
     @Setter
     private boolean withCopyrights;
+    @Column(name = "project_number", nullable = false)
+    private String projectNumber;
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @NonNull
     private Contractor contractor;
-    @ManyToOne
-    private Project project;
     @Enumerated(EnumType.STRING)
     private ContractWorkStatus status;
 
@@ -50,13 +51,13 @@ public class ContractWork extends AbstractContract {
                         String additionalInformation,
                         ContractType contractType,
                         boolean withCopyrights,
+                        String projectNumber,
                         @NonNull Contractor contractor,
-                           Project project,
                            ContractWorkStatus status) {
         super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.withCopyrights = withCopyrights;
+        this.projectNumber = projectNumber;
         this.contractor = contractor;
-        this.project = project;
         this.status = status;
     }
 
@@ -71,8 +72,8 @@ public class ContractWork extends AbstractContract {
                 createDto.contractDetailsDto().additionalInformation(),
                 CONTRACT_WORK,
                 createDto.withCopyrights(),
+                project.getContractNumber(),
                 contractor,
-                project,
                 DRAFT
         );
     }
