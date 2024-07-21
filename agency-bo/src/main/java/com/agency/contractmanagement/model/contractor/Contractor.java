@@ -40,7 +40,7 @@ public class Contractor extends BaseEntity<Long> {
     private String contractorDescription;
     @OneToMany(mappedBy = "contractor", cascade = CascadeType.PERSIST)
     private List<ContractWork> contract = new ArrayList<>();
-    @ManyToMany
+    @ManyToMany(mappedBy = "contractors")
     private List<Project> projects = new ArrayList<>();
 
     public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String email, String contractorType) {

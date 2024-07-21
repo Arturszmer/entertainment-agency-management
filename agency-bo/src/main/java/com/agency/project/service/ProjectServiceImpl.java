@@ -31,6 +31,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
+        // TODO: protect from creating a project before initialize agency
         String projectNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
         Project project = Project.create(projectNumber, projectCreateDto);
         if(!projectCreateDto.isInternal()){

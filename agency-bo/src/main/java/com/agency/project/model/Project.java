@@ -8,9 +8,13 @@ import com.agency.dto.project.ProjectCreateDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.organizer.model.Organizer;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -34,7 +38,12 @@ public class Project extends AbstractContract {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "project_contractor",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "contractor_id")
+    )
     private List<Contractor> contractors = new ArrayList<>();
 
     @ManyToOne
