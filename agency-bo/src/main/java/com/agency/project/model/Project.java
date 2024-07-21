@@ -1,19 +1,22 @@
 package com.agency.project.model;
 
 import com.agency.contractmanagement.model.contract.AbstractContract;
-import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dict.contract.ContractType;
-import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dict.project.ProjectStatus;
-import com.agency.exception.ContractorErrorResult;
+import com.agency.dto.project.ProjectCreateDto;
 import com.agency.exception.AgencyException;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.organizer.model.Organizer;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -35,11 +38,21 @@ public class Project extends AbstractContract {
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
 
-    @OneToMany(mappedBy = "project", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<ContractWork> contracts = new ArrayList<>();
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(
+            name = "project_contractor",
+            joinColumns = @JoinColumn(name = "project_id"),
+            inverseJoinColumns = @JoinColumn(name = "contractor_id")
+    )
+    private List<Contractor> contractors = new ArrayList<>();
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne
     private Organizer organizer;
+
+    /*
+    If it's true organizer should be null, and the owner of the project is agency
+     */
+    private boolean isInternal;
 
     @Override
     public ContractType getContractType() {
@@ -54,16 +67,18 @@ public class Project extends AbstractContract {
                    BigDecimal salary,
                    String additionalInformation,
                    ContractType contractType,
-                   ProjectStatus status) {
+                   ProjectStatus status,
+                   boolean isInternal) {
         super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.status = status;
+        this.isInternal = isInternal;
     }
 
     public static Project create(String contractNumber, ProjectCreateDto createDto){
         return new Project(
             contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
-                createDto.subjectOfTheContract(), createDto.salary(), createDto.additionalInformation(),
-                ContractType.PROJECT, ProjectStatus.DRAFT
+                createDto.projectSubject(), createDto.salary(), createDto.additionalInformation(),
+                ContractType.PROJECT, ProjectStatus.DRAFT, createDto.isInternal()
         );
     }
 
@@ -74,7 +89,7 @@ public class Project extends AbstractContract {
         status = updatedStatus;
     }
 
-    public void addContractWork(ContractWork contractWork) {
-        this.getContracts().add(contractWork);
+    public void addOrganizer(Organizer organizer) {
+        this.organizer = organizer;
     }
 }

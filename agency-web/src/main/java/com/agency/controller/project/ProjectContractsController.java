@@ -16,9 +16,10 @@ public class ProjectContractsController {
 
     private final ProjectContractsService service;
 
-    @PostMapping
-    ResponseEntity<ProjectDto> addContractToProject(@RequestBody ContractWorkCreateDto request){
-        return ResponseEntity.ok(service.createContract(request));
-    }
+    // TODO: to edit -> first, the contractor must be added to the Project, then we can create a contract
+//    @PostMapping
+//    ResponseEntity<ProjectDto> addContractToProject(@RequestBody ContractWorkCreateDto request){
+//        return ResponseEntity.ok(service.createContract(request));
+//    }
 
 }

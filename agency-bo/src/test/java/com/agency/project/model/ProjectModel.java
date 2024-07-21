@@ -2,9 +2,11 @@ package com.agency.project.model;
 
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
+import com.agency.dto.project.ProjectCreateDto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 public class ProjectModel {
 
@@ -12,6 +14,7 @@ public class ProjectModel {
     public final static LocalDate START_DATE = LocalDate.of(2024, 1, 2);
     public final static LocalDate END_DATE = LocalDate.of(2024, 1, 31);
     public final static String CONTRACTOR_PUBLIC_ID = "fb75951a-fe54-11ee-92c8-0242ac120003";
+    public final static String ORGANIZER_PUBLIC_ID = "d4bfca9f-2056-4e49-9c15-1abc10015c2e";
     public static final String PROJECT_NUMBER = "2024/STY/PRO11";
 
     public static ContractWorkCreateDto getContractWorkCreateDto(){
@@ -19,6 +22,20 @@ public class ProjectModel {
                 "Subject of the contract", BigDecimal.valueOf(3000),
                 "Additional information");
         return new ContractWorkCreateDto(PROJECT_NUMBER, CONTRACTOR_PUBLIC_ID, basicContractDetailsDto, true);
+    }
+
+    public static ProjectCreateDto getProjectCreateDto(){
+        return new ProjectCreateDto(
+                SIGN_DATE,
+                START_DATE,
+                END_DATE,
+                "Test project",
+                BigDecimal.valueOf(1000),
+                "additional",
+                ORGANIZER_PUBLIC_ID,
+                List.of(),
+                false
+        );
     }
 
 }

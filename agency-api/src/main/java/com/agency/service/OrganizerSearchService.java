@@ -11,4 +11,6 @@ public interface OrganizerSearchService {
     Page<OrganizerSearchResultDto> findAll(int page, int size, String sort, String order);
     OrganizerDto findByPublicId(String publicId);
     List<OrganizerDto> findByUsername();
+
+    Page<OrganizerSearchResultDto> findAllByOrganizerName(int page, int size, String sort, String order, String organizerName);
 }

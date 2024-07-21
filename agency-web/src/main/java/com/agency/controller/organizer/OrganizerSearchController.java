@@ -43,4 +43,13 @@ public class OrganizerSearchController {
     public ResponseEntity<List<OrganizerDto>> getMyOrganizers() {
         return ResponseEntity.ok(service.findByUsername());
     }
+
+    @GetMapping("/filter")
+    public ResponseEntity<Page<OrganizerSearchResultDto>> getOrganizersByName(@RequestParam("page") int page,
+                                                                              @RequestParam("size") int size,
+                                                                              @RequestParam(required = false, value = "sort") String sort,
+                                                                              @RequestParam(required = false, value = "order") String order,
+                                                                              @RequestParam("organizerName") String organizerName){
+        return ResponseEntity.ok(service.findAllByOrganizerName(page, size, sort, order, organizerName));
+    }
 }

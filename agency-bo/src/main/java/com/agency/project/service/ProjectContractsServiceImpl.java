@@ -31,22 +31,26 @@ public class ProjectContractsServiceImpl implements ProjectContractsService {
     private final ContractorRepository contractorRepository;
     private final ContractNumberGenerator numberGenerator;
 
+
+    //TODO: to edit
     @Override
     @Transactional
     public ProjectDto createContract(ContractWorkCreateDto contractWorkCreateDto) {
-        Project project = repository.findByContractNumber(contractWorkCreateDto.projectContractNumber())
-                .orElseThrow(() -> new AgencyException(ContractorErrorResult.PROJECT_DOES_NOT_EXIST_EXCEPTION));
+//        Project project = repository.findByContractNumber(contractWorkCreateDto.projectContractNumber())
+//                .orElseThrow(() -> new AgencyException(ContractorErrorResult.PROJECT_DOES_NOT_EXIST_EXCEPTION));
+//
+//        validateProjectStatus(project.getStatus());
+//
+//        Contractor contractor = contractorRepository.findContractorByPublicId(UUID.fromString(contractWorkCreateDto.contractorPublicId()))
+//                .orElseThrow(() -> new AgencyException(ContractorErrorResult.CONTRACTOR_DOES_NOT_EXISTS));
+//
+//        String contractWorkNumber = numberGenerator.generateContractNumber(contractWorkCreateDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
+//        ContractWork contractWork = ContractWork.create(contractWorkNumber, contractWorkCreateDto, contractor, project);
+//        project.addContractWork(contractWork);
+//        Project savedProject = repository.save(project);
+//        return ProjectAssembler.toDto(savedProject);
+        return null;
 
-        validateProjectStatus(project.getStatus());
-
-        Contractor contractor = contractorRepository.findContractorByPublicId(UUID.fromString(contractWorkCreateDto.contractorPublicId()))
-                .orElseThrow(() -> new AgencyException(ContractorErrorResult.CONTRACTOR_DOES_NOT_EXISTS));
-
-        String contractWorkNumber = numberGenerator.generateContractNumber(contractWorkCreateDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
-        ContractWork contractWork = ContractWork.create(contractWorkNumber, contractWorkCreateDto, contractor, project);
-        project.addContractWork(contractWork);
-        Project savedProject = repository.save(project);
-        return ProjectAssembler.toDto(savedProject);
     }
 
     private void validateProjectStatus(ProjectStatus status) {

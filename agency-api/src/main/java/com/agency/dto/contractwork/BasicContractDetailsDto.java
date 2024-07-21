@@ -7,7 +7,7 @@ public record BasicContractDetailsDto(
         LocalDate signDate,
         LocalDate startDate,
         LocalDate endDate,
-        String subjectOfTheContract,
+        String projectSubject,
         BigDecimal salary,
         String additionalInformation
 ) {

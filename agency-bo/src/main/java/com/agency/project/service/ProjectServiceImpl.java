@@ -6,6 +6,9 @@ import com.agency.dto.project.ProjectDto;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.AgencyException;
+import com.agency.exception.OrganizerErrorResult;
+import com.agency.organizer.model.Organizer;
+import com.agency.organizer.repository.OrganizerRepository;
 import com.agency.project.assembler.ProjectAssembler;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;
@@ -15,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -22,13 +27,24 @@ public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository repository;
     private final ContractNumberGenerator numberGenerator;
+    private final OrganizerRepository organizerRepository;
 
     @Override
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
-        String contractNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
-        Project project = repository.save(Project.create(contractNumber, projectCreateDto));
-        log.info("New project with contract number {} and DRAFT status has been created.", contractNumber);
+        // TODO: protect from creating a project before initialize agency
+        String projectNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
+        Project project = Project.create(projectNumber, projectCreateDto);
+        if(!projectCreateDto.isInternal()){
+          project.addOrganizer(addOrganizer(projectCreateDto.organizerPublicId()));
+        }
+        repository.save(project);
+        log.info("New project with contract number {} and DRAFT status has been created.", projectNumber);
         return ProjectAssembler.toDto(project);
+    }
+
+    private Organizer addOrganizer(String organizerPublicId) {
+        return organizerRepository.findOrganizerByPublicId(UUID.fromString(organizerPublicId))
+                .orElseThrow(() -> new AgencyException(OrganizerErrorResult.ORGANIZER_NOT_FOUND, organizerPublicId));
     }
 
     @Override

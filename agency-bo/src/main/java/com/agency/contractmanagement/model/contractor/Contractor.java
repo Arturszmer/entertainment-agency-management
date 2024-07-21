@@ -3,13 +3,9 @@ package com.agency.contractmanagement.model.contractor;
 import com.agency.common.BaseEntity;
 import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
+import com.agency.project.model.Project;
 import com.agency.user.model.Address;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,6 +40,8 @@ public class Contractor extends BaseEntity<Long> {
     private String contractorDescription;
     @OneToMany(mappedBy = "contractor", cascade = CascadeType.PERSIST)
     private List<ContractWork> contract = new ArrayList<>();
+    @ManyToMany(mappedBy = "contractors")
+    private List<Project> projects = new ArrayList<>();
 
     public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String email, String contractorType) {
         this.publicId = UUID.randomUUID();

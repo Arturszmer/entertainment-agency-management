@@ -2,12 +2,14 @@ package com.agency.organizer.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.dto.organizer.OrganizerCreate;
+import com.agency.project.model.Project;
 import com.agency.user.assembler.AddressAssembler;
 import com.agency.user.helper.SecurityContextUsers;
 import com.agency.user.model.Address;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
@@ -16,6 +18,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -41,6 +45,8 @@ public class Organizer extends BaseEntity<Long> {
     @Column(name = "notes", length = 1000)
     @Setter
     private String notes;
+    @OneToMany
+    private List<Project> projects = new ArrayList<>();
 
     public Organizer(String notes, Address address, String telephone, String email, String organizerName) {
         this.publicId = UUID.randomUUID();

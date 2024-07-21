@@ -2,6 +2,7 @@ package com.agency.contractmanagement.model;
 
 import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.project.model.Project;
 import com.agency.user.model.Address;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class ContractorBuilder {
     private String email;
     private String contractorDescription;
     private List<ContractWork> contract = new ArrayList<>();
+    private List<Project> projects = new ArrayList<>();
 
     public static ContractorBuilder aContractorBuilder() {
         return new ContractorBuilder();
@@ -76,6 +78,11 @@ public class ContractorBuilder {
         return this;
     }
 
+    public ContractorBuilder withProjects(List<Project> projects) {
+        this.projects = projects;
+        return this;
+    }
+
     public Contractor build() {
         return new Contractor(
                 publicId,
@@ -86,7 +93,8 @@ public class ContractorBuilder {
                 phone,
                 email,
                 contractorDescription,
-                contract
+                contract,
+                projects
         );
     }
 }
