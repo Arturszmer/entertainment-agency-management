@@ -1,5 +1,6 @@
 package com.agency.controller.contractor;
 
+import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorDto;
 import com.agency.dto.contractor.ShortContractorDto;
 import com.agency.service.ContractorSearchService;
@@ -10,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/contractor")
@@ -29,11 +32,17 @@ public class ContractorSearchController {
     }
 
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('CONTRACTORS_VIEW', 'CONTRACTOR_MANAGEMENT')")
+    @PreAuthorize("hasAnyAuthority('CONTRACTORS_VIEW')")
     public ResponseEntity<Page<ShortContractorDto>> getContractorsShortInfo(@RequestParam("page") int page,
                                                                             @RequestParam("size") int size,
                                                                             @RequestParam(required = false, value = "sort") String sort,
                                                                             @RequestParam(required = false, value = "order") String order){
         return ResponseEntity.ok(service.getContractorsShortInfo(page, size, sort, order));
+    }
+
+    @PostMapping("/to-assign")
+    @PreAuthorize("hasAnyAuthority('CONTRACTORS_VIEW')")
+    public ResponseEntity<List<ContractorAssignDto>> getContractorsList(@RequestBody String projectNumber){
+        return ResponseEntity.ok(service.getContractorsForAssign(projectNumber));
     }
 }

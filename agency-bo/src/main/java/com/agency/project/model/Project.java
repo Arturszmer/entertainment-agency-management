@@ -8,20 +8,12 @@ import com.agency.dto.project.ProjectCreateDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.organizer.model.Organizer;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -33,6 +25,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@Slf4j
 public class Project extends AbstractContract {
 
     @Enumerated(EnumType.STRING)
@@ -91,5 +84,13 @@ public class Project extends AbstractContract {
 
     public void addOrganizer(Organizer organizer) {
         this.organizer = organizer;
+    }
+
+    public void assignContractor(Contractor contractor){
+        if(contractors.stream().anyMatch(c -> c.getPublicId().equals(contractor.getPublicId()))){
+            log.info("Contractor with public id {} exists into the project", contractor.getPublicId());
+            return;
+        }
+        this.contractors.add(contractor);
     }
 }
