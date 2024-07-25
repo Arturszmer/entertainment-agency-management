@@ -1,11 +1,15 @@
 package com.agency.project.service;
 
+import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
+import com.agency.dict.project.ProjectStatus;
+import com.agency.dto.contractor.ContractorAssignDto;
+import com.agency.dto.project.ProjectContractorAssignDto;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectDto;
-import com.agency.dict.project.ProjectStatus;
-import com.agency.exception.ContractorErrorResult;
+import com.agency.dto.project.ProjectSearchDto;
 import com.agency.exception.AgencyException;
+import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.OrganizerErrorResult;
 import com.agency.organizer.model.Organizer;
 import com.agency.organizer.repository.OrganizerRepository;
@@ -18,7 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
+
+import static com.agency.exception.ProjectErrorResult.PROJECT_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -28,6 +35,7 @@ public class ProjectServiceImpl implements ProjectService {
     private final ProjectRepository repository;
     private final ContractNumberGenerator numberGenerator;
     private final OrganizerRepository organizerRepository;
+    private final ContractorRepository contractorRepository;
 
     @Override
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
@@ -58,5 +66,27 @@ public class ProjectServiceImpl implements ProjectService {
         log.info("The Project status has been changed successfully, \n old status: {} \n new status: {}",
                 oldStatus, projectWithUpdatedStatus.getStatus());
         return ProjectAssembler.toDto(projectWithUpdatedStatus);
+    }
+
+    @Override
+    public ProjectSearchDto assignContractors(ProjectContractorAssignDto projectContractorAssignDto) {
+        Project project = repository.findByContractNumber(projectContractorAssignDto.projectNumber())
+                .orElseThrow(() -> new AgencyException(PROJECT_NOT_FOUND, projectContractorAssignDto.projectNumber()));
+        assign(projectContractorAssignDto.contractors(), project);
+        Project savedProject = repository.save(project);
+        log.info("The operation of assigning the contractors to the project nr {} is finished successfully. " +
+                "The actual number of contractors is: {}", savedProject.getContractNumber(), savedProject.getContractors().size());
+        return ProjectAssembler.toSearchDto(savedProject);
+    }
+
+    private void assign(List<ContractorAssignDto> contractorsToAssign, Project project) {
+        contractorsToAssign.forEach(contractorToAssign ->
+            contractorRepository.findContractorByPublicId(UUID.fromString(contractorToAssign.publicId()))
+                    .ifPresent(contractor -> {
+                        project.assignContractor(contractor);
+                        log.info("Contractor with id: {} to project number {} has been added succesfully.",
+                                contractor.getPublicId(), project.getContractNumber());
+                    })
+        );
     }
 }

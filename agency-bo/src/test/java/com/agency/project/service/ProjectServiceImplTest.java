@@ -1,5 +1,6 @@
 package com.agency.project.service;
 
+import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
@@ -28,10 +29,11 @@ class ProjectServiceImplTest {
     private final ProjectRepository repository = mock(ProjectRepository.class);
     private final ContractNumberGenerator generator = mock(ContractNumberGenerator.class);
     private final OrganizerRepository organizerRepository = mock(OrganizerRepository.class);
+    private final ContractorRepository contractorRepository = mock(ContractorRepository.class);
 
     @BeforeEach
     void setup(){
-        service = new ProjectServiceImpl(repository, generator, organizerRepository);
+        service = new ProjectServiceImpl(repository, generator, organizerRepository, contractorRepository);
     }
 
     @Test

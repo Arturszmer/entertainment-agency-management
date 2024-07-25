@@ -1,9 +1,11 @@
 package com.agency.contractmanagement.assembler;
 
 import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
 import com.agency.dto.contractor.ShortContractorDto;
+import com.agency.project.model.Project;
 import com.agency.user.assembler.AddressAssembler;
 
 import java.util.ArrayList;
@@ -40,6 +42,14 @@ public class ContractorAssembler {
                 AddressAssembler.toDto(contractor.getAddress()),
                 contractor.getPhone(),
                 contractor.getEmail()
+        );
+    }
+
+    public static ContractorAssignDto toAssignContractors(Contractor contractor, Project project) {
+        return new ContractorAssignDto(
+                contractor.getPublicId().toString(),
+                contractor.getFirstName() + " " + contractor.getLastName(),
+                project.getContractors().contains(contractor)
         );
     }
 }

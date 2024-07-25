@@ -4,6 +4,7 @@ import com.agency.contractmanagement.assembler.ContractorAssembler;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ShortContractorDto;
+import com.agency.project.repository.ProjectRepository;
 import com.agency.search.SortableConfig;
 import com.agency.user.model.Address;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +27,11 @@ class ContractorSearchServiceImplTest {
 
     private ContractorSearchServiceImpl service;
     private final ContractorRepository contractorRepository = mock(ContractorRepository.class);
+    private final ProjectRepository projectRepository = mock(ProjectRepository.class);
 
     @BeforeEach
     void setUp() {
-        service = new ContractorSearchServiceImpl(contractorRepository, new SortableConfig());
+        service = new ContractorSearchServiceImpl(contractorRepository, projectRepository, new SortableConfig());
     }
 
     @Test
