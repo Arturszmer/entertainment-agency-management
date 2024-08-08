@@ -3,7 +3,7 @@ package com.agency.contractmanagement.service;
 import com.agency.contractmanagement.assembler.ContractorAssembler;
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
-import com.agency.dto.contractor.ShortContractorDto;
+import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.project.repository.ProjectRepository;
 import com.agency.search.SortableConfig;
 import com.agency.user.model.Address;
@@ -51,7 +51,7 @@ class ContractorSearchServiceImplTest {
 
         // when
 
-        Page<ShortContractorDto> result = service.getContractorsShortInfo(page, size, sort, order);
+        Page<ContractorShortInfoDto> result = service.getContractorsShortInfo(page, size, sort, order);
         // then
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
@@ -62,7 +62,7 @@ class ContractorSearchServiceImplTest {
         assertEquals(page, pageable.getPageNumber());
         assertEquals(size, pageable.getPageSize());
 
-        List<ShortContractorDto> expectedDtos = contractors.stream()
+        List<ContractorShortInfoDto> expectedDtos = contractors.stream()
                 .map(ContractorAssembler::toShortContractorDto)
                 .toList();
         assertEquals(expectedDtos, result.getContent());

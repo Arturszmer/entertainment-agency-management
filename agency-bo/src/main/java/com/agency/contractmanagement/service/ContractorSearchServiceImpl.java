@@ -5,7 +5,7 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorDto;
-import com.agency.dto.contractor.ShortContractorDto;
+import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.project.model.Project;
@@ -34,16 +34,17 @@ public class ContractorSearchServiceImpl implements ContractorSearchService {
     private final SortableConfig sortableConfig;
 
     @Override
+    @Transactional(readOnly = true)
     public ContractorDto getContractorFullInfo(String publicId) {
         return ContractorAssembler.toDto(repository.findContractorByPublicId(UUID.fromString(publicId))
                 .orElseThrow(() -> new AgencyException(ContractorErrorResult.CONTRACTOR_DOES_NOT_EXISTS, publicId)));
     }
 
     @Override
-    public Page<ShortContractorDto> getContractorsShortInfo(int page, int size, String sort, String order) {
+    public Page<ContractorShortInfoDto> getContractorsShortInfo(int page, int size, String sort, String order) {
         Pageable pagesRequest = sortableConfig.getPageable(page, size, sort, order);
         Page<Contractor> contractorsPage = repository.findAll(pagesRequest);
-        List<ShortContractorDto> contractorDtos = contractorsPage.getContent().stream()
+        List<ContractorShortInfoDto> contractorDtos = contractorsPage.getContent().stream()
                 .map(ContractorAssembler::toShortContractorDto)
                 .toList();
         return new PageImpl<>(contractorDtos, pagesRequest, contractorsPage.getTotalElements());

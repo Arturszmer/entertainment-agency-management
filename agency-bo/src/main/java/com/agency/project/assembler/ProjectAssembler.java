@@ -1,5 +1,6 @@
 package com.agency.project.assembler;
 
+import com.agency.contractmanagement.assembler.ContractorAssembler;
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
@@ -9,6 +10,7 @@ public class ProjectAssembler {
 
     public static ProjectDto toDto(Project project){
         BasicContractDetailsDto basicContractDetailsDto = new BasicContractDetailsDto(
+                project.getPublicId().toString(),
                 project.getSignDate(),
                 project.getStartDate(),
                 project.getEndDate(),
@@ -22,12 +24,15 @@ public class ProjectAssembler {
                 project.getStatus(),
                 project.getContractType(),
                 project.isInternal(),
-                getOrganizerName(project)
+                getOrganizerName(project),
+                project.getContractors().stream()
+                        .map(ContractorAssembler::toShortContractorDto).toList()
         );
     }
 
     public static ProjectSearchDto toSearchDto(Project project) {
         return new ProjectSearchDto(
+                project.getPublicId().toString(),
                 project.getContractNumber(),
                 getOrganizerName(project),
                 project.getSubjectOfTheContract(),

@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @MappedSuperclass
 @AllArgsConstructor
@@ -19,6 +20,8 @@ import java.time.LocalDate;
 @Getter
 public abstract class AbstractContract extends BaseEntity<Long> {
 
+    @Column(name = "public_id", nullable = false, unique = true)
+    private UUID publicId;
     @Column(name = "contract_number", nullable = false)
     private String contractNumber;
     @Column(name = "sign_date")

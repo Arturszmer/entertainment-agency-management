@@ -1,5 +1,6 @@
 package com.agency.controller.project;
 
+import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
 import com.agency.service.ProjectSearchService;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,5 +27,10 @@ public class ProjectSearchController {
                                                          @RequestParam(required = false, value = "sort") String sort,
                                                          @RequestParam(required = false, value = "order") String order){
         return ResponseEntity.ok(searchService.findAll(page, size, sort, order));
+    }
+
+    @GetMapping("/{public-id}")
+    public ResponseEntity<ProjectDto> getProjectDetails(@PathVariable("public-id") String publicId){
+        return ResponseEntity.ok(searchService.getProjectFullInfo(publicId));
     }
 }

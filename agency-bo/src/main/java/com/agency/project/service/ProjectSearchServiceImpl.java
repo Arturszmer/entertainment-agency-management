@@ -1,6 +1,9 @@
 package com.agency.project.service;
 
+import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
+import com.agency.exception.AgencyException;
+import com.agency.exception.ProjectErrorResult;
 import com.agency.project.assembler.ProjectAssembler;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;
@@ -15,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -31,5 +35,11 @@ public class ProjectSearchServiceImpl implements ProjectSearchService {
         Page<Project> projectPage = repository.findAll(pagesRequest);
         List<ProjectSearchDto> projectsDto = projectPage.stream().map(ProjectAssembler::toSearchDto).toList();
         return new PageImpl<>(projectsDto, pagesRequest, projectPage.getTotalElements());
+    }
+
+    @Override
+    public ProjectDto getProjectFullInfo(String publicId) {
+        return ProjectAssembler.toDto(repository.findProjectByPublicId(UUID.fromString(publicId))
+                .orElseThrow(() -> new AgencyException(ProjectErrorResult.PROJECT_NOT_FOUND)));
     }
 }

@@ -16,9 +16,10 @@ public class ProjectModel {
     public final static String CONTRACTOR_PUBLIC_ID = "fb75951a-fe54-11ee-92c8-0242ac120003";
     public final static String ORGANIZER_PUBLIC_ID = "d4bfca9f-2056-4e49-9c15-1abc10015c2e";
     public static final String PROJECT_NUMBER = "2024/STY/PRO11";
+    public static final String PROJECT_PUBLIC_ID = "585dee47-e5d0-4485-b72e-7c2ceca6d886";
 
     public static ContractWorkCreateDto getContractWorkCreateDto(){
-        BasicContractDetailsDto basicContractDetailsDto = new BasicContractDetailsDto(SIGN_DATE, START_DATE, END_DATE,
+        BasicContractDetailsDto basicContractDetailsDto = new BasicContractDetailsDto(PROJECT_PUBLIC_ID, SIGN_DATE, START_DATE, END_DATE,
                 "Subject of the contract", BigDecimal.valueOf(3000),
                 "Additional information");
         return new ContractWorkCreateDto(PROJECT_NUMBER, CONTRACTOR_PUBLIC_ID, basicContractDetailsDto, true);

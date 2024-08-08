@@ -21,6 +21,7 @@ import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static com.agency.dict.contract.ContractType.CONTRACT_WORK;
 import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
@@ -54,7 +55,7 @@ public class ContractWork extends AbstractContract {
                         String projectNumber,
                         @NonNull Contractor contractor,
                            ContractWorkStatus status) {
-        super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
+        super(UUID.randomUUID(), contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.withCopyrights = withCopyrights;
         this.projectNumber = projectNumber;
         this.contractor = contractor;

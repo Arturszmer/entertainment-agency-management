@@ -4,7 +4,7 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
-import com.agency.dto.contractor.ShortContractorDto;
+import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.project.model.Project;
 import com.agency.user.assembler.AddressAssembler;
 
@@ -34,8 +34,8 @@ public class ContractorAssembler {
         );
     }
 
-    public static ShortContractorDto toShortContractorDto(Contractor contractor) {
-        return new ShortContractorDto(
+    public static ContractorShortInfoDto toShortContractorDto(Contractor contractor) {
+        return new ContractorShortInfoDto(
                 contractor.getPublicId().toString(),
                 contractor.getFirstName(),
                 contractor.getLastName(),
