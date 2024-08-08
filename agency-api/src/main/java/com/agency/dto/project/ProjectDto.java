@@ -2,8 +2,11 @@ package com.agency.dto.project;
 
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
+import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 public record ProjectDto(
         String contractNumber,
@@ -12,6 +15,7 @@ public record ProjectDto(
         ContractType contractType,
         @JsonProperty(value = "isInternal")
         boolean isInternal,
-        String organizerName
+        String organizerName,
+        List<ContractorShortInfoDto> contractors
 ) {
 }

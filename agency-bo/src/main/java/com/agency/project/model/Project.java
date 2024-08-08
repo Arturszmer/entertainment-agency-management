@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "project")
@@ -52,7 +53,8 @@ public class Project extends AbstractContract {
         return ContractType.PROJECT;
     }
 
-    protected Project(String contractNumber,
+    protected Project(
+                   String contractNumber,
                    LocalDate signDate,
                    LocalDate startDate,
                    LocalDate endDate,
@@ -62,14 +64,13 @@ public class Project extends AbstractContract {
                    ContractType contractType,
                    ProjectStatus status,
                    boolean isInternal) {
-        super(contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
+        super(UUID.randomUUID(), contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.status = status;
         this.isInternal = isInternal;
     }
 
     public static Project create(String contractNumber, ProjectCreateDto createDto){
-        return new Project(
-            contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
+        return new Project(contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
                 createDto.projectSubject(), createDto.salary(), createDto.additionalInformation(),
                 ContractType.PROJECT, ProjectStatus.DRAFT, createDto.isInternal()
         );

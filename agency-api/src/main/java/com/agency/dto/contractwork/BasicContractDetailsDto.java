@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record BasicContractDetailsDto(
+        String publicId,
         LocalDate signDate,
         LocalDate startDate,
         LocalDate endDate,
