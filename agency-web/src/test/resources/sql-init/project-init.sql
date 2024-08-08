@@ -1,7 +1,7 @@
-insert into project (end_date, salary, sign_date, start_date, creation_timestamp, id, modification_timestamp,
+insert into project (public_id, end_date, salary, sign_date, start_date, creation_timestamp, id, modification_timestamp,
                      additional_information, contract_number, contract_type, created_by, last_modified,
                      subject_of_the_contract, status, is_internal)
-values ('2024-01-31', '3000', '2024-01-02', '2024-01-02', CURRENT_TIMESTAMP, 10, CURRENT_TIMESTAMP, 'Project for concert',
+values ('585dee47-e5d0-4485-b72e-7c2ceca6d886', '2024-01-31', '3000', '2024-01-02', '2024-01-02', CURRENT_TIMESTAMP, 10, CURRENT_TIMESTAMP, 'Project for concert',
         '2024/STY/PRO10', 'PROJECT', 'admin', CURRENT_TIMESTAMP, 'Concert AC/DC', 'DRAFT', true);
 
 insert into user_address (id, created_by, creation_timestamp, modification_timestamp, last_modified, apartment_number,
