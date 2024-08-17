@@ -1,7 +1,9 @@
 package com.agency.project.service;
 
+import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
+import com.agency.dto.project.ProjectToAssignContractorDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ProjectErrorResult;
 import com.agency.project.assembler.ProjectAssembler;
@@ -41,5 +43,11 @@ public class ProjectSearchServiceImpl implements ProjectSearchService {
     public ProjectDto getProjectFullInfo(String publicId) {
         return ProjectAssembler.toDto(repository.findProjectByPublicId(UUID.fromString(publicId))
                 .orElseThrow(() -> new AgencyException(ProjectErrorResult.PROJECT_NOT_FOUND)));
+    }
+
+    @Override
+    public List<ProjectToAssignContractorDto> findAllToAssign() {
+        List<Project> projects = repository.findAllByStatusNot(ProjectStatus.TERMINATED);
+        return projects.stream().map(ProjectAssembler::toProjectToAssignContractor).toList();
     }
 }

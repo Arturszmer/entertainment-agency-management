@@ -2,6 +2,7 @@ package com.agency.controller.project;
 
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
+import com.agency.dto.project.ProjectToAssignContractorDto;
 import com.agency.service.ProjectSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/project")
@@ -32,5 +35,10 @@ public class ProjectSearchController {
     @GetMapping("/{public-id}")
     public ResponseEntity<ProjectDto> getProjectDetails(@PathVariable("public-id") String publicId){
         return ResponseEntity.ok(searchService.getProjectFullInfo(publicId));
+    }
+
+    @GetMapping("/to-assign")
+    public ResponseEntity<List<ProjectToAssignContractorDto>> getAllProjectsToAssign(){
+        return ResponseEntity.ok(searchService.findAllToAssign());
     }
 }

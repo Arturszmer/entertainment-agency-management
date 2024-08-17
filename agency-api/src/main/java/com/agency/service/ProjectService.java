@@ -1,10 +1,7 @@
 package com.agency.service;
 
 import com.agency.dict.project.ProjectStatus;
-import com.agency.dto.project.ProjectContractorAssignDto;
-import com.agency.dto.project.ProjectCreateDto;
-import com.agency.dto.project.ProjectDto;
-import com.agency.dto.project.ProjectSearchDto;
+import com.agency.dto.project.*;
 
 public interface ProjectService {
 
@@ -12,5 +9,5 @@ public interface ProjectService {
 
     ProjectDto updateStatus(String contractNumber, ProjectStatus status);
 
-    ProjectSearchDto assignContractors(ProjectContractorAssignDto projectContractorAssignDto);
+    ProjectContractorAssignResponse assignContractors(ProjectContractorAssignDto projectContractorAssignDto);
 }

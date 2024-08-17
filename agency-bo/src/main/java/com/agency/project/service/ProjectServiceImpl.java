@@ -4,10 +4,7 @@ import com.agency.contractmanagement.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.contractor.ContractorAssignDto;
-import com.agency.dto.project.ProjectContractorAssignDto;
-import com.agency.dto.project.ProjectCreateDto;
-import com.agency.dto.project.ProjectDto;
-import com.agency.dto.project.ProjectSearchDto;
+import com.agency.dto.project.*;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.OrganizerErrorResult;
@@ -69,14 +66,14 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
-    public ProjectSearchDto assignContractors(ProjectContractorAssignDto projectContractorAssignDto) {
+    public ProjectContractorAssignResponse assignContractors(ProjectContractorAssignDto projectContractorAssignDto) {
         Project project = repository.findByContractNumber(projectContractorAssignDto.projectNumber())
                 .orElseThrow(() -> new AgencyException(PROJECT_NOT_FOUND, projectContractorAssignDto.projectNumber()));
         assign(projectContractorAssignDto.contractors(), project);
         Project savedProject = repository.save(project);
         log.info("The operation of assigning the contractors to the project nr {} is finished successfully. " +
                 "The actual number of contractors is: {}", savedProject.getContractNumber(), savedProject.getContractors().size());
-        return ProjectAssembler.toSearchDto(savedProject);
+        return ProjectAssembler.toProjectContractorAssignResponse(savedProject);
     }
 
     private void assign(List<ContractorAssignDto> contractorsToAssign, Project project) {

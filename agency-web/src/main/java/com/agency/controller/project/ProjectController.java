@@ -1,10 +1,7 @@
 package com.agency.controller.project;
 
 import com.agency.dict.project.ProjectStatus;
-import com.agency.dto.project.ProjectContractorAssignDto;
-import com.agency.dto.project.ProjectCreateDto;
-import com.agency.dto.project.ProjectDto;
-import com.agency.dto.project.ProjectSearchDto;
+import com.agency.dto.project.*;
 import com.agency.service.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +33,7 @@ public class ProjectController {
     }
 
     @PutMapping("/assign")
-    ResponseEntity<ProjectSearchDto> assignContractors(@RequestBody ProjectContractorAssignDto projectContractorAssignDto){
+    ResponseEntity<ProjectContractorAssignResponse> assignContractors(@RequestBody ProjectContractorAssignDto projectContractorAssignDto){
 
         return ResponseEntity.ok(service.assignContractors(projectContractorAssignDto));
     }
