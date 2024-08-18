@@ -53,7 +53,7 @@ public class ContractorServiceImpl implements ContractorService {
     @Transactional
     public void delete(String publicId) {
         repository.findContractorByPublicId(UUID.fromString(publicId)).ifPresent(contractor -> {
-            if(contractor.getContract().isEmpty()){
+            if(contractor.getContracts().isEmpty()){
                 repository.delete(contractor);
                 log.info(SUCCESSFULLY_DELETED, publicId);
             } else {

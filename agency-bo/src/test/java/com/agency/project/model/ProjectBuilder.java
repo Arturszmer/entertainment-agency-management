@@ -1,6 +1,6 @@
 package com.agency.project.model;
 
-import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 
@@ -18,8 +18,8 @@ public class ProjectBuilder extends Project {
     private BigDecimal salary;
     private String additionalInformation;
     private ContractType contractType;
+    private List<Contractor> contractors;
     private ProjectStatus status;
-    private List<ContractWork> contracts;
     private boolean isInternal;
 
     public static ProjectBuilder aProjectBuilder(){
@@ -33,6 +33,11 @@ public class ProjectBuilder extends Project {
 
     public ProjectBuilder withProjectStatus(ProjectStatus status){
         this.status = status;
+        return this;
+    }
+
+    public ProjectBuilder withContractors(List<Contractor> contractors){
+        this.contractors = contractors;
         return this;
     }
 

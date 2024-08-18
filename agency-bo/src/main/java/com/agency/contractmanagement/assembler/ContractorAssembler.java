@@ -28,9 +28,9 @@ public class ContractorAssembler {
                 contractor.getPhone(),
                 contractor.getEmail(),
                 contractor.getContractorDescription(),
-                contractor.getContract().isEmpty()
+                contractor.getContracts().isEmpty()
                         ? new ArrayList<>()
-                        : contractor.getContract().stream().map(ContractAssembler::toContractShortDto).toList()
+                        : contractor.getContracts().stream().map(ContractAssembler::toContractShortDto).toList()
         );
     }
 
