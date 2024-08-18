@@ -1,6 +1,7 @@
 package com.agency.project.service;
 
 import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractmanagement.validator.ContractorValidator;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
@@ -30,10 +31,13 @@ class ProjectServiceImplTest {
     private final ContractNumberGenerator generator = mock(ContractNumberGenerator.class);
     private final OrganizerRepository organizerRepository = mock(OrganizerRepository.class);
     private final ContractorRepository contractorRepository = mock(ContractorRepository.class);
+    private final ContractorValidator contractorValidator = mock(ContractorValidator.class);
+    private final static String CONTRACT_NUMBER = "2024/STY/PRO1";
+
 
     @BeforeEach
     void setup(){
-        service = new ProjectServiceImpl(repository, generator, organizerRepository, contractorRepository);
+        service = new ProjectServiceImpl(repository, generator, organizerRepository, contractorRepository, contractorValidator);
     }
 
     @Test
@@ -55,16 +59,14 @@ class ProjectServiceImplTest {
     mode = EnumSource.Mode.INCLUDE)
     public void should_throw_exception_when_status_of_updated_project_is_terminated_or_signed(ProjectStatus projectStatus){
         // given
-        String contractNumber = "2024/STY/PRO1";
         Project project = ProjectBuilder.aProjectBuilder()
                 .withProjectStatus(projectStatus)
-                .withContractNumber(contractNumber)
+                .withContractNumber(CONTRACT_NUMBER)
                 .buildProject();
 
-        when(repository.findByContractNumber(contractNumber)).thenReturn(Optional.of(project));
+        when(repository.findByContractNumber(CONTRACT_NUMBER)).thenReturn(Optional.of(project));
 
         // then
-        assertThrows(AgencyException.class, () -> service.updateStatus(contractNumber, ProjectStatus.PROPOSITION));
+        assertThrows(AgencyException.class, () -> service.updateStatus(CONTRACT_NUMBER, ProjectStatus.PROPOSITION));
     }
-
 }

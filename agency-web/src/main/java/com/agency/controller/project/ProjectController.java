@@ -38,4 +38,9 @@ public class ProjectController {
         return ResponseEntity.ok(service.assignContractors(projectContractorAssignDto));
     }
 
+    @PutMapping("/remove-contractor")
+    ResponseEntity<ProjectContractorAssignResponse> removeContractor(@RequestBody ProjectContractorRemoveDto projectContractorRemoveDto){
+        return ResponseEntity.ok(service.removeContractor(projectContractorRemoveDto));
+    }
+
 }

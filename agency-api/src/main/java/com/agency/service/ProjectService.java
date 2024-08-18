@@ -10,4 +10,6 @@ public interface ProjectService {
     ProjectDto updateStatus(String contractNumber, ProjectStatus status);
 
     ProjectContractorAssignResponse assignContractors(ProjectContractorAssignDto projectContractorAssignDto);
+
+    ProjectContractorAssignResponse removeContractor(ProjectContractorRemoveDto projectContractorRemoveDto);
 }

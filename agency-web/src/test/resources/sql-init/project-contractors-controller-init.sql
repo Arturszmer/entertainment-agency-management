@@ -1,8 +1,8 @@
 insert into project (end_date, salary, sign_date, start_date, creation_timestamp, id, modification_timestamp,
                      additional_information, contract_number, contract_type, created_by, last_modified,
-                     subject_of_the_contract, status)
+                     subject_of_the_contract, status, is_internal, public_id)
 values ('2024-01-31', '3000', '2024-01-02', '2024-01-02', CURRENT_TIMESTAMP, 10, CURRENT_TIMESTAMP, 'Additional information',
-        '2024/STY/PRO11', 'PROJECT', 'admin', CURRENT_TIMESTAMP, 'Subject of the contract', 'DRAFT');
+        '2024/STY/PRO11', 'PROJECT', 'admin', CURRENT_TIMESTAMP, 'Subject of the contract', 'DRAFT', true, '4f6952dc-4b2a-4723-a649-353f1abb5b7e');
 
 insert into user_address (id, created_by, creation_timestamp, modification_timestamp, last_modified, apartment_number,
                           city, house_number, street, zip_code)
