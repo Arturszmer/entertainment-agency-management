@@ -38,7 +38,7 @@ public class ProjectSearchController {
     }
 
     @GetMapping("/to-assign")
-    public ResponseEntity<List<ProjectToAssignContractorDto>> getAllProjectsToAssign(){
-        return ResponseEntity.ok(searchService.findAllToAssign());
+    public ResponseEntity<List<ProjectToAssignContractorDto>> getAllProjectsToAssign(@RequestParam("public-id") String assignedContractorPublicId){
+        return ResponseEntity.ok(searchService.findAllToAssign(assignedContractorPublicId));
     }
 }

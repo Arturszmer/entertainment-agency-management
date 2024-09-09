@@ -13,5 +13,5 @@ public interface ProjectSearchService {
 
     ProjectDto getProjectFullInfo(String publicId);
 
-    List<ProjectToAssignContractorDto> findAllToAssign();
+    List<ProjectToAssignContractorDto> findAllToAssign(String assignedContractorPublicId);
 }
