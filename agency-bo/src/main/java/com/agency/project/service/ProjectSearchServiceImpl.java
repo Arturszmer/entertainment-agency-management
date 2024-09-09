@@ -46,8 +46,11 @@ public class ProjectSearchServiceImpl implements ProjectSearchService {
     }
 
     @Override
-    public List<ProjectToAssignContractorDto> findAllToAssign() {
+    public List<ProjectToAssignContractorDto> findAllToAssign(String assignedContractorPublicId) {
         List<Project> projects = repository.findAllByStatusNot(ProjectStatus.TERMINATED);
-        return projects.stream().map(ProjectAssembler::toProjectToAssignContractor).toList();
+        return projects.stream()
+                .filter(project -> project.getContractors().stream().noneMatch(contractor -> contractor.getPublicId().toString().equals(assignedContractorPublicId)))
+                .map(ProjectAssembler::toProjectToAssignContractor)
+                .toList();
     }
 }
