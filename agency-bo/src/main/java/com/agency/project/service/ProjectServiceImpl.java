@@ -2,7 +2,6 @@ package com.agency.project.service;
 
 import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.contractmanagement.repository.ContractorRepository;
-import com.agency.contractmanagement.validator.ContractorValidator;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.contractor.ContractorAssignDto;
@@ -24,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
+import static com.agency.contractmanagement.validator.ContractorValidator.hasActiveContractInProject;
 import static com.agency.exception.ProjectErrorResult.PROJECT_NOT_FOUND;
 
 @Service
@@ -35,7 +35,6 @@ public class ProjectServiceImpl implements ProjectService {
     private final ContractNumberGenerator numberGenerator;
     private final OrganizerRepository organizerRepository;
     private final ContractorRepository contractorRepository;
-    private final ContractorValidator contractorValidator;
 
     @Override
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
@@ -79,7 +78,7 @@ public class ProjectServiceImpl implements ProjectService {
         Project project = getProject(projectNumber);
 
         Contractor contractorToRemove = findContractorToRemove(projectContractorRemoveDto, project, projectNumber);
-        contractorValidator.hasActiveContractInProject(contractorToRemove, projectNumber);
+        hasActiveContractInProject(contractorToRemove, projectNumber);
 
         project.getContractors().remove(contractorToRemove);
         Project updatedProject = repository.save(project);

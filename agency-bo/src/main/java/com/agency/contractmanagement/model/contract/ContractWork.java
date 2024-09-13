@@ -54,7 +54,7 @@ public class ContractWork extends AbstractContract {
                         boolean withCopyrights,
                         String projectNumber,
                         @NonNull Contractor contractor,
-                           ContractWorkStatus status) {
+                        ContractWorkStatus status) {
         super(UUID.randomUUID(), contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
         this.withCopyrights = withCopyrights;
         this.projectNumber = projectNumber;

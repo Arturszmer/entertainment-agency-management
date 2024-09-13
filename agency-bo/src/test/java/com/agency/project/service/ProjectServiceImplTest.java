@@ -1,7 +1,6 @@
 package com.agency.project.service;
 
 import com.agency.contractmanagement.repository.ContractorRepository;
-import com.agency.contractmanagement.validator.ContractorValidator;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
@@ -31,13 +30,12 @@ class ProjectServiceImplTest {
     private final ContractNumberGenerator generator = mock(ContractNumberGenerator.class);
     private final OrganizerRepository organizerRepository = mock(OrganizerRepository.class);
     private final ContractorRepository contractorRepository = mock(ContractorRepository.class);
-    private final ContractorValidator contractorValidator = mock(ContractorValidator.class);
     private final static String CONTRACT_NUMBER = "2024/STY/PRO1";
 
 
     @BeforeEach
     void setup(){
-        service = new ProjectServiceImpl(repository, generator, organizerRepository, contractorRepository, contractorValidator);
+        service = new ProjectServiceImpl(repository, generator, organizerRepository, contractorRepository);
     }
 
     @Test
