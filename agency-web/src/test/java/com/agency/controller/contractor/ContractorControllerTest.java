@@ -23,8 +23,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
 @WithMockUser(authorities = "CONTRACTOR_MANAGEMENT")
-@Sql(scripts = "/sql-init/contractor-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@Sql(scripts = "/sql-init/contractor-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@Sql(scripts = "/sql-init/20-contractor-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/sql-init/20-contractor-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class ContractorControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
 @WithMockUser(roles = "ADMIN")
-@Sql(scripts = "/sql-init/agency-details-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@Sql(scripts = "/sql-init/50-agency-details-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired
@@ -41,7 +41,7 @@ class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
     }
 
     @Test
-    @Sql(scripts = "/sql-init/agency-details-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    @Sql(scripts = "/sql-init/50-agency-details-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     public void should_update_existing_agency() throws Exception {
         // given
         String editetAgencyName = "Entertainment Agency";

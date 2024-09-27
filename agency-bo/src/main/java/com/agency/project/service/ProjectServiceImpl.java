@@ -62,6 +62,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @Transactional
     public ProjectContractorAssignResponse assignContractors(ProjectContractorAssignDto projectContractorAssignDto) {
         Project project = getProject(projectContractorAssignDto.projectNumber());
         assign(projectContractorAssignDto.contractors(), project);

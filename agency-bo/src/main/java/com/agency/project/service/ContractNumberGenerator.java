@@ -44,7 +44,7 @@ public class ContractNumberGenerator {
         return switch (contractType){
             case PROJECT -> "PRO";
             case CONTRACT_WORK -> "CON";
-            default -> throw new AgencyException(ContractorErrorResult.CONTRACT_TYPE_DOES_NOT_EXIST);
+            case MANDATORY_CONTRACT -> "ZLE";
         };
     }
 }

@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @WithMockUser(authorities = "PROJECT_MANAGEMENT")
-@Sql(scripts = "/sql-init/project-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@Sql(scripts = "/sql-init/project-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@Sql(scripts = "/sql-init/30-project-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/sql-init/30-project-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class ProjectControllerTest extends BaseIntegrationTestSettings {
 
     @Autowired

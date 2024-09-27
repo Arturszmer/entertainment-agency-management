@@ -41,6 +41,21 @@ public class ProjectBuilder extends Project {
         return this;
     }
 
+    public ProjectBuilder withSignDate(LocalDate signDate){
+        this.signDate = signDate;
+        return this;
+    }
+
+    public ProjectBuilder withStartDate(LocalDate startDate){
+        this.startDate = startDate;
+        return this;
+    }
+
+    public ProjectBuilder withEndDate(LocalDate endDate){
+        this.endDate = endDate;
+        return this;
+    }
+
     public Project buildProject(){
         return new Project(
                 contractNumber,
