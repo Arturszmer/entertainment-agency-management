@@ -10,7 +10,7 @@ public record ContractWorkDto(
         LocalDate signDate,
         LocalDate startDate,
         LocalDate endDate,
-        String subjectOftheContract,
+        String contractSubject,
         BigDecimal salary,
         String additionalInformation,
         ContractType contractType,

@@ -21,8 +21,8 @@ import static com.agency.model.ContractorModel.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @WithMockUser(authorities = "PROJECT_MANAGEMENT")
-@Sql(scripts = "/sql-init/project-contractors-controller-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@Sql(scripts = "/sql-init/project-contractors-controller-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@Sql(scripts = "/sql-init/21-project-contractors-controller-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/sql-init/21-project-contractors-controller-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 @Transactional
 class ProjectContractorsControllerTest extends BaseIntegrationTestSettings {
 

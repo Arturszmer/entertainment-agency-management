@@ -14,8 +14,8 @@ import org.springframework.util.MultiValueMap;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Transactional
-@Sql(scripts = "/sql-init/contractor-search-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
-@Sql(scripts = "/sql-init/contractor-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
+@Sql(scripts = "/sql-init/10-contractor-search-init.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+@Sql(scripts = "/sql-init/20-contractor-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class ContractorSearchControllerTest extends BaseIntegrationTestSettings {
 
     private final static String urlPath = "/contractor";

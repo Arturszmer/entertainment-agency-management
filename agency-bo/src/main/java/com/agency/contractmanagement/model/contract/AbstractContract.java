@@ -22,20 +22,29 @@ public abstract class AbstractContract extends BaseEntity<Long> {
 
     @Column(name = "public_id", nullable = false, unique = true)
     private UUID publicId;
+
     @Column(name = "contract_number", nullable = false)
     private String contractNumber;
+
     @Column(name = "sign_date")
     private LocalDate signDate;
+
     @Column(name = "start_date")
     private LocalDate startDate;
+
     @Column(name = "end_date")
     private LocalDate endDate;
-    @Column(name = "subject_of_the_contract")
-    private String subjectOfTheContract;
+
+    @Column(name = "contract_subject")
+    private String contractSubject;
+
     @Column(name = "salary")
     private BigDecimal salary;
+
     @Column(name = "additional_information")
     private String additionalInformation;
+
+    @Column(name = "contract_type")
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
 

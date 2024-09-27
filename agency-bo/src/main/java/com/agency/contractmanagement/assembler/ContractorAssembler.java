@@ -41,7 +41,10 @@ public class ContractorAssembler {
                 contractor.getLastName(),
                 AddressAssembler.toDto(contractor.getAddress()),
                 contractor.getPhone(),
-                contractor.getEmail()
+                contractor.getEmail(),
+                contractor.getContracts().stream()
+                        .map(ContractAssembler::toContractShortDto)
+                        .toList()
         );
     }
 

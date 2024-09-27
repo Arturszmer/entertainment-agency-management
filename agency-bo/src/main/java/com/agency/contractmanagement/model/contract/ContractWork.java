@@ -4,7 +4,6 @@ import com.agency.contractmanagement.model.contractor.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dict.contract.ContractWorkStatus;
-import com.agency.project.model.Project;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,13 +32,19 @@ import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
 @Getter
 public class ContractWork extends AbstractContract {
 
+    @Column(name = "with_copyrights")
     @Setter
     private boolean withCopyrights;
+
     @Column(name = "project_number", nullable = false)
     private String projectNumber;
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @NonNull
+    @Setter
     private Contractor contractor;
+
+    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     private ContractWorkStatus status;
 
@@ -62,18 +67,18 @@ public class ContractWork extends AbstractContract {
         this.status = status;
     }
 
-    public static ContractWork create(String contractNumber, ContractWorkCreateDto createDto, Contractor contractor, Project project){
+    public static ContractWork create(String contractNumber, ContractWorkCreateDto createDto, Contractor contractor){
         return new ContractWork(
                 contractNumber,
                 createDto.contractDetailsDto().signDate(),
                 createDto.contractDetailsDto().startDate(),
                 createDto.contractDetailsDto().endDate(),
-                createDto.contractDetailsDto().projectSubject(),
+                createDto.contractDetailsDto().contractSubject(),
                 createDto.contractDetailsDto().salary(),
                 createDto.contractDetailsDto().additionalInformation(),
                 CONTRACT_WORK,
                 createDto.withCopyrights(),
-                project.getContractNumber(),
+                createDto.projectContractNumber(),
                 contractor,
                 DRAFT
         );

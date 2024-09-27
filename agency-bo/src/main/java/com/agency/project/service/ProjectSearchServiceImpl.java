@@ -40,6 +40,7 @@ public class ProjectSearchServiceImpl implements ProjectSearchService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ProjectDto getProjectFullInfo(String publicId) {
         return ProjectAssembler.toDto(repository.findProjectByPublicId(UUID.fromString(publicId))
                 .orElseThrow(() -> new AgencyException(ProjectErrorResult.PROJECT_NOT_FOUND)));

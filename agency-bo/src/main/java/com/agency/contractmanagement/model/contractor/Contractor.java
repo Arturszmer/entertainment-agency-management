@@ -3,6 +3,8 @@ package com.agency.contractmanagement.model.contractor;
 import com.agency.common.BaseEntity;
 import com.agency.contractmanagement.model.contract.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
+import com.agency.exception.AgencyException;
+import com.agency.exception.ContractErrorResult;
 import com.agency.project.model.Project;
 import com.agency.user.model.Address;
 import jakarta.persistence.*;
@@ -64,5 +66,25 @@ public class Contractor extends BaseEntity<Long> {
         phone = request.phone();
         email = request.email();
         contractorDescription = request.contractorDescription();
+    }
+
+    public void addNewContract(ContractWork contract) {
+        if(projects.stream()
+                .anyMatch(project -> project.getContractNumber().equals(contract.getProjectNumber()))){
+            contracts.add(contract);
+        } else {
+            throw new AgencyException(ContractErrorResult.CONTRACTOR_IS_NOT_PART_OF_THE_PROJECT, firstName, lastName, contract.getProjectNumber());
+        }
+    }
+
+    public Contractor getContractorWithProjectContracts(String projectNumber) {
+        this.contracts = getContractsForProject(projectNumber);
+        return this;
+    }
+
+    public List<ContractWork> getContractsForProject(String projectNumber) {
+        return contracts.stream()
+                .filter(contractWork -> contractWork.getProjectNumber().equals(projectNumber))
+                .toList();
     }
 }

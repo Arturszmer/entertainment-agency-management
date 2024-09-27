@@ -41,6 +41,7 @@ public class ContractorSearchServiceImpl implements ContractorSearchService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<ContractorShortInfoDto> getContractorsShortInfo(int page, int size, String sort, String order) {
         Pageable pagesRequest = sortableConfig.getPageable(page, size, sort, order);
         Page<Contractor> contractorsPage = repository.findAll(pagesRequest);
