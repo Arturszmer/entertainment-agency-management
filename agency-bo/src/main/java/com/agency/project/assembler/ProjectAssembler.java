@@ -49,6 +49,7 @@ public class ProjectAssembler {
         return new ProjectContractorAssignResponse(
                 project.getPublicId().toString(),
                 project.getContractors().stream()
+                        .map(contractor -> contractor.getContractorWithProjectContracts(project.getContractNumber()))
                         .map(ContractorAssembler::toShortContractorDto).toList()
         );
     }

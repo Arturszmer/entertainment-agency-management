@@ -6,9 +6,10 @@ import com.agency.dict.project.ProjectStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-public class ProjectBuilder extends Project {
+public class ProjectBuilder {
 
     private String contractNumber;
     private LocalDate signDate;
@@ -21,6 +22,7 @@ public class ProjectBuilder extends Project {
     private List<Contractor> contractors;
     private ProjectStatus status;
     private boolean isInternal;
+    private List<ProjectCost> projectCosts = new ArrayList<>();
 
     public static ProjectBuilder aProjectBuilder(){
         return new ProjectBuilder();
@@ -65,11 +67,8 @@ public class ProjectBuilder extends Project {
                 subjectOfTheContract,
                 salary,
                 additionalInformation,
-                contractType,
                 status,
                 isInternal
         );
     }
-
-
 }

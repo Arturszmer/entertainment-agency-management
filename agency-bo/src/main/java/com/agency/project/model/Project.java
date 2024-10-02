@@ -27,7 +27,7 @@ import java.util.UUID;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Slf4j
-public class Project extends AbstractContract {
+public class Project extends AbstractContract implements CostRelated {
 
     @Enumerated(EnumType.STRING)
     private ProjectStatus status;
@@ -48,6 +48,9 @@ public class Project extends AbstractContract {
      */
     private boolean isInternal;
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
+    private List<ProjectCost> projectCosts = new ArrayList<>();
+
     @Override
     public ContractType getContractType() {
         return ContractType.PROJECT;
@@ -61,10 +64,9 @@ public class Project extends AbstractContract {
                    String subjectOfTheContract,
                    BigDecimal salary,
                    String additionalInformation,
-                   ContractType contractType,
                    ProjectStatus status,
                    boolean isInternal) {
-        super(UUID.randomUUID(), contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, contractType);
+        super(UUID.randomUUID(), contractNumber, signDate, startDate, endDate, subjectOfTheContract, salary, additionalInformation, ContractType.PROJECT);
         this.status = status;
         this.isInternal = isInternal;
     }
@@ -72,7 +74,7 @@ public class Project extends AbstractContract {
     public static Project create(String contractNumber, ProjectCreateDto createDto){
         return new Project(contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
                 createDto.projectSubject(), createDto.salary(), createDto.additionalInformation(),
-                ContractType.PROJECT, ProjectStatus.DRAFT, createDto.isInternal()
+                ProjectStatus.DRAFT, createDto.isInternal()
         );
     }
 
@@ -93,5 +95,9 @@ public class Project extends AbstractContract {
             return;
         }
         this.contractors.add(contractor);
+    }
+
+    public void addCost(ProjectCost newCost) {
+        getProjectCosts().add(newCost);
     }
 }
