@@ -12,8 +12,10 @@ import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.project.model.Project;
+import com.agency.project.model.ProjectCost;
 import com.agency.project.service.ContractNumberGenerator;
 import com.agency.service.ContractService;
+import com.agency.project.service.CostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +34,7 @@ public class ContractServiceImpl implements ContractService {
     private final ContractWorkRepository contractWorkRepository;
     private final ContractorRepository contractorRepository;
     private final ContractNumberGenerator numberGenerator;
+    private final CostService costService;
 
     @Override
     @Transactional
@@ -46,6 +49,8 @@ public class ContractServiceImpl implements ContractService {
         String contractNumber = numberGenerator.generateContractNumber(createDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
 
         ContractWork contract = contractWorkRepository.save(ContractWork.create(contractNumber, createDto, contractor));
+        ProjectCost projectCost = costService.addContractTypeCost(contract, projectForContract);
+        projectForContract.addCost(projectCost);
         contractor.addNewContract(contract);
         contractorRepository.save(contractor);
         log.info("The new contract of work for contractor no. id: {} has beed created", contractor.getId());
