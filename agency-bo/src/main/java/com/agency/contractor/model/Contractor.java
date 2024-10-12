@@ -1,7 +1,7 @@
-package com.agency.contractmanagement.model.contractor;
+package com.agency.contractor.model;
 
 import com.agency.common.BaseEntity;
-import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.contractmanagement.model.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;

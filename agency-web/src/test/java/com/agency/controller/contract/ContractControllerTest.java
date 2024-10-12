@@ -1,8 +1,8 @@
 package com.agency.controller.contract;
 
 import com.agency.BaseIntegrationTestSettings;
-import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractor.model.Contractor;
+import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dto.contractwork.ContractWorkDto;
 import org.junit.jupiter.api.Test;

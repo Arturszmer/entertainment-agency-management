@@ -1,7 +1,7 @@
 package com.agency.project.model;
 
-import com.agency.contractmanagement.model.contract.AbstractContract;
-import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.contractmanagement.model.AbstractContract;
+import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;

@@ -1,8 +1,10 @@
 package com.agency.contractmanagement.assembler;
 
-import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.contractmanagement.model.ContractWork;
+import com.agency.contractor.model.Contractor;
 import com.agency.dto.contractwork.ContractShortDto;
 import com.agency.dto.contractwork.ContractWorkDto;
+import com.agency.dto.contractwork.ContractWorkSearchResultDto;
 
 public class ContractAssembler {
 
@@ -21,6 +23,13 @@ public class ContractAssembler {
                 contract.getAdditionalInformation(),
                 contract.getContractType(),
                 contract.isWithCopyrights()
+        );
+    }
+
+    public static ContractWorkSearchResultDto toContractWorkSearchResultDto(ContractWork contractWork) {
+        Contractor contractor = contractWork.getContractor();
+        return new ContractWorkSearchResultDto(
+                toContractWorkDto(contractWork), contractor.getFirstName() + " " + contractor.getLastName(), contractWork.getProjectNumber()
         );
     }
 }

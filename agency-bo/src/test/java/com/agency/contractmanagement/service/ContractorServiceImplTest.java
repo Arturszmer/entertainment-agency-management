@@ -2,9 +2,10 @@ package com.agency.contractmanagement.service;
 
 import com.agency.contractmanagement.model.ContractWorkBuilder;
 import com.agency.contractmanagement.model.ContractorBuilder;
-import com.agency.contractmanagement.model.contract.ContractWork;
-import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractmanagement.model.ContractWork;
+import com.agency.contractor.model.Contractor;
+import com.agency.contractor.repository.ContractorRepository;
+import com.agency.contractor.service.ContractorServiceImpl;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.exception.AgencyException;
 import com.agency.service.ContractorService;

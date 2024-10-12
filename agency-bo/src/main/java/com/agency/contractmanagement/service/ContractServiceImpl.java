@@ -1,10 +1,10 @@
 package com.agency.contractmanagement.service;
 
 import com.agency.contractmanagement.assembler.ContractAssembler;
-import com.agency.contractmanagement.model.contract.ContractWork;
-import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.contractmanagement.model.ContractWork;
+import com.agency.contractor.model.Contractor;
 import com.agency.contractmanagement.repository.ContractWorkRepository;
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dto.contractwork.ContractWorkDto;

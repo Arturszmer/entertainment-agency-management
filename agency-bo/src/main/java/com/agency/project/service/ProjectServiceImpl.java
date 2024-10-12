@@ -1,7 +1,7 @@
 package com.agency.project.service;
 
-import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractor.model.Contractor;
+import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.contractor.ContractorAssignDto;
@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static com.agency.contractmanagement.validator.ContractorValidator.hasActiveContractInProject;
+import static com.agency.contractor.validator.ContractorValidator.hasActiveContractInProject;
 import static com.agency.exception.ProjectErrorResult.PROJECT_NOT_FOUND;
 
 @Service

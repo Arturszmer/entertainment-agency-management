@@ -1,6 +1,6 @@
-package com.agency.contractmanagement.repository;
+package com.agency.contractor.repository;
 
-import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.contractor.model.Contractor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

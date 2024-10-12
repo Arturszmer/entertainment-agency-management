@@ -1,7 +1,7 @@
 package com.agency.dto.contractor;
 
 import com.agency.dto.address.AddressDto;
-import com.agency.dto.contractwork.ContractShortDto;
+import com.agency.dto.contractwork.ContractWorkDto;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -17,6 +17,6 @@ public record ContractorDto(
         String phone,
         String email,
         String contractorDescription,
-        List<ContractShortDto> contracts
+        List<ContractWorkDto> contracts
 ) {
 }

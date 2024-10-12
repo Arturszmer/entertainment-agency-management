@@ -1,6 +1,7 @@
-package com.agency.contractmanagement.assembler;
+package com.agency.contractor.assembler;
 
-import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.contractmanagement.assembler.ContractAssembler;
+import com.agency.contractor.model.Contractor;
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
@@ -30,7 +31,7 @@ public class ContractorAssembler {
                 contractor.getContractorDescription(),
                 contractor.getContracts().isEmpty()
                         ? new ArrayList<>()
-                        : contractor.getContracts().stream().map(ContractAssembler::toContractShortDto).toList()
+                        : contractor.getContracts().stream().map(ContractAssembler::toContractWorkDto).toList()
         );
     }
 

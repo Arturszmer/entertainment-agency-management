@@ -1,11 +1,11 @@
 package com.agency.contractmanagement.service;
 
-import com.agency.contractmanagement.assembler.ContractorAssembler;
-import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractor.assembler.ContractorAssembler;
+import com.agency.contractor.model.Contractor;
+import com.agency.contractor.repository.ContractorRepository;
+import com.agency.contractor.service.ContractorSearchServiceImpl;
 import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.project.repository.ProjectRepository;
-import com.agency.search.SortableConfig;
 import com.agency.user.model.Address;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -31,7 +31,7 @@ class ContractorSearchServiceImplTest {
 
     @BeforeEach
     void setUp() {
-        service = new ContractorSearchServiceImpl(contractorRepository, projectRepository, new SortableConfig());
+        service = new ContractorSearchServiceImpl(contractorRepository, projectRepository);
     }
 
     @Test

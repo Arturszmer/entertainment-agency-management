@@ -1,6 +1,6 @@
 package com.agency.project.service;
 
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
