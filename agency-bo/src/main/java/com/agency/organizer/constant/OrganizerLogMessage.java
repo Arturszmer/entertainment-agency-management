@@ -1,4 +1,4 @@
-package com.agency.contractmanagement.constant;
+package com.agency.organizer.constant;
 
 public final class OrganizerLogMessage {
 

@@ -9,7 +9,6 @@ import com.agency.exception.ProjectErrorResult;
 import com.agency.project.assembler.ProjectAssembler;
 import com.agency.project.model.Project;
 import com.agency.project.repository.ProjectRepository;
-import com.agency.search.SortableConfig;
 import com.agency.service.ProjectSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,12 +27,11 @@ import java.util.UUID;
 public class ProjectSearchServiceImpl implements ProjectSearchService {
 
     private final ProjectRepository repository;
-    private final SortableConfig sortableConfig;
 
     @Override
     @Transactional(readOnly = true)
     public Page<ProjectSearchDto> findAll(int page, int size, String sort, String order) {
-        Pageable pagesRequest = sortableConfig.getPageable(page, size, sort, order);
+        Pageable pagesRequest = ProjectSearchFilter.forPageable(page, size, sort, order).getPageable();
         Page<Project> projectPage = repository.findAll(pagesRequest);
         List<ProjectSearchDto> projectsDto = projectPage.stream().map(ProjectAssembler::toSearchDto).toList();
         return new PageImpl<>(projectsDto, pagesRequest, projectPage.getTotalElements());

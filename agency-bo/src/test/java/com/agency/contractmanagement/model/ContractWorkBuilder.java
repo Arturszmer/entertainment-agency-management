@@ -1,7 +1,6 @@
 package com.agency.contractmanagement.model;
 
-import com.agency.contractmanagement.model.contract.ContractWork;
-import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.contract.ContractWorkStatus;
 

@@ -1,7 +1,6 @@
 package com.agency.user.service;
 
 import com.agency.dto.userprofile.UserProfileDetailsDto;
-import com.agency.search.SortableConfig;
 import com.agency.service.UserSearchService;
 import com.agency.user.assembler.UserAssembler;
 import com.agency.user.model.UserProfile;
@@ -19,11 +18,10 @@ import java.util.List;
 public class UserSearchServiceImpl implements UserSearchService {
 
     private final UserProfileRepository repository;
-    private final SortableConfig sortableConfig;
 
     @Override
     public Page<UserProfileDetailsDto> getAllUsers(int page, int size, String sort, String order) {
-        Pageable pageRequest = sortableConfig.getPageable(page, size, sort, order);
+        Pageable pageRequest = UserSearchFilter.forPageable(page, size, sort, order).getPageable();
         Page<UserProfile> usersPage = repository.findAll(pageRequest);
         List<UserProfileDetailsDto> userDetailsDto = usersPage.getContent().stream()
                 .map(UserAssembler::toUserProfileDetailsDto)

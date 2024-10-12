@@ -1,6 +1,6 @@
 package com.agency.project.model.costcreator;
 
-import com.agency.contractmanagement.model.contract.ContractWork;
+import com.agency.contractmanagement.model.ContractWork;
 import com.agency.project.model.Project;
 import com.agency.project.model.ProjectCost;
 import lombok.RequiredArgsConstructor;

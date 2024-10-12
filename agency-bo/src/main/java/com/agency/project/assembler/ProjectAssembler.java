@@ -1,6 +1,6 @@
 package com.agency.project.assembler;
 
-import com.agency.contractmanagement.assembler.ContractorAssembler;
+import com.agency.contractor.assembler.ContractorAssembler;
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.agency.dto.project.ProjectContractorAssignResponse;
 import com.agency.dto.project.ProjectDto;

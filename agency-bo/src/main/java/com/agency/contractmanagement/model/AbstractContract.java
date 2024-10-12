@@ -1,4 +1,4 @@
-package com.agency.contractmanagement.model.contract;
+package com.agency.contractmanagement.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.dict.contract.ContractType;

@@ -1,8 +1,8 @@
-package com.agency.contractmanagement.service;
+package com.agency.contractor.service;
 
-import com.agency.contractmanagement.assembler.ContractorAssembler;
-import com.agency.contractmanagement.model.contractor.Contractor;
-import com.agency.contractmanagement.repository.ContractorRepository;
+import com.agency.contractor.assembler.ContractorAssembler;
+import com.agency.contractor.model.Contractor;
+import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
 import com.agency.exception.AgencyException;
@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.agency.contractmanagement.constant.ContractorLogsMessage.*;
+import static com.agency.contractor.constant.ContractorLogsMessage.*;
 import static com.agency.exception.ContractorErrorResult.*;
 
 @Service

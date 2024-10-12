@@ -1,7 +1,7 @@
 package com.agency.organizer.service;
 
 import com.agency.auth.RoleType;
-import com.agency.contractmanagement.constant.OrganizerLogMessage;
+import com.agency.organizer.constant.OrganizerLogMessage;
 import com.agency.dto.organizer.OrganizerCreate;
 import com.agency.dto.organizer.OrganizerDto;
 import com.agency.dto.organizer.OrganizerNotesEdit;

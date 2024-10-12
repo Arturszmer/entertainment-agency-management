@@ -1,6 +1,6 @@
-package com.agency.contractmanagement.validator;
+package com.agency.contractor.validator;
 
-import com.agency.contractmanagement.model.contractor.Contractor;
+import com.agency.contractor.model.Contractor;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ProjectErrorResult;
 

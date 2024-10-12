@@ -5,7 +5,6 @@ import com.agency.dto.organizer.OrganizerSearchResultDto;
 import com.agency.organizer.assembler.OrganizerAssembler;
 import com.agency.organizer.model.Organizer;
 import com.agency.organizer.repository.OrganizerRepository;
-import com.agency.search.SortableConfig;
 import com.agency.service.OrganizerSearchService;
 import com.agency.user.helper.SecurityContextUsers;
 import lombok.RequiredArgsConstructor;
@@ -24,13 +23,11 @@ import java.util.UUID;
 public class OrganizerSearchServiceImpl implements OrganizerSearchService {
 
     private final OrganizerRepository repository;
-    private final SortableConfig sortableConfig;
-
 
     @Override
     public Page<OrganizerSearchResultDto> findAll(int page, int size, String sort, String order) {
         String mappedSort = mapAddressSortColumn(sort);
-        Pageable pagesRequest = sortableConfig.getPageable(page, size, mappedSort, order);
+        Pageable pagesRequest = OrganizerSearchFilter.forPageable(page, size, mappedSort, order).getPageable();
         Page<Organizer> organizersPage = repository.findAll(pagesRequest);
         List<OrganizerSearchResultDto> organizersDto = organizersPage.getContent().stream().map(OrganizerAssembler::mapToSearchResult).toList();
 
@@ -53,7 +50,7 @@ public class OrganizerSearchServiceImpl implements OrganizerSearchService {
     @Override
     public Page<OrganizerSearchResultDto> findAllByOrganizerName(int page, int size, String sort, String order, String organizerName) {
         String mappedSort = mapAddressSortColumn(sort);
-        Pageable pagesRequest = sortableConfig.getPageable(page, size, mappedSort, order);
+        Pageable pagesRequest = OrganizerSearchFilter.forPageable(page, size, mappedSort, order).getPageable();
         Page<Organizer> organizersPage = repository.findAllByOrganizerName(organizerName, pagesRequest);
         List<OrganizerSearchResultDto> organizersDto = organizersPage.stream().map(OrganizerAssembler::mapToSearchResult).toList();
 

@@ -1,4 +1,4 @@
-package com.agency.contractmanagement.constant;
+package com.agency.contractor.constant;
 
 public final class ContractorLogsMessage {
 
