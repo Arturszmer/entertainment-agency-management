@@ -1,6 +1,6 @@
-package com.agency.contractmanagement.model;
+package com.agency.contractor.model;
 
-import com.agency.contractor.model.Contractor;
+import com.agency.contractmanagement.model.ContractWork;
 import com.agency.project.model.Project;
 import com.agency.user.model.Address;
 

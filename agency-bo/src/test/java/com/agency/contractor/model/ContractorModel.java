@@ -1,6 +1,5 @@
-package com.agency.contractmanagement.model;
+package com.agency.contractor.model;
 
-import com.agency.contractor.model.Contractor;
 import com.agency.dto.address.AddressDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.user.assembler.AddressAssembler;

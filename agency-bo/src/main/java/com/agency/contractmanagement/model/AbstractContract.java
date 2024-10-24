@@ -48,4 +48,5 @@ public abstract class AbstractContract extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
 
+    public abstract void checkForDelete();
 }

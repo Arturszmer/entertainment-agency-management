@@ -5,6 +5,7 @@ import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorDto;
+import com.agency.dto.contractor.ContractorSearchRequest;
 import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractorErrorResult;
@@ -13,8 +14,6 @@ import com.agency.project.repository.ProjectRepository;
 import com.agency.service.ContractorSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,13 +39,10 @@ public class ContractorSearchServiceImpl implements ContractorSearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public Page<ContractorShortInfoDto> getContractorsShortInfo(int page, int size, String sort, String order) {
-        Pageable pagesRequest = ContractorSearchFilter.forPageable(page, size, sort, order).getPageable();
-        Page<Contractor> contractorsPage = repository.findAll(pagesRequest);
-        List<ContractorShortInfoDto> contractorDtos = contractorsPage.getContent().stream()
-                .map(ContractorAssembler::toShortContractorDto)
-                .toList();
-        return new PageImpl<>(contractorDtos, pagesRequest, contractorsPage.getTotalElements());
+    public Page<ContractorShortInfoDto> getContractorsShortInfo(ContractorSearchRequest request) {
+        ContractorSearchFilter filter = ContractorSearchFilter.of(request);
+        return repository.findAll(filter.getPredicate(), filter.getPageable())
+                .map(ContractorAssembler::toShortContractorDto);
     }
 
     @Override

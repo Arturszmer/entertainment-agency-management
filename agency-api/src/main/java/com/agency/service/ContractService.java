@@ -6,4 +6,5 @@ import com.agency.dto.contractwork.ContractWorkDto;
 public interface ContractService {
 
     ContractWorkDto createContractOfWork(ContractWorkCreateDto createDto);
+    void deleteContractOfWork(String publicId);
 }

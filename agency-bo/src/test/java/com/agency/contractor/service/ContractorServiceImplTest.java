@@ -1,11 +1,10 @@
-package com.agency.contractmanagement.service;
+package com.agency.contractor.service;
 
 import com.agency.contractmanagement.model.ContractWorkBuilder;
-import com.agency.contractmanagement.model.ContractorBuilder;
+import com.agency.contractor.model.ContractorBuilder;
 import com.agency.contractmanagement.model.ContractWork;
 import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
-import com.agency.contractor.service.ContractorServiceImpl;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.exception.AgencyException;
 import com.agency.service.ContractorService;
@@ -16,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.agency.contractmanagement.model.ContractorModel.*;
+import static com.agency.contractor.model.ContractorModel.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

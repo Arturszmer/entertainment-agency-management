@@ -1,7 +1,8 @@
 package com.agency.dto.contractwork;
 
 public record  ContractWorkSearchResultDto(
-        ContractWorkDto contracts,
-        String contractorName,
+        ContractWorkDto contract,
+        String firstName,
+        String lastName,
         String projectNumber
 ) {}

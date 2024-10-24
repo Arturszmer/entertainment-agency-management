@@ -7,6 +7,7 @@ import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractorErrorResult;
+import com.agency.exception.ProjectErrorResult;
 import com.agency.organizer.model.Organizer;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -99,5 +100,15 @@ public class Project extends AbstractContract implements CostRelated {
 
     public void addCost(ProjectCost newCost) {
         getProjectCosts().add(newCost);
+    }
+
+    @Override
+    public void checkForDelete() {
+        if (status != ProjectStatus.DRAFT) {
+            throw new AgencyException(ProjectErrorResult.CANNOT_DELETE_PROJECT, "Project has not in draft status");
+        }
+        if (!contractors.isEmpty()) {
+            throw new AgencyException(ProjectErrorResult.CANNOT_DELETE_PROJECT, "Contractors are existed in the project");
+        }
     }
 }
