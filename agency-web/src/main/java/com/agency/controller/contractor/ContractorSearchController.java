@@ -2,6 +2,7 @@ package com.agency.controller.contractor;
 
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorDto;
+import com.agency.dto.contractor.ContractorSearchRequest;
 import com.agency.dto.contractor.ContractorShortInfoDto;
 import com.agency.service.ContractorSearchService;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,8 @@ public class ContractorSearchController {
 
     @GetMapping
     @PreAuthorize("hasAnyAuthority('CONTRACTORS_VIEW')")
-    public ResponseEntity<Page<ContractorShortInfoDto>> getContractorsShortInfo(@RequestParam("page") int page,
-                                                                                @RequestParam("size") int size,
-                                                                                @RequestParam(required = false, value = "sort") String sort,
-                                                                                @RequestParam(required = false, value = "order") String order){
-        return ResponseEntity.ok(service.getContractorsShortInfo(page, size, sort, order));
+    public ResponseEntity<Page<ContractorShortInfoDto>> getContractorsShortInfo(ContractorSearchRequest request) {
+        return ResponseEntity.ok(service.getContractorsShortInfo(request));
     }
 
     @PostMapping("/to-assign")

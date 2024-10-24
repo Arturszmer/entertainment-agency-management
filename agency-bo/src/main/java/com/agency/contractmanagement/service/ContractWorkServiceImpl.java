@@ -1,6 +1,7 @@
 package com.agency.contractmanagement.service;
 
 import com.agency.contractmanagement.assembler.ContractAssembler;
+import com.agency.contractmanagement.constant.ContractLogsMessage;
 import com.agency.contractmanagement.model.ContractWork;
 import com.agency.contractor.model.Contractor;
 import com.agency.contractmanagement.repository.ContractWorkRepository;
@@ -29,7 +30,7 @@ import static com.agency.dict.project.ProjectStatus.TERMINATED;
 @RequiredArgsConstructor
 @Service
 @Slf4j
-public class ContractServiceImpl implements ContractService {
+public class ContractWorkServiceImpl implements ContractService {
 
     private final ContractWorkRepository contractWorkRepository;
     private final ContractorRepository contractorRepository;
@@ -55,6 +56,15 @@ public class ContractServiceImpl implements ContractService {
         contractorRepository.save(contractor);
         log.info("The new contract of work for contractor no. id: {} has beed created", contractor.getId());
         return ContractAssembler.toContractWorkDto(contract);
+    }
+
+    @Override
+    public void deleteContractOfWork(String publicId) {
+        ContractWork contractWork = contractWorkRepository.findContractWorkByPublicId(UUID.fromString(publicId))
+                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_NOT_EXISTS, publicId));
+        contractWork.checkForDelete();
+        contractWorkRepository.delete(contractWork);
+        log.info(ContractLogsMessage.SUCCESSFULLY_DELETED, publicId);
     }
 
     private static void checkIsProjectTerminated(ContractWorkCreateDto createDto, Project projectForContract) {

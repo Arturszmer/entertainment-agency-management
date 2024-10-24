@@ -21,7 +21,7 @@ import static java.util.Optional.ofNullable;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class ContractWorkSearchFilter extends AbstractSortableConfig {
+class ContractWorkSearchFilter extends AbstractSortableConfig {
 
     private static final QContractWork CONTRACT_WORK = QContractWork.contractWork;
 

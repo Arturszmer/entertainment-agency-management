@@ -14,6 +14,7 @@ public class ContractAssembler {
 
     public static ContractWorkDto toContractWorkDto(ContractWork contract) {
         return new ContractWorkDto(
+                contract.getPublicId().toString(),
                 contract.getContractNumber(),
                 contract.getSignDate(),
                 contract.getStartDate(),
@@ -29,7 +30,7 @@ public class ContractAssembler {
     public static ContractWorkSearchResultDto toContractWorkSearchResultDto(ContractWork contractWork) {
         Contractor contractor = contractWork.getContractor();
         return new ContractWorkSearchResultDto(
-                toContractWorkDto(contractWork), contractor.getFirstName() + " " + contractor.getLastName(), contractWork.getProjectNumber()
+                toContractWorkDto(contractWork), contractor.getFirstName(),contractor.getLastName(), contractWork.getProjectNumber()
         );
     }
 }

@@ -3,7 +3,7 @@ package com.agency.agencydetails.model;
 import com.agency.dto.agencydetails.AgencyDetailsDto;
 import com.agency.user.model.Address;
 
-import static com.agency.contractmanagement.model.ContractorModel.createAddressDto;
+import static com.agency.contractor.model.ContractorModel.createAddressDto;
 
 public class AgencyDetailsModel {
 

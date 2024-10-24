@@ -4,6 +4,8 @@ import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dict.contract.ContractWorkStatus;
+import com.agency.exception.AgencyException;
+import com.agency.exception.ContractErrorResult;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -82,5 +84,12 @@ public class ContractWork extends AbstractContract {
                 contractor,
                 DRAFT
         );
+    }
+
+    @Override
+    public void checkForDelete() {
+        if(DRAFT != status){
+            throw new AgencyException(ContractErrorResult.CONTRACT_CANNOT_BE_DELETED);
+        }
     }
 }
