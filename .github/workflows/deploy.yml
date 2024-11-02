@@ -34,10 +34,10 @@ jobs:
       - name: Stop service
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.MIKRUS_HOST_IP }}
-          username: ${{ secrets.MIKRUS_USER }}
-          key: ${{ secrets.MIKRUS_PRIVATE_KEY }}
-          port: ${{ secrets.MIKRUS_ACCESS_PORT }}
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SERVER_PRIVATE_KEY }}
+          port: ${{ secrets.ACCESS_PORT }}
           script: |
             cd /var/www/event-paiger/event-paiger-users/event-paiger-users-web
             docker compose down
