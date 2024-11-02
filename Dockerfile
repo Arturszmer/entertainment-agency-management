@@ -2,7 +2,7 @@ FROM openjdk:17-jdk
 
 WORKDIR /app
 
-COPY agency-web/target/agency-web-0.0.1-SNAPSHOT.jar /app/agency-web-0.0.1-SNAPSHOT.jar
+COPY agency-web-0.0.1-SNAPSHOT.jar /app/agency-web-0.0.1-SNAPSHOT.jar
 
 EXPOSE 31002
 
