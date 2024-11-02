@@ -1,27 +1,29 @@
 services:
-  postgres:
-    container_name: agency-db
-    image: postgres
-    environment:
-      POSTGRES_USER: agency-user
-      POSTGRES_PASSWORD: agency-pass
-      POSTGRES_DB: agencydb
-    ports:
-    - "5434:5432"
-    volumes:
-    - postgres:/var/lib/postgres/data
-    networks:
-    - agency-network
+#  agency-db-local:
+#    container_name: agency-db-local-container
+#    image: postgres
+#    environment:
+#      POSTGRES_USER: agency-user
+#      POSTGRES_PASSWORD: agency-pass
+#      POSTGRES_DB: agencydb
+#    ports:
+#    - "5432:5432"
+#    volumes:
+#    - /Users/artmusicrecords/FIRMA/AGENCY-MANAGEMENT/data:/var/lib/postgresql/data
+#    networks:
+#    - agency-network
   event-paiger-app:
-    container_name: entertainment-agency
-    image: entertainment-agency-image
+    container_name: entertainment-agency-app
+    image: entertainment-agency-app-image
     ports:
-      - "8081:8081"
+      - "40482:8082"
     networks:
       - agency-network
+#    depends_on:
+#      - agency-db-local
 
-volumes:
-  postgres:
+#volumes:
+#  postgres:
 
 networks:
   agency-network:
