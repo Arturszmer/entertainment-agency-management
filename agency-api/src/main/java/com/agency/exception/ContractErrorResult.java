@@ -14,7 +14,9 @@ public enum ContractErrorResult implements AgencyErrorResult{
     PROJECT_IS_TERMINATED(HttpStatus.BAD_REQUEST, "ACW004", "Cannot create a contract based on the terminated project."),
     CONTRACTOR_IS_NOT_PART_OF_THE_PROJECT(HttpStatus.BAD_REQUEST, "ACW005", "Contractor %s %s is not part of the project no.: %s"),
     CONTRACT_NOT_EXISTS(HttpStatus.NOT_FOUND, "ACW006" , "The contract with public id %s does not exist" ),
-    CONTRACT_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "ACW007" , "Only the contract with DRAFT status can be deleted"),;
+    CONTRACT_CANNOT_BE_DELETED(HttpStatus.BAD_REQUEST, "ACW007" , "Only the contract with DRAFT status can be deleted"),
+    CANNOT_GENERATE_ANOTHER_CONTRACT_DOCUMENT(HttpStatus.BAD_REQUEST, "ACW008" , "Cannot generate another contract document"),
+    CONTRACT_DOCUMENT_DOES_NOT_EXISTS(HttpStatus.NOT_FOUND, "ACW009" , "The contract with public id %s does not exist" ),;
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -18,5 +18,6 @@ public abstract class BaseEntity<ID extends Serializable> extends EntityLog impl
     @Id
     @Column(name = "ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @ExcludeFromPlaceholders
     private ID id;
 }

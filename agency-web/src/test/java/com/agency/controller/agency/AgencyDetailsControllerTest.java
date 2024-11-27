@@ -54,7 +54,7 @@ class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
 
         // then
         assertTrue(agencyDetailsOptional.isPresent());
-        assertEquals(editetAgencyName, agencyDetailsOptional.get().getName());
+        assertEquals(editetAgencyName, agencyDetailsOptional.get().getAgencyName());
 
     }
 
@@ -63,6 +63,8 @@ class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
                 name,
                 "6611235511",
                 "123456789",
+                null,
+                null,
                 null,
                 null,
                 new AddressDto(

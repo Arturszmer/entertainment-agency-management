@@ -1,6 +1,7 @@
 package com.agency.contractor.model;
 
 import com.agency.common.BaseEntity;
+import com.agency.common.ExcludeFromPlaceholders;
 import com.agency.contractmanagement.model.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.exception.AgencyException;
@@ -27,6 +28,7 @@ import java.util.UUID;
 public class Contractor extends BaseEntity<Long> {
 
     @Column(name = "public_id", nullable = false, unique = true)
+    @ExcludeFromPlaceholders
     private UUID publicId;
     private String firstName;
     private String lastName;
@@ -41,8 +43,10 @@ public class Contractor extends BaseEntity<Long> {
     @Column(name = "contractor_description")
     private String contractorDescription;
     @OneToMany(mappedBy = "contractor", cascade = CascadeType.PERSIST)
+    @ExcludeFromPlaceholders
     private List<ContractWork> contracts = new ArrayList<>();
     @ManyToMany(mappedBy = "contractors")
+    @ExcludeFromPlaceholders
     private List<Project> projects = new ArrayList<>();
 
     public Contractor(String name, String lastName, String pesel, LocalDate birthDate, Address address, String phone, String email, String contractorType) {

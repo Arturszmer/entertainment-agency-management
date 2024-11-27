@@ -8,13 +8,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.agency.dict.userProfile.Permission.*;
 
@@ -23,6 +26,7 @@ import static com.agency.dict.userProfile.Permission.*;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @EqualsAndHashCode(callSuper = true)
 public class Role extends BaseEntity<Long> {
 
@@ -32,8 +36,9 @@ public class Role extends BaseEntity<Long> {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "permission")
-    private List<Permission> permissions = new ArrayList<>();
+    private Set<Permission> permissions = new HashSet<>();
 
+    //TODO: add functionality to do not hardcode default permissions
     public Role(RoleType name) {
         this.name = name;
         switch (name) {

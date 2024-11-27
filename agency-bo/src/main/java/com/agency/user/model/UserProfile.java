@@ -3,6 +3,7 @@ package com.agency.user.model;
 import com.agency.auth.CreateUserRequest;
 import com.agency.auth.RoleType;
 import com.agency.common.BaseEntity;
+import com.agency.dict.userProfile.Permission;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.exception.AgencyException;
 import jakarta.persistence.CascadeType;
@@ -23,10 +24,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
-import static com.agency.exception.UserExceptionResult.USER_IS_ALREADY_BLOCKED;
-import static com.agency.exception.UserExceptionResult.USER_IS_NOT_BLOCKED;
+import static com.agency.exception.UserExceptionResult.*;
 
 @Entity
 @Table(name = "user_profile")
@@ -56,9 +57,6 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
                 joinColumns = @JoinColumn(name = "user_profile_id", referencedColumnName = "ID"),
                 inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "ID"))
     private List<Role> roles = new ArrayList<>();
-//    @Column(name = "role")
-//    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-//    private Role role;
 
     @Column(name = "account_non_locked")
     private boolean accountNonLocked = true;
@@ -159,5 +157,18 @@ public class UserProfile extends BaseEntity<Long> implements UserDetails {
 
     public Role getRole(){
         return getRoles().get(0);
+    }
+
+    public Set<Permission> getPermissions() {
+
+        return getRole().getPermissions();
+    }
+
+    public void updatePermissions(Set<Permission> updatedPermissions) {
+        if(updatedPermissions.stream().allMatch(permission -> permission.canBeUpdated(permission, getRole().getName()))){
+            getRole().setPermissions(updatedPermissions);
+        } else {
+            throw new IllegalArgumentException(PERMISSION_NOT_AVAILABLE_FOR_ROLE_TYPE.getMessage());
+        }
     }
 }

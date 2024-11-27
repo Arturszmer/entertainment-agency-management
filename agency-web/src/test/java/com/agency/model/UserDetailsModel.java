@@ -4,11 +4,11 @@ import com.agency.auth.RoleType;
 import com.agency.dto.userprofile.RoleDto;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 
-import java.util.List;
+import java.util.Set;
 
 public class UserDetailsModel {
 
-    public static UserProfileDetailsDto defaultUserDetails(){
+    public static UserProfileDetailsDto defaultUserDetails() {
         return new UserProfileDetailsDto(
                 "admin",
                 "admin@example.com",
@@ -21,7 +21,7 @@ public class UserDetailsModel {
 
     private static RoleDto getRoleDto() {
         return new RoleDto(
-                RoleType.ADMIN, List.of()
+                RoleType.ADMIN, Set.of()
         );
     }
 }

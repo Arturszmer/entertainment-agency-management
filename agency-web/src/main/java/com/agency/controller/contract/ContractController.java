@@ -31,4 +31,6 @@ public class ContractController {
         service.deleteContractOfWork(publicId);
         return ResponseEntity.noContent().build();
     }
+
+
 }

@@ -3,8 +3,8 @@ package com.agency.contractmanagement.service;
 import com.agency.contractmanagement.assembler.ContractAssembler;
 import com.agency.contractmanagement.constant.ContractLogsMessage;
 import com.agency.contractmanagement.model.ContractWork;
-import com.agency.contractor.model.Contractor;
 import com.agency.contractmanagement.repository.ContractWorkRepository;
+import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
@@ -15,8 +15,8 @@ import com.agency.exception.ContractorErrorResult;
 import com.agency.project.model.Project;
 import com.agency.project.model.ProjectCost;
 import com.agency.project.service.ContractNumberGenerator;
-import com.agency.service.ContractService;
 import com.agency.project.service.CostService;
+import com.agency.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -60,15 +60,19 @@ public class ContractWorkServiceImpl implements ContractService {
 
     @Override
     public void deleteContractOfWork(String publicId) {
-        ContractWork contractWork = contractWorkRepository.findContractWorkByPublicId(UUID.fromString(publicId))
-                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_NOT_EXISTS, publicId));
+        ContractWork contractWork = getEntity(publicId);
         contractWork.checkForDelete();
         contractWorkRepository.delete(contractWork);
         log.info(ContractLogsMessage.SUCCESSFULLY_DELETED, publicId);
     }
 
+    private ContractWork getEntity(String publicId) {
+        return contractWorkRepository.findContractWorkByPublicId(UUID.fromString(publicId))
+                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_NOT_EXISTS, publicId));
+    }
+
     private static void checkIsProjectTerminated(ContractWorkCreateDto createDto, Project projectForContract) {
-        if(TERMINATED.equals(projectForContract.getStatus())){
+        if (TERMINATED.equals(projectForContract.getStatus())) {
             throw new AgencyException(ContractErrorResult.PROJECT_IS_TERMINATED, createDto.projectContractNumber());
         }
     }

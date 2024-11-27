@@ -1,6 +1,8 @@
 package com.agency.user.service;
 
 import com.agency.auth.ChangePasswordRequest;
+import com.agency.dict.userProfile.Permission;
+import com.agency.dto.userprofile.AgencyPermissionsDto;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.exception.AgencyException;
 import com.agency.service.UserService;
@@ -13,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 
@@ -93,6 +96,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto, String currentUsername) {
         return editUserDetails(userProfileDetailsDto, currentUsername);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public AgencyPermissionsDto getUserPermissions(String username) {
+        UserProfile userProfile = repository.findUserProfileByUsername(username)
+                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+
+        return new AgencyPermissionsDto(
+                Permission.getPermissionsToManage(userProfile.getRole().getName()),
+                userProfile.getPermissions());
     }
 
     @NotNull

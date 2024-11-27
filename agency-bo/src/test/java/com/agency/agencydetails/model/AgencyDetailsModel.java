@@ -13,6 +13,8 @@ public class AgencyDetailsModel {
                 "1234567891",
                 null,
                 null,
+                "FirstName",
+                "LastName",
                 null,
                 createAddressDto()
         );
@@ -23,7 +25,9 @@ public class AgencyDetailsModel {
                 "Entertainment",
                 "9234567891",
                 null,
-                null,
+                "89120995302",
+                "Andrzej",
+                "Kowalski",
                 null,
                 createAddress()
         );
