@@ -6,12 +6,14 @@ import com.agency.dict.contract.ContractWorkStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import static com.agency.dict.contract.ContractType.CONTRACT_WORK;
 import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
 
 public class ContractWorkBuilder {
 
+    private UUID publicID;
     private String contractNumber;
     private LocalDate signDate;
     private LocalDate startDate;
@@ -27,6 +29,21 @@ public class ContractWorkBuilder {
 
     public static ContractWorkBuilder aContractWorkBuilder() {
         return new ContractWorkBuilder();
+    }
+
+    public ContractWorkBuilder withBasicData(){
+        this.contractNumber = "UoD/05/2024-1";
+        this.signDate = LocalDate.now();
+        this.startDate = LocalDate.now();
+        this.endDate = LocalDate.now();
+        this.subjectOfTheContract = "Subject Of The";
+        this.salary = BigDecimal.valueOf(100);
+        return this;
+    }
+
+    public ContractWorkBuilder withPublicId(String publicId) {
+        this.publicID = UUID.fromString(publicId);
+        return this;
     }
 
     public ContractWorkBuilder withContractNumber(String contractNumber) {

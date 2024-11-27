@@ -1,5 +1,6 @@
 package com.agency.contractmanagement.model;
 
+import com.agency.common.ExcludeFromPlaceholders;
 import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
@@ -44,11 +45,18 @@ public class ContractWork extends AbstractContract {
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @NonNull
     @Setter
+    @ExcludeFromPlaceholders
     private Contractor contractor;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
+    @ExcludeFromPlaceholders
     private ContractWorkStatus status;
+
+    @Column(name = "file_id_reference")
+    @Setter
+    @ExcludeFromPlaceholders
+    private String filename;
 
     public ContractWork(String contractNumber,
                         LocalDate signDate,

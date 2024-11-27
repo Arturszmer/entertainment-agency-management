@@ -5,7 +5,6 @@ import com.agency.agencydetails.repository.AgencyDetailsRepository;
 import com.agency.common.validators.PeselValidator;
 import com.agency.dto.agencydetails.AgencyDetailsDto;
 import com.agency.exception.AgencyException;
-import com.agency.user.assembler.AddressAssembler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ public class AgencyDetailsService {
         if(repository.findAll().isEmpty()){
             AgencyDetails agencyDetails = repository.save(AgencyDetails.initialize(agencyDetailsDto));
             log.info("Agency with NIP number {} has been initialized", agencyDetails.getNip());
-            return toDto(agencyDetails);
+            return AgencyDetailsAssembler.toDto(agencyDetails);
         } else {
             throw new AgencyException(ONLY_ONE_AGENCY_CAN_EXIST);
         }
@@ -42,13 +41,13 @@ public class AgencyDetailsService {
         Optional<AgencyDetails> agencyDetailsOpt = repository.findAll().stream().findFirst();
         return agencyDetailsOpt.map(agencyDetails -> {
             agencyDetails.update(agencyDetailsDto);
-            return toDto(repository.save(agencyDetails));
+            return AgencyDetailsAssembler.toDto(repository.save(agencyDetails));
         }).orElseThrow(() -> new AgencyException(AGENCY_NOT_INITIALIZED_EXCEPTION));
     }
 
     public AgencyDetailsDto getAgencyDetails() {
         return repository.findAll().stream().findFirst()
-                .map(this::toDto)
+                .map(AgencyDetailsAssembler::toDto)
                 .orElseThrow(() -> new AgencyException(AGENCY_NOT_INITIALIZED_EXCEPTION));
     }
 
@@ -58,10 +57,5 @@ public class AgencyDetailsService {
                 throw new AgencyException(PESEL_INVALID_EXCEPTION);
             }
         }
-    }
-
-    private AgencyDetailsDto toDto(AgencyDetails agencyDetails) {
-        return new AgencyDetailsDto(agencyDetails.getName(), agencyDetails.getNip(), agencyDetails.getRegon(), agencyDetails.getPesel(),
-                agencyDetails.getKrsNumber(), AddressAssembler.toDto(agencyDetails.getAddress()));
     }
 }

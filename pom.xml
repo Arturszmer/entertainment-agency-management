@@ -16,6 +16,7 @@
     <modules>
         <module>agency-web</module>
         <module>agency-api</module>
+        <module>agency-doc-generator</module>
         <module>agency-bo</module>
         <module>agency-auth</module>
         <module>agency-security</module>

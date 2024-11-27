@@ -32,6 +32,14 @@ public class ContractorBuilder {
         return this;
     }
 
+    public ContractorBuilder withBasicData() {
+        this.firstName = "John";
+        this.lastName = "Doe";
+        this.pesel = "123456789";
+        this.address = new Address();
+        return this;
+    }
+
     public ContractorBuilder withFirstName(String firstName) {
         this.firstName = firstName;
         return this;

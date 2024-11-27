@@ -1,6 +1,7 @@
 package com.agency.controller.user;
 
 import com.agency.auth.ChangePasswordRequest;
+import com.agency.dto.userprofile.AgencyPermissionsDto;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 import com.agency.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -61,5 +62,11 @@ public class UserController {
     @GetMapping("/details")
     public ResponseEntity<UserProfileDetailsDto> getDetails(){
         return ResponseEntity.ok(userService.getUserDetails());
+    }
+
+    @GetMapping("/roles/{username}")
+    @PreAuthorize("hasAuthority('USER_MANAGEMENT')")
+    public ResponseEntity<AgencyPermissionsDto> getUserRoles(@PathVariable("username") String currentUsername){
+        return ResponseEntity.ok(userService.getUserPermissions(currentUsername));
     }
 }

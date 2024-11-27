@@ -14,7 +14,9 @@ public enum UserExceptionResult implements AgencyErrorResult{
     NEW_PASSWORD_MUST_BE_DIFFERENT_THAN_CURRENT(HttpStatus.BAD_REQUEST, "USER004","The new password must be different than the old one."),
     USER_IS_ALREADY_BLOCKED(HttpStatus.BAD_REQUEST, "USER005", "User is already blocked"),
     USER_IS_NOT_BLOCKED(HttpStatus.BAD_REQUEST, "USER006", "User is not blocked"),
-    CANNOT_BLOCK_YOURSELF(HttpStatus.BAD_REQUEST, "USER007", "Cannot block yourself.");
+    CANNOT_BLOCK_YOURSELF(HttpStatus.BAD_REQUEST, "USER007", "Cannot block yourself."),
+    PERMISSION_NOT_AVAILABLE_FOR_ROLE_TYPE(HttpStatus.BAD_REQUEST, "USER008", "Permission not available for role type"),
+    CANNOT_CHANGE_ADMIN_PERMISSIONS(HttpStatus.BAD_REQUEST, "USER009", "Cannot change admin permissions"),;
 
     private final HttpStatus httpStatus;
     private final String code;

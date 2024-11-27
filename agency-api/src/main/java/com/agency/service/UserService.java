@@ -1,6 +1,7 @@
 package com.agency.service;
 
 import com.agency.auth.ChangePasswordRequest;
+import com.agency.dto.userprofile.AgencyPermissionsDto;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
 
 import java.nio.file.attribute.UserPrincipalNotFoundException;
@@ -21,4 +22,6 @@ public interface UserService {
     UserProfileDetailsDto changeCurrentUserDetails(UserProfileDetailsDto userProfileDetailsDto);
 
     UserProfileDetailsDto changeUserDetails(UserProfileDetailsDto userProfileDetailsDto, String currentUsername);
+
+    AgencyPermissionsDto getUserPermissions(String currentUsername);
 }

@@ -1,6 +1,7 @@
 package com.agency.contractmanagement.model;
 
 import com.agency.common.BaseEntity;
+import com.agency.common.ExcludeFromPlaceholders;
 import com.agency.dict.contract.ContractType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
@@ -21,6 +22,7 @@ import java.util.UUID;
 public abstract class AbstractContract extends BaseEntity<Long> {
 
     @Column(name = "public_id", nullable = false, unique = true)
+    @ExcludeFromPlaceholders
     private UUID publicId;
 
     @Column(name = "contract_number", nullable = false)
