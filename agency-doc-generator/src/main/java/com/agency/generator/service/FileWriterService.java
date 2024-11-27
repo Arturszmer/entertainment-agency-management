@@ -69,7 +69,7 @@ public class FileWriterService {
             if (Files.exists(existingFilePath)) {
                 Files.delete(existingFilePath);
             }
-            return write(file.getOriginalFilename(), context, file);
+            return write(file.getOriginalFilename(), context, file); //TODO: obsłużyć NULL
         } catch (IOException e){
             log.error(e.getMessage(), e);
         }

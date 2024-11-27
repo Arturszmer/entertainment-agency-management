@@ -55,7 +55,7 @@ public class DocGenerator {
         if (generationResult.isSuccess()) {
             fileName = String.format("%s_%s_%s-%s.docx", context.getContractor().name(),
                     context.getContractor().lastName(), date, operationId);
-            fileWriterService.write(docStaticFilePath, fileName, context.getDocContextType(), document);
+            fileWriterService.write(docStaticFilePath, fileName, context.getDocContextType(), document); // TODO: MOŻE ZWRACAĆ BOOLEAN I OBSŁUŻYĆ? COFNĄĆ TRANSAKCJE?
         } else {
             fileName = String.format("%s_%s_%s-error.txt", context.getContractor().name(), context.getContractor().lastName(),
                     operationId);
@@ -63,17 +63,11 @@ public class DocGenerator {
             fileWriterService.writeErrorLog(docStaticFilePath, fileName,
                     DocContextType.CONTRACT_WORK, generationResult.getErrorLogs());
             generationResult.setSuccess(Boolean.FALSE);
-//            String documentErrorOutputPath = generateDirectoryPath(context.getDocContextType());
-//            createErrorLogFile(documentErrorOutputPath, fileName, generationResult.getErrorLogs());
         }
         document.close();
         fis.close();
         return fileName;
     }
-
-//    private String generateDirectoryPath(DocContextType contextType) throws IOException {
-//        return new DirectoryGenerator(docStaticFilePath, contextType.toString()).getContextDirectory();
-//    }
 
     private void processParagraph(DocumentContext context, XWPFParagraph p) {
         String replacedText = new DocParagraphsReplacer(generationResult).replaceText(p.getText(), context.getPlaceholders());
@@ -111,19 +105,4 @@ public class DocGenerator {
         }
         generationResult.getErrorLogs().add("Available context placeholders: " + availablePlaceholders);
     }
-
-//    private void createErrorLogFile(String outputPath, String fileName, List<String> errorLogs) {
-//        try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath + fileName))) {
-//            writer.write("Error Logs:");
-//            writer.newLine();
-//
-//            for (String log : errorLogs) {
-//                writer.write(log);
-//                writer.newLine();
-//            }
-//            log.info("Document had some issues, document with logs has been saved successfully, filename: {}", fileName);
-//        } catch (IOException e) {
-//            log.error(e.getMessage(), e);
-//        }
-//    }
 }

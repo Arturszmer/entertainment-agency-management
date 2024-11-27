@@ -27,7 +27,8 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     private final FileWriterService fileWriter;
     private final String outputPath;
 
-    public DocumentTemplateServiceImpl(TemplateDocumentRepository templateDocumentRepository, DefaultDocumentTemplateResolver defaultDocumentTemplateResolver,
+    public DocumentTemplateServiceImpl(TemplateDocumentRepository templateDocumentRepository,
+                                       DefaultDocumentTemplateResolver defaultDocumentTemplateResolver,
                                        FileWriterService fileWriter,
                                        @Value("${doc-static-file-path}") String outputPath) {
         this.templateDocumentRepository = templateDocumentRepository;
@@ -47,7 +48,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         log.info("Start uploading new document template with name: {} for the context: {}", templateName, templateContext);
         DocumentTemplateValidator.validate(file);
 
-        String fileName = fileWriter.write(outputPath, DocContextType.TEMPLATE, file);
+        String fileName = fileWriter.write(outputPath, DocContextType.TEMPLATE, file); // TODO: OBSŁUŻYĆ NULL
 
         isDefault = resolveIsDefaultAttribute(isDefault, templateContext);
 

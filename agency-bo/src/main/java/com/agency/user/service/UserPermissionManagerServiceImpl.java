@@ -32,7 +32,7 @@ public class UserPermissionManagerServiceImpl implements UserPermissionManagerSe
 
         changedUser.updatePermissions(updatedPermissions);
         userProfileRepository.save(changedUser);
-        log.info("User profile %s permissions updated: {}", updatedPermissions);
+        log.info("User profile {} permissions updated: {}", username, updatedPermissions);
     }
 
     private void validateIsUserFromContextCouldChangeAdminUser(UserProfile changedUser, UserProfile userFromContext) {
