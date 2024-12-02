@@ -12,24 +12,27 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class FileWriterService {
 
+    private static final String SUCCESSFUL_LOG_MESSAGE = "Document with name {} has been saved successfully";
+
     public void write(String docStaticFilePath, String fileName, DocContextType context, XWPFDocument document) {
         try {
             String documentOutputPath = generateDirectoryPath(docStaticFilePath, context);
             OutputStream out = new FileOutputStream(documentOutputPath + fileName);
             document.write(out);
-            log.info("Document with name {} has been saved successfully", fileName);
+            logSuccessfullyOperation(fileName);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String write(String outputPath, DocContextType context, MultipartFile file) {
+    public Optional<String> write(String outputPath, DocContextType context, MultipartFile file) {
         try {
             Path documentOutputPath = new DirectoryGenerator(outputPath, context.toString()).getDirectory();
             String originalFilename = file.getOriginalFilename();
@@ -37,12 +40,14 @@ public class FileWriterService {
             assert originalFilename != null;
 
             Path filePath = documentOutputPath.resolve(originalFilename);
-            Files.write(filePath, file.getBytes());
-            return originalFilename;
+            Path saved = Files.write(filePath, file.getBytes());
+            logSuccessfullyOperation(originalFilename);
+            log.info("FILES WRITE: {}", saved.getFileName());
+            return Optional.of(originalFilename);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
+            return Optional.empty();
         }
-        return null;
     }
 
     public void writeErrorLog(String docStaticFilePath, String fileName, DocContextType context, List<String> errorLogs) {
@@ -62,21 +67,25 @@ public class FileWriterService {
         }
     }
 
-    public String update(String outputPath, DocContextType context, MultipartFile file, String existingFileName) {
+    public Optional<String> update(String outputPath, DocContextType context, MultipartFile file, String existingFileName) {
         try {
             Path directoryPath = new DirectoryGenerator(outputPath, context.toString()).getDirectory();
             Path existingFilePath = directoryPath.resolve(existingFileName);
             if (Files.exists(existingFilePath)) {
                 Files.delete(existingFilePath);
             }
-            return write(file.getOriginalFilename(), context, file); //TODO: obsłużyć NULL
+            return write(file.getOriginalFilename(), context, file);
         } catch (IOException e){
             log.error(e.getMessage(), e);
         }
-        return null;
+        return Optional.empty();
     }
 
     private String generateDirectoryPath(String docStaticFilePath, DocContextType contextType) throws IOException {
         return new DirectoryGenerator(docStaticFilePath, contextType.toString()).getContextDirectory();
+    }
+
+    private static void logSuccessfullyOperation(String originalFilename) {
+        log.info(SUCCESSFUL_LOG_MESSAGE, originalFilename);
     }
 }
