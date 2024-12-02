@@ -48,7 +48,11 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         log.info("Start uploading new document template with name: {} for the context: {}", templateName, templateContext);
         DocumentTemplateValidator.validate(file);
 
-        String fileName = fileWriter.write(outputPath, DocContextType.TEMPLATE, file); // TODO: OBSŁUŻYĆ NULL
+        Optional<String> fileNameOpt = fileWriter.write(outputPath, DocContextType.TEMPLATE, file);
+        if(fileNameOpt.isEmpty()) {
+            throw new AgencyException(DocumentTemplateResult.FILE_NOT_SAVED, file.getOriginalFilename());
+        }
+        String fileName = fileNameOpt.get();
 
         isDefault = resolveIsDefaultAttribute(isDefault, templateContext);
 
@@ -66,7 +70,11 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         DocumentTemplateValidator.validate(file);
 
         templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId)).ifPresent(templateDocument -> {
-            String fileName = fileWriter.update(outputPath, DocContextType.TEMPLATE, file, templateDocument.getFileName());
+            Optional<String> fileNameOpt = fileWriter.update(outputPath, DocContextType.TEMPLATE, file, templateDocument.getFileName());
+            if(fileNameOpt.isEmpty()) {
+                throw new AgencyException(DocumentTemplateResult.FILE_NOT_SAVED, file.getOriginalFilename());
+            }
+            String fileName = fileNameOpt.get();
             templateDocument.setFileName(fileName);
             templateDocumentRepository.save(templateDocument);
         });
