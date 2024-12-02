@@ -42,7 +42,7 @@ public class FileWriterService {
             Path filePath = documentOutputPath.resolve(originalFilename);
             Path saved = Files.write(filePath, file.getBytes());
             logSuccessfullyOperation(originalFilename);
-            log.info("FILES WRITE: {}", saved.getFileName());
+            log.info("FILES WRITE: {}", saved);
             return Optional.of(originalFilename);
         } catch (IOException e) {
             log.error(e.getMessage(), e);
