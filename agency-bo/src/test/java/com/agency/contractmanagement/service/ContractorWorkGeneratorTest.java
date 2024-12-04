@@ -57,7 +57,13 @@ class ContractorWorkGeneratorTest {
         String templateName = "Template";
         String fileName = "Umowa o dzieło - template.docx";
 
-        ContractWork contractWork = ContractWorkBuilder.aContractWorkBuilder().withPublicId(publicID).withBasicData().withContractor(ContractorBuilder.aContractorBuilder().withBasicData().build()).build();
+        ContractWork contractWork = ContractWorkBuilder.aContractWorkBuilder()
+                .withPublicId(publicID)
+                .withBasicData()
+                .withContractor(ContractorBuilder.aContractorBuilder()
+                        .withBasicData()
+                        .build())
+                .build();
 
         AgencyDetails agencyDetails = AgencyDetailsModel.getAgencyDetails();
 

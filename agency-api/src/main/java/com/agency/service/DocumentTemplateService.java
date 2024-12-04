@@ -10,4 +10,5 @@ public interface DocumentTemplateService {
 
     TemplateDocumentDto saveDocumentTemplate(MultipartFile file, String templateName, boolean isDefault, TemplateContext templateContext);
     void updateDocumentTemplate(MultipartFile file, String referenceId) throws IOException;
+    void removeTemplateDocument(String referenceId);
 }

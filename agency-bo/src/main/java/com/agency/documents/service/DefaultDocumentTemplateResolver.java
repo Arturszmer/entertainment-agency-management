@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -25,5 +26,19 @@ public class DefaultDocumentTemplateResolver {
                     log.info("Default document template with reference id {} has been changed to false.", template.getReferenceId());
                     templateDocumentRepository.save(template);
                 });
+    }
+
+    public void setLatestModifiedTemplateAsDefault(TemplateContext templateContext) {
+        List<TemplateDocument> allByContextType = templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext);
+        boolean defaultTemplateIsNotSet = allByContextType.stream()
+                .noneMatch(TemplateDocument::isDefault);
+        if(defaultTemplateIsNotSet) {
+            allByContextType.stream()
+                    .max(Comparator.comparing(TemplateDocument::getModificationTimestamp))
+                    .ifPresent(template -> {
+                        template.setDefault(true);
+                        templateDocumentRepository.save(template);
+                    });
+        }
     }
 }

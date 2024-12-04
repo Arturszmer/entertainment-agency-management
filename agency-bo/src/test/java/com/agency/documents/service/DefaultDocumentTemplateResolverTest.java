@@ -44,6 +44,4 @@ class DefaultDocumentTemplateResolverTest {
         //then
         assertFalse(defaultTemplate.isDefault());
     }
-
-
 }

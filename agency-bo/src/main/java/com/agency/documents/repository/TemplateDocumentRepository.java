@@ -15,4 +15,7 @@ public interface TemplateDocumentRepository extends JpaRepository<TemplateDocume
     Optional<TemplateDocument> findByTemplateName(String templateName);
     Optional<TemplateDocument> findByReferenceId(UUID referenceId);
     List<TemplateDocument> findAllTemplateDocumentsByTemplateContext(TemplateContext templateContext);
+
+    boolean existsTemplateDocumentByFileName(String originalFilename);
+    boolean existsTemplateDocumentByTemplateName(String templateName);
 }

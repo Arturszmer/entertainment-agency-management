@@ -6,13 +6,14 @@ import com.agency.service.DocumentTemplateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
 @RestController
-//@PreAuthorize("hasAuthority('DOCUMENT_MANAGEMENT')")
+@PreAuthorize("hasAuthority('DOCUMENT_MANAGEMENT')")
 @RequestMapping("api/v1/document/template")
 @RequiredArgsConstructor
 public class DocumentTemplateController {
@@ -37,5 +38,11 @@ public class DocumentTemplateController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body("Failed to update template");
         }
+    }
+
+    @DeleteMapping("/{public-id}")
+    ResponseEntity<Void> delete(@PathVariable("public-id") String templatePublicId){
+        templateService.removeTemplateDocument(templatePublicId);
+        return ResponseEntity.noContent().build();
     }
 }
