@@ -55,12 +55,12 @@ public class DocGenerator {
         if (generationResult.isSuccess()) {
             fileName = String.format("%s_%s_%s-%s.docx", context.getContractor().name(),
                     context.getContractor().lastName(), date, operationId);
-            fileWriterService.write(docStaticFilePath, fileName, context.getDocContextType(), document); // TODO: MOŻE ZWRACAĆ BOOLEAN I OBSŁUŻYĆ? COFNĄĆ TRANSAKCJE?
+            fileWriterService.write(fileName, context.getDocContextType(), document);
         } else {
             fileName = String.format("%s_%s_%s-error.txt", context.getContractor().name(), context.getContractor().lastName(),
                     operationId);
             setFinalErrorLog(context);
-            fileWriterService.writeErrorLog(docStaticFilePath, fileName,
+            fileWriterService.writeErrorLog(fileName,
                     DocContextType.CONTRACT_WORK, generationResult.getErrorLogs());
             generationResult.setSuccess(Boolean.FALSE);
         }

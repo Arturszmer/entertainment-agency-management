@@ -2,7 +2,7 @@ package com.agency.controller.contract;
 
 import com.agency.documentcontext.doccontext.DocContextType;
 import com.agency.documentcontext.doccontext.GenerationResult;
-import com.agency.contractmanagement.service.ContractWorkDocumentRemove;
+import com.agency.contractmanagement.service.ContractWorkDocumentRemoveService;
 import com.agency.service.ContractFileGeneratorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContractDocumentController {
 
     private final ContractFileGeneratorService generatorService;
-    private final ContractWorkDocumentRemove contractWorkDocumentRemove;
+    private final ContractWorkDocumentRemoveService contractWorkDocumentRemoveService;
 
     @PostMapping("/generate/{public-id}")
     ResponseEntity<GenerationResult> generate(@PathVariable("public-id") String contractPublicId, @RequestParam("template-name") String templateName){
@@ -30,7 +30,7 @@ public class ContractDocumentController {
 
     @DeleteMapping("/{public-id}")
     ResponseEntity<Void> delete(@PathVariable("public-id") String contractorPublicId){
-        contractWorkDocumentRemove.removeDocument(contractorPublicId);
+        contractWorkDocumentRemoveService.removeDocument(contractorPublicId);
         return ResponseEntity.ok().build();
     }
 }

@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
-@WithMockUser(roles = "ADMIN")
+@WithMockUser(authorities = {"AGENCY_MANAGEMENT", "ROLE_MANAGER"})
 @Sql(scripts = "/sql-init/50-agency-details-clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_CLASS)
 class AgencyDetailsControllerTest extends BaseIntegrationTestSettings {
 

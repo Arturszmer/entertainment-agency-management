@@ -1,10 +1,12 @@
 package com.agency.generator.service;
 
 import com.agency.documentcontext.doccontext.DocContextType;
+import com.agency.exception.AgencyException;
+import com.agency.exception.DocumentErrorResult;
 import com.agency.generator.DirectoryGenerator;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,47 +18,49 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @Slf4j
 public class FileWriterService {
 
     private static final String SUCCESSFUL_LOG_MESSAGE = "Document with name {} has been saved successfully";
+    private final String DOC_STATIC_FILE_PATH;
 
-    public void write(String docStaticFilePath, String fileName, DocContextType context, XWPFDocument document) {
+    public FileWriterService(@Value("${doc-static-file-path}") String outputDirectory) {
+        DOC_STATIC_FILE_PATH = outputDirectory;
+    }
+
+    public void write(String fileName, DocContextType context, XWPFDocument document) {
         try {
-            String documentOutputPath = generateDirectoryPath(docStaticFilePath, context);
+            String documentOutputPath = generateDirectoryPath(DOC_STATIC_FILE_PATH, context);
             OutputStream out = new FileOutputStream(documentOutputPath + fileName);
             document.write(out);
             logSuccessfullyOperation(fileName);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AgencyException(DocumentErrorResult.DOCUMENT_FILE_WRITE_ERROR);
         }
     }
 
-    public Optional<String> write(String outputPath, DocContextType context, MultipartFile file) {
+    public String write(DocContextType context, MultipartFile file) {
         try {
-            Path documentOutputPath = new DirectoryGenerator(outputPath, context.toString()).getDirectory();
+            Path documentOutputPath = new DirectoryGenerator(DOC_STATIC_FILE_PATH, context.toString()).getDirectory();
             String originalFilename = file.getOriginalFilename();
 
             assert originalFilename != null;
 
             Path filePath = documentOutputPath.resolve(originalFilename);
-            Path saved = Files.write(filePath, file.getBytes());
+            Files.write(filePath, file.getBytes());
             logSuccessfullyOperation(originalFilename);
-            log.info("FILES WRITE: {}", saved);
-            return Optional.of(originalFilename);
+            return originalFilename;
         } catch (IOException e) {
             log.error(e.getMessage(), e);
-            return Optional.empty();
+            throw new AgencyException(DocumentErrorResult.DOCUMENT_FILE_WRITE_ERROR);
         }
     }
 
-    public void writeErrorLog(String docStaticFilePath, String fileName, DocContextType context, List<String> errorLogs) {
+    public void writeErrorLog(String fileName, DocContextType context, List<String> errorLogs) {
         try {
-            String outputPath = generateDirectoryPath(docStaticFilePath, context);
+            String outputPath = generateDirectoryPath(DOC_STATIC_FILE_PATH, context);
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputPath + fileName));
             writer.write("Error Logs:");
             writer.newLine();
@@ -71,19 +75,20 @@ public class FileWriterService {
         }
     }
 
-    public Optional<String> update(String outputPath, DocContextType context, MultipartFile file, String existingFileName) {
-        try {
-            Path directoryPath = new DirectoryGenerator(outputPath, context.toString()).getDirectory();
-            Path existingFilePath = directoryPath.resolve(existingFileName);
-            if (Files.exists(existingFilePath)) {
-                Files.delete(existingFilePath);
-            }
-            return write(file.getOriginalFilename(), context, file);
-        } catch (IOException e){
-            log.error(e.getMessage(), e);
-        }
-        return Optional.empty();
-    }
+    // TODO: do usunięcia? Jeżeli nazwa pliku jest ta sama to powinien go nadpisać
+//    public String update(DocContextType context, MultipartFile file, String existingFileName) {
+//        try {
+//            Path directoryPath = new DirectoryGenerator(DOC_STATIC_FILE_PATH, context.toString()).getDirectory();
+//            Path existingFilePath = directoryPath.resolve(existingFileName);
+//            if (Files.exists(existingFilePath)) {
+//                Files.delete(existingFilePath);
+//            }
+//            return write(context, file);
+//        } catch (IOException e){
+//            log.error(e.getMessage(), e);
+//            throw new AgencyException(DocumentErrorResult.DOCUMENT_FILE_WRITE_ERROR);
+//        }
+//    }
 
     private String generateDirectoryPath(String docStaticFilePath, DocContextType contextType) throws IOException {
         return new DirectoryGenerator(docStaticFilePath, contextType.toString()).getContextDirectory();

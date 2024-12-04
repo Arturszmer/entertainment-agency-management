@@ -8,15 +8,16 @@ import com.agency.documents.repository.TemplateDocumentRepository;
 import com.agency.dto.document.TemplateDocumentDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.DocumentTemplateResult;
+import com.agency.generator.service.FileRemoveService;
 import com.agency.generator.service.FileWriterService;
 import com.agency.service.DocumentTemplateService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Optional;
 import java.util.UUID;
+
+import static com.agency.documents.service.DocumentTemplateValidator.validateFile;
 
 @Service
 @Slf4j
@@ -24,17 +25,17 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
 
     private final TemplateDocumentRepository templateDocumentRepository;
     private final DefaultDocumentTemplateResolver defaultDocumentTemplateResolver;
-    private final FileWriterService fileWriter;
-    private final String outputPath;
+    private final FileWriterService fileWriterService;
+    private final FileRemoveService fileRemoveService;
 
     public DocumentTemplateServiceImpl(TemplateDocumentRepository templateDocumentRepository,
                                        DefaultDocumentTemplateResolver defaultDocumentTemplateResolver,
-                                       FileWriterService fileWriter,
-                                       @Value("${doc-static-file-path}") String outputPath) {
+                                       FileWriterService fileWriterService,
+                                       FileRemoveService fileRemoveService) {
         this.templateDocumentRepository = templateDocumentRepository;
         this.defaultDocumentTemplateResolver = defaultDocumentTemplateResolver;
-        this.fileWriter = fileWriter;
-        this.outputPath = outputPath;
+        this.fileWriterService = fileWriterService;
+        this.fileRemoveService = fileRemoveService;
     }
 
     @Override
@@ -43,20 +44,17 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
                                                     boolean isDefault,
                                                     final TemplateContext templateContext) {
 
-        checkIsDocumentTemplateByNameExists(templateName);
-
+        validateFile(file);
         log.info("Start uploading new document template with name: {} for the context: {}", templateName, templateContext);
-        DocumentTemplateValidator.validate(file);
+        DocumentTemplateValidator validator = new DocumentTemplateValidator(templateName, templateDocumentRepository);
+        validator.validateFilenameMustBeUnique(file);
+        validator.validateTemplateNameMustBeUnique();
 
-        Optional<String> fileNameOpt = fileWriter.write(outputPath, DocContextType.TEMPLATE, file);
-        if(fileNameOpt.isEmpty()) {
-            throw new AgencyException(DocumentTemplateResult.FILE_NOT_SAVED, file.getOriginalFilename());
-        }
-        String fileName = fileNameOpt.get();
+        String filename = fileWriterService.write(DocContextType.TEMPLATE, file);
 
-        isDefault = resolveIsDefaultAttribute(isDefault, templateContext);
+        boolean isDefaultResolved = resolveIsDefaultAttribute(isDefault, templateContext);
 
-        TemplateDocument templateDocument = new TemplateDocument(fileName, templateName, isDefault, templateContext);
+        TemplateDocument templateDocument = new TemplateDocument(filename, templateName, isDefaultResolved, templateContext);
 
 
         TemplateDocument saved = templateDocumentRepository.saveAndFlush(templateDocument);
@@ -67,41 +65,41 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
 
     @Override
     public void updateDocumentTemplate(MultipartFile file, String referenceId) {
-        DocumentTemplateValidator.validate(file);
-
+        validateFile(file);
+        log.info("Start updating document template with reference id: {}", referenceId);
         templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId)).ifPresent(templateDocument -> {
-            Optional<String> fileNameOpt = fileWriter.update(outputPath, DocContextType.TEMPLATE, file, templateDocument.getFileName());
-            if(fileNameOpt.isEmpty()) {
-                throw new AgencyException(DocumentTemplateResult.FILE_NOT_SAVED, file.getOriginalFilename());
-            }
-            String fileName = fileNameOpt.get();
+            new DocumentTemplateValidator(templateDocument.getTemplateName(), templateDocumentRepository)
+                    .validateFilenameMustBeEqual(file, templateDocument.getFileName());
+
+            String fileName = fileWriterService.write(DocContextType.TEMPLATE, file);
             templateDocument.setFileName(fileName);
-            templateDocumentRepository.save(templateDocument);
+            templateDocumentRepository.saveAndFlush(templateDocument);
+            log.info("Updated document template with reference id: {}", referenceId);
         });
 
     }
 
+    @Override
+    public void removeTemplateDocument(String referenceId) {
+        TemplateDocument templateDocument = templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId))
+                .orElseThrow(() -> new AgencyException(DocumentTemplateResult.DOCUMENT_TEMPLATE_NOT_FOUND));
+
+        fileRemoveService.removeFile(templateDocument.getFileName(), DocContextType.TEMPLATE.toString());
+        templateDocumentRepository.delete(templateDocument);
+        defaultDocumentTemplateResolver.setLatestModifiedTemplateAsDefault(templateDocument.getTemplateContext());
+        log.info("Deleted template document from DB is finished: {}", templateDocument.getTemplateName());
+    }
+
     private boolean resolveIsDefaultAttribute(boolean isDefault, TemplateContext templateContext) {
-        if (isDefault) {
-            defaultDocumentTemplateResolver.clearDefaultTemplate(templateContext);
+        defaultDocumentTemplateResolver.clearDefaultTemplate(templateContext);
+        if(isDefault){
+            return true;
         } else {
-            isDefault = setTrueIfNoneExists(isDefault);
+            return setTrueIfNoneExists(templateContext);
         }
-        return isDefault;
     }
 
-    private boolean setTrueIfNoneExists(boolean isDefault) {
-        if (templateDocumentRepository.findAll().isEmpty()) {
-            isDefault = true;
-        }
-        return isDefault;
-    }
-
-    private void checkIsDocumentTemplateByNameExists(String templateName) {
-        Optional<TemplateDocument> existingTemplateOpt = templateDocumentRepository.findByTemplateName(templateName);
-        if (existingTemplateOpt.isPresent()) {
-            log.info("Template with name {} already exists.", templateName);
-            throw new AgencyException(DocumentTemplateResult.TEMPLATE_NAME_FOR_DOC_CONTEXT_EXISTS, templateName, DocContextType.TEMPLATE.toString());
-        }
+    private boolean setTrueIfNoneExists(TemplateContext templateContext) {
+        return templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext).isEmpty();
     }
 }

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public enum Permission {
 
+    AGENCY_MANAGEMENT(List.of(RoleType.USER)),
     CONTRACT_MANAGEMENT(List.of(RoleType.USER)),
     CONTRACT_VIEW(List.of()),
     EVENT_MANAGEMENT(List.of(RoleType.USER)),
