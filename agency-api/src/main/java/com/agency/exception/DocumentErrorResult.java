@@ -8,7 +8,9 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum DocumentErrorResult implements AgencyErrorResult{
 
-    DOCUMENT_FILE_WRITE_ERROR(HttpStatus.BAD_REQUEST, "D001", "Document file write error. File is not saved"),;
+    DOCUMENT_FILE_WRITE_ERROR(HttpStatus.BAD_REQUEST, "D001", "Document file write error. File is not saved"),
+    DOCUMENT_NOT_FOUND(HttpStatus.BAD_REQUEST, "D002", "Document not found"),
+    DOCUMENT_FILE_READ_ERROR(HttpStatus.BAD_REQUEST, "D003", "Document file read error"),;
 
     private final HttpStatus httpStatus;
     private final String code;

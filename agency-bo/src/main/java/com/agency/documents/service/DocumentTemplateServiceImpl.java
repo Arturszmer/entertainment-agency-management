@@ -8,10 +8,13 @@ import com.agency.documents.repository.TemplateDocumentRepository;
 import com.agency.dto.document.TemplateDocumentDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.DocumentTemplateResult;
+import com.agency.generator.service.FileDownloadService;
 import com.agency.generator.service.FileRemoveService;
 import com.agency.generator.service.FileWriterService;
 import com.agency.service.DocumentTemplateService;
+import com.agency.user.helper.SecurityContextUsers;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,15 +30,17 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     private final DefaultDocumentTemplateResolver defaultDocumentTemplateResolver;
     private final FileWriterService fileWriterService;
     private final FileRemoveService fileRemoveService;
+    private final FileDownloadService fileDownloadService;
 
     public DocumentTemplateServiceImpl(TemplateDocumentRepository templateDocumentRepository,
                                        DefaultDocumentTemplateResolver defaultDocumentTemplateResolver,
                                        FileWriterService fileWriterService,
-                                       FileRemoveService fileRemoveService) {
+                                       FileRemoveService fileRemoveService, FileDownloadService fileDownloadService) {
         this.templateDocumentRepository = templateDocumentRepository;
         this.defaultDocumentTemplateResolver = defaultDocumentTemplateResolver;
         this.fileWriterService = fileWriterService;
         this.fileRemoveService = fileRemoveService;
+        this.fileDownloadService = fileDownloadService;
     }
 
     @Override
@@ -64,19 +69,30 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     }
 
     @Override
-    public void updateDocumentTemplate(MultipartFile file, String referenceId) {
+    public void updateDocumentTemplate(MultipartFile file, String referenceId, String templateName) {
         validateFile(file);
         log.info("Start updating document template with reference id: {}", referenceId);
         templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId)).ifPresent(templateDocument -> {
-            new DocumentTemplateValidator(templateDocument.getTemplateName(), templateDocumentRepository)
-                    .validateFilenameMustBeEqual(file, templateDocument.getFileName());
-
-            String fileName = fileWriterService.write(DocContextType.TEMPLATE, file);
+            new DocumentTemplateValidator(templateName, templateDocumentRepository)
+                    .validateIsFilenameExistsInOtherTemplate(file.getOriginalFilename(), templateDocument.getReferenceId());
+            String fileName = fileWriterService.update(DocContextType.TEMPLATE, file, templateDocument.getFileName());
             templateDocument.setFileName(fileName);
+            templateDocument.setTemplateName(templateName);
             templateDocumentRepository.saveAndFlush(templateDocument);
-            log.info("Updated document template with reference id: {}", referenceId);
+            logUpdate(referenceId);
         });
 
+    }
+
+    @Override
+    public void updateDocumentTemplateName(String referenceId, String templateName) {
+        templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId))
+                .ifPresent(templateDocument -> {
+                    new DocumentTemplateValidator(templateName, templateDocumentRepository).validateTemplateNameMustBeUnique();
+                    templateDocument.setTemplateName(templateName);
+                    templateDocumentRepository.save(templateDocument);
+                    logUpdate(referenceId);
+                });
     }
 
     @Override
@@ -90,9 +106,25 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         log.info("Deleted template document from DB is finished: {}", templateDocument.getTemplateName());
     }
 
+    @Override
+    public Resource downloadDocumentTemplate(String filename) {
+        String usernameFromAuthenticatedUser = SecurityContextUsers.getUsernameFromAuthenticatedUser();
+        return fileDownloadService.downloadFile(filename, DocContextType.TEMPLATE, usernameFromAuthenticatedUser);
+    }
+
+    @Override
+    public void setAsDefault(String referenceId) {
+        templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId)).ifPresent(templateDocument -> {
+            defaultDocumentTemplateResolver.clearDefaultTemplate(templateDocument.getTemplateContext());
+            templateDocument.setDefault(true);
+            templateDocumentRepository.save(templateDocument);
+            log.info("Set default document template with reference id: {}", referenceId);
+        });
+    }
+
     private boolean resolveIsDefaultAttribute(boolean isDefault, TemplateContext templateContext) {
-        defaultDocumentTemplateResolver.clearDefaultTemplate(templateContext);
         if(isDefault){
+            defaultDocumentTemplateResolver.clearDefaultTemplate(templateContext);
             return true;
         } else {
             return setTrueIfNoneExists(templateContext);
@@ -101,5 +133,9 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
 
     private boolean setTrueIfNoneExists(TemplateContext templateContext) {
         return templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext).isEmpty();
+    }
+
+    private void logUpdate(String referenceId) {
+        log.info("Update document template with reference id: {}", referenceId);
     }
 }

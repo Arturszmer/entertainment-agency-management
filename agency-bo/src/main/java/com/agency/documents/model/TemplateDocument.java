@@ -23,6 +23,7 @@ import java.util.UUID;
 public class TemplateDocument extends Document {
 
     @Column(name = "template_name")
+    @Setter
     private String templateName;
 
     @Column(name = "is_default")
