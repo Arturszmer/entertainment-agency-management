@@ -76,4 +76,4 @@ jobs:
             tar -xzvf deploy.tar.gz
             docker build -t entertainment-agency-app-image . 
             docker compose up -d
-#            docker rmi $(docker images -f "dangling=true" -q)
+            docker rmi $(docker images -f "dangling=true" -q)
