@@ -5,6 +5,8 @@ import com.agency.exception.AgencyException;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
@@ -53,16 +55,6 @@ class DocumentTemplateValidatorTest {
     }
 
     @Test
-    void shouldThrowAnException_whenFilenameIsNotEqual() {
-        MultipartFile file = mock(MultipartFile.class);
-        when(file.getOriginalFilename()).thenReturn("template.docx");
-        String templateName = "template";
-        AgencyException agencyException = assertThrows(AgencyException.class,
-                () -> new DocumentTemplateValidator(templateName, repository).validateFilenameMustBeEqual(file, "template_v1.docx"));
-        assertEquals("ADT06", agencyException.getErrorCode());
-    }
-
-    @Test
     void shouldThrowAnException_whenTemplateNameIsNotUnique() {
         MultipartFile file = mock(MultipartFile.class);
         when(file.getOriginalFilename()).thenReturn("template.docx");
@@ -71,5 +63,16 @@ class DocumentTemplateValidatorTest {
         AgencyException agencyException = assertThrows(AgencyException.class,
                 () -> new DocumentTemplateValidator(templateName, repository).validateTemplateNameMustBeUnique());
         assertEquals("ADT02", agencyException.getErrorCode());
+    }
+
+    @Test
+    public void shouldThrowAnException_whenTemplateNameExistsInOtherTemplate() {
+        String templateName = "template";
+        UUID referenceId = UUID.randomUUID();
+        when(repository.existsTemplateDocumentByFileNameAndReferenceIdIsNot(templateName, referenceId)).thenReturn(true);
+        AgencyException agencyException = assertThrows(AgencyException.class,
+                () -> new DocumentTemplateValidator(templateName, repository).validateIsFilenameExistsInOtherTemplate(templateName, referenceId));
+        assertEquals("ADT07", agencyException.getErrorCode());
+
     }
 }

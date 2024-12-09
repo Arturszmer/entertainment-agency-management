@@ -6,6 +6,7 @@ import com.agency.documents.model.TemplateDocument;
 import com.agency.documents.model.TemplateDocumentBuilder;
 import com.agency.documents.repository.TemplateDocumentRepository;
 import com.agency.dto.document.TemplateDocumentDto;
+import com.agency.generator.service.FileDownloadService;
 import com.agency.generator.service.FileRemoveService;
 import com.agency.generator.service.FileWriterService;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,12 +28,13 @@ class DocumentTemplateServiceImplTest {
     private final DefaultDocumentTemplateResolver resolver = mock(DefaultDocumentTemplateResolver.class);
     private final FileWriterService fileWriterService = mock(FileWriterService.class);
     private final FileRemoveService fileRemoveService = mock(FileRemoveService.class);
+    private final FileDownloadService fileDownloadService = mock(FileDownloadService.class);
 
     private DocumentTemplateServiceImpl documentTemplateService;
 
     @BeforeEach
     void setUp() {
-        documentTemplateService = new DocumentTemplateServiceImpl(documentRepository, resolver, fileWriterService, fileRemoveService);
+        documentTemplateService = new DocumentTemplateServiceImpl(documentRepository, resolver, fileWriterService, fileRemoveService, fileDownloadService);
     }
 
     @Test
@@ -91,7 +93,7 @@ class DocumentTemplateServiceImplTest {
         when(multipartFile.getOriginalFilename()).thenReturn(filename);
 
         // when
-        documentTemplateService.updateDocumentTemplate(multipartFile, referenceId);
+        documentTemplateService.updateDocumentTemplate(multipartFile, referenceId, templateName);
 
         // then
         ArgumentCaptor<TemplateDocument> captor = ArgumentCaptor.forClass(TemplateDocument.class);
@@ -129,6 +131,4 @@ class DocumentTemplateServiceImplTest {
         verify(resolver, times(1)).setLatestModifiedTemplateAsDefault(templateContext);
 
     }
-
-
 }

@@ -75,20 +75,19 @@ public class FileWriterService {
         }
     }
 
-    // TODO: do usunięcia? Jeżeli nazwa pliku jest ta sama to powinien go nadpisać
-//    public String update(DocContextType context, MultipartFile file, String existingFileName) {
-//        try {
-//            Path directoryPath = new DirectoryGenerator(DOC_STATIC_FILE_PATH, context.toString()).getDirectory();
-//            Path existingFilePath = directoryPath.resolve(existingFileName);
-//            if (Files.exists(existingFilePath)) {
-//                Files.delete(existingFilePath);
-//            }
-//            return write(context, file);
-//        } catch (IOException e){
-//            log.error(e.getMessage(), e);
-//            throw new AgencyException(DocumentErrorResult.DOCUMENT_FILE_WRITE_ERROR);
-//        }
-//    }
+    public String update(DocContextType context, MultipartFile file, String existingFileName) {
+        try {
+            Path directoryPath = new DirectoryGenerator(DOC_STATIC_FILE_PATH, context.toString()).getDirectory();
+            Path existingFilePath = directoryPath.resolve(existingFileName);
+            if (Files.exists(existingFilePath)) {
+                Files.delete(existingFilePath);
+            }
+            return write(context, file);
+        } catch (IOException e){
+            log.error(e.getMessage(), e);
+            throw new AgencyException(DocumentErrorResult.DOCUMENT_FILE_WRITE_ERROR);
+        }
+    }
 
     private String generateDirectoryPath(String docStaticFilePath, DocContextType contextType) throws IOException {
         return new DirectoryGenerator(docStaticFilePath, contextType.toString()).getContextDirectory();

@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 class DocumentTemplateValidator {
 
@@ -36,17 +38,15 @@ class DocumentTemplateValidator {
         }
     }
 
-    void validateFilenameMustBeEqual(MultipartFile file, String updatingFilename) {
-        String originalFilename = file.getOriginalFilename();
-        if (!updatingFilename.equals(originalFilename)) {
-            throw new AgencyException(DocumentTemplateResult.TEMPLATE_FILENAME_MUST_BE_EQUAL, updatingFilename, originalFilename);
-        }
-    }
-
     void validateTemplateNameMustBeUnique() {
         if (templateDocumentRepository.existsTemplateDocumentByTemplateName(templateName)) {
             throw new AgencyException(DocumentTemplateResult.TEMPLATE_NAME_FOR_DOC_CONTEXT_EXISTS, templateName, DocContextType.TEMPLATE.toString());
         }
     }
 
+    public void validateIsFilenameExistsInOtherTemplate(String originalFilename, UUID referenceId) {
+        if(templateDocumentRepository.existsTemplateDocumentByFileNameAndReferenceIdIsNot(originalFilename, referenceId)) {
+            throw new AgencyException(DocumentTemplateResult.TEMPLATE_FILENAME_EXISTS_IN_OTHER_TEMPLATE, originalFilename);
+        }
+    }
 }
