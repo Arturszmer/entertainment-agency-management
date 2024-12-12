@@ -13,6 +13,7 @@ public class CostCreator {
     public ProjectCost addProjectTypeCost(Project project) {
         return null;
     }
+
     public ProjectCost addContractWorkTypeCost(ContractWork contractWork) {
         return new ProjectCost(
                 "CONTRACT_WORK",

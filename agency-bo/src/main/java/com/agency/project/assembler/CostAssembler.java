@@ -7,6 +7,7 @@ public class CostAssembler {
 
     public static CostDto toDto(ProjectCost projectCost) {
         return new CostDto(
+                projectCost.getPublicId().toString(),
                 projectCost.getCostType(),
                 projectCost.getCostReference(),
                 projectCost.getDescription(),

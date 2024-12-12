@@ -14,21 +14,22 @@ import com.agency.documents.model.ContractDocument;
 import com.agency.documents.model.TemplateDocument;
 import com.agency.documents.repository.ContractDocumentRepository;
 import com.agency.documents.repository.TemplateDocumentRepository;
+import com.agency.dto.contractwork.DocumentGenerateRequest;
 import com.agency.generator.service.FileWriterService;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ContractorWorkGeneratorTest {
+class ContractWorkGeneratorTest {
 
-    private ContractorWorkGenerator contractorWorkGenerator;
+    private ContractWorkGenerator contractWorkGenerator;
     private final ContractWorkRepository contractWorkRepository = mock(ContractWorkRepository.class);
     private final AgencyDetailsRepository agencyDetailsRepository = mock(AgencyDetailsRepository.class);
     private final ContractDocumentRepository contractDocumentRepository = mock(ContractDocumentRepository.class);
@@ -40,7 +41,7 @@ class ContractorWorkGeneratorTest {
     @BeforeEach
     void setUp() {
         String docStaticFilepath = "src/test/resources/templates/";
-        contractorWorkGenerator = new ContractorWorkGenerator(
+        contractWorkGenerator = new ContractWorkGenerator(
                 contractWorkRepository,
                 agencyDetailsRepository,
                 contractDocumentRepository,
@@ -67,12 +68,14 @@ class ContractorWorkGeneratorTest {
 
         AgencyDetails agencyDetails = AgencyDetailsModel.getAgencyDetails();
 
+        DocumentGenerateRequest generateRequest = getGenerateRequest(contractWork, templateName);
+
         when(templateDocumentRepository.findByTemplateName(templateName)).thenReturn(Optional.of(getTemplateDocument(fileName, templateName)));
-        when(contractWorkRepository.findContractWorkByPublicId(UUID.fromString(publicID))).thenReturn(Optional.of(contractWork));
+        when(contractWorkRepository.findContractWorkByContractNumber(contractWork.getContractNumber())).thenReturn(Optional.of(contractWork));
         when(agencyDetailsRepository.findAll()).thenReturn(List.of(agencyDetails));
 
         // when
-        GenerationResult generate = contractorWorkGenerator.generate(publicID, templateName, DocContextType.CONTRACT_WORK);
+        GenerationResult generate = contractWorkGenerator.generate(generateRequest);
 
         // then
         assertTrue(generate.isSuccess());
@@ -100,12 +103,14 @@ class ContractorWorkGeneratorTest {
 
         AgencyDetails agencyDetails = AgencyDetailsModel.getAgencyDetails();
 
+        DocumentGenerateRequest generateRequest = getGenerateRequest(contractWork, templateName);
+
         when(templateDocumentRepository.findByTemplateName(templateName)).thenReturn(Optional.of(getTemplateDocument(fileName, templateName)));
-        when(contractWorkRepository.findContractWorkByPublicId(UUID.fromString(publicID))).thenReturn(Optional.of(contractWork));
+        when(contractWorkRepository.findContractWorkByContractNumber(contractWork.getContractNumber())).thenReturn(Optional.of(contractWork));
         when(agencyDetailsRepository.findAll()).thenReturn(List.of(agencyDetails));
 
         // when
-        GenerationResult generate = contractorWorkGenerator.generate(publicID, templateName, DocContextType.CONTRACT_WORK);
+        GenerationResult generate = contractWorkGenerator.generate(generateRequest);
 
         // then
         assertFalse(generate.isSuccess());
@@ -117,6 +122,11 @@ class ContractorWorkGeneratorTest {
         assertTrue(actualContractDocument.getFileName().contains("error"));
         assertNotNull(actualContractDocument.getReferenceId());
         assertTrue(actualContractDocument.isErrorFile());
+    }
+
+    @NotNull
+    private static DocumentGenerateRequest getGenerateRequest(ContractWork contractWork, String templateName) {
+        return new DocumentGenerateRequest(contractWork.getContractNumber(), templateName, DocContextType.CONTRACT_WORK);
     }
 
     private TemplateDocument getTemplateDocument(String fileName, String templateName) {

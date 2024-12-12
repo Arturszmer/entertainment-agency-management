@@ -93,7 +93,7 @@ class DocumentTemplateServiceImplTest {
         when(multipartFile.getOriginalFilename()).thenReturn(filename);
 
         // when
-        documentTemplateService.updateDocumentTemplate(multipartFile, referenceId, templateName);
+        documentTemplateService.updateDocument(multipartFile, referenceId, templateName);
 
         // then
         ArgumentCaptor<TemplateDocument> captor = ArgumentCaptor.forClass(TemplateDocument.class);
@@ -123,7 +123,7 @@ class DocumentTemplateServiceImplTest {
         when(documentRepository.findByReferenceId(UUID.fromString(referenceId))).thenReturn(Optional.of(templateDocument));
 
         // when
-        documentTemplateService.removeTemplateDocument(referenceId);
+        documentTemplateService.removeDocument(referenceId);
 
         // then
         verify(fileRemoveService, times(1)).removeFile(filename, DocContextType.TEMPLATE.toString());
