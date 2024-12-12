@@ -13,4 +13,6 @@ public interface CostService {
     List<CostDto> getAllCostsForProject(String projectPublicId);
     CostDto addCost(CostCreateDto costDto);
     ProjectCost addContractTypeCost(AbstractContract contract, Project costOwner);
+    void removeCost(String publicId);
+    void removeCostsByCostReference(String costReference);
 }

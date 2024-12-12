@@ -100,4 +100,8 @@ public class ContractWork extends AbstractContract {
             throw new AgencyException(ContractErrorResult.CONTRACT_CANNOT_BE_DELETED);
         }
     }
+
+    public boolean hasGeneratedFile() {
+        return filename != null && !filename.isEmpty();
+    }
 }

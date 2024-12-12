@@ -69,7 +69,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     }
 
     @Override
-    public void updateDocumentTemplate(MultipartFile file, String referenceId, String templateName) {
+    public void updateDocument(MultipartFile file, String referenceId, String templateName) {
         validateFile(file);
         log.info("Start updating document template with reference id: {}", referenceId);
         templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId)).ifPresent(templateDocument -> {
@@ -96,7 +96,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     }
 
     @Override
-    public void removeTemplateDocument(String referenceId) {
+    public void removeDocument(String referenceId) {
         TemplateDocument templateDocument = templateDocumentRepository.findByReferenceId(UUID.fromString(referenceId))
                 .orElseThrow(() -> new AgencyException(DocumentTemplateResult.DOCUMENT_TEMPLATE_NOT_FOUND));
 
@@ -107,7 +107,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     }
 
     @Override
-    public Resource downloadDocumentTemplate(String filename) {
+    public Resource downloadDocument(String filename) {
         String usernameFromAuthenticatedUser = SecurityContextUsers.getUsernameFromAuthenticatedUser();
         return fileDownloadService.downloadFile(filename, DocContextType.TEMPLATE, usernameFromAuthenticatedUser);
     }

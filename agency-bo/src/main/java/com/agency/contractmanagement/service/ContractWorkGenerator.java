@@ -16,13 +16,14 @@ import com.agency.documents.model.ContractDocument;
 import com.agency.documents.model.TemplateDocument;
 import com.agency.documents.repository.ContractDocumentRepository;
 import com.agency.documents.repository.TemplateDocumentRepository;
+import com.agency.dto.contractwork.DocumentGenerateRequest;
 import com.agency.exception.AgencyException;
 import com.agency.exception.AgencyExceptionResult;
 import com.agency.exception.ContractErrorResult;
 import com.agency.exception.DocumentTemplateResult;
 import com.agency.generator.DocGenerator;
 import com.agency.generator.service.FileWriterService;
-import com.agency.service.ContractFileGeneratorService;
+import com.agency.service.ContractDocumentGeneratorService;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,7 +36,7 @@ import java.util.UUID;
 
 @Service
 @Slf4j
-public class ContractorWorkGenerator implements ContractFileGeneratorService {
+public class ContractWorkGenerator implements ContractDocumentGeneratorService {
 
     private final ContractWorkRepository contractWorkRepository;
     private final AgencyDetailsRepository agencyDetailsRepository;
@@ -44,11 +45,11 @@ public class ContractorWorkGenerator implements ContractFileGeneratorService {
     private final FileWriterService fileWriterService;
     private final String docStaticFilePath;
 
-    public ContractorWorkGenerator(ContractWorkRepository contractWorkRepository,
-                                   AgencyDetailsRepository agencyDetailsRepository,
-                                   ContractDocumentRepository contractDocumentRepository,
-                                   TemplateDocumentRepository templateDocumentRepository, FileWriterService fileWriterService,
-                                   @Value("${doc-static-file-path}") String docStaticFilePath) {
+    public ContractWorkGenerator(ContractWorkRepository contractWorkRepository,
+                                 AgencyDetailsRepository agencyDetailsRepository,
+                                 ContractDocumentRepository contractDocumentRepository,
+                                 TemplateDocumentRepository templateDocumentRepository, FileWriterService fileWriterService,
+                                 @Value("${doc-static-file-path}") String docStaticFilePath) {
         this.contractWorkRepository = contractWorkRepository;
         this.agencyDetailsRepository = agencyDetailsRepository;
         this.contractDocumentRepository = contractDocumentRepository;
@@ -59,18 +60,18 @@ public class ContractorWorkGenerator implements ContractFileGeneratorService {
 
     @Override
     @Transactional
-    public GenerationResult generate(String contractPublicId, String templateName, DocContextType docContextType) {
+    public GenerationResult generate(DocumentGenerateRequest documentGenerateRequest) {
 
-        ContractWork contractWork = getContractWork(contractPublicId);
+        ContractWork contractWork = getContractWork(documentGenerateRequest.contractNumber());
         validate(contractWork);
 
         AgencyDetails agencyDetails = getAgencyDetails();
 
         UUID contractPublicID = contractWork.getPublicId();
 
-        DocumentContext documentContext = getDocumentContext(docContextType, agencyDetails, contractWork);
+        DocumentContext documentContext = getDocumentContext(documentGenerateRequest.docContextType(), agencyDetails, contractWork);
 
-        TemplateDocument template = getTemplate(templateName);
+        TemplateDocument template = getTemplate(documentGenerateRequest.templateName());
         DocGenerator docGenerator = new DocGenerator(docStaticFilePath, template.getFileName(), fileWriterService);
         log.info("==> Start generating document proces for contract with public id: {}", contractPublicID);
         GenerationResult generate = docGenerator.generate(documentContext);
@@ -104,9 +105,9 @@ public class ContractorWorkGenerator implements ContractFileGeneratorService {
                 getPlaceholderContextFields(contractWork, agencyDetails), docContextType);
     }
 
-    private ContractWork getContractWork(String publicId) {
-        return contractWorkRepository.findContractWorkByPublicId(UUID.fromString(publicId))
-                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_NOT_EXISTS, publicId));
+    private ContractWork getContractWork(String contractNumber) {
+        return contractWorkRepository.findContractWorkByContractNumber(contractNumber)
+                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_NOT_EXISTS, contractNumber));
     }
 
     private void validate(ContractWork contractWork) {

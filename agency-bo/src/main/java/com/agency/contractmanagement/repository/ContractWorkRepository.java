@@ -16,5 +16,6 @@ public interface ContractWorkRepository extends JpaRepository<ContractWork, Long
     int getNumberOfContractsByYear(int year);
 
     Optional<ContractWork> findContractWorkByPublicId(UUID publicId);
+    Optional<ContractWork> findContractWorkByContractNumber(String contractNumber);
 
 }

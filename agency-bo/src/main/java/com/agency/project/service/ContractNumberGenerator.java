@@ -20,6 +20,7 @@ public class ContractNumberGenerator {
     private final ProjectRepository projectRepository;
     private final ContractWorkRepository contractWorkRepository;
 
+    //TODO: FIX CONTRACT GENERATOR -> should be related to the table with all contract numbers to prevent duplications
     public String generateContractNumber(LocalDate signDate, ContractType contractType) {
         int year = signDate.getYear();
         Month month = signDate.getMonth();

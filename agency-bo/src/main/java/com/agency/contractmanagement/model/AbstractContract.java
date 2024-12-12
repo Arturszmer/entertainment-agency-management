@@ -25,7 +25,7 @@ public abstract class AbstractContract extends BaseEntity<Long> {
     @ExcludeFromPlaceholders
     private UUID publicId;
 
-    @Column(name = "contract_number", nullable = false)
+    @Column(name = "contract_number", nullable = false, unique = true)
     private String contractNumber;
 
     @Column(name = "sign_date")

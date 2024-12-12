@@ -1,7 +1,6 @@
 package com.agency.contractmanagement.service;
 
 import com.agency.contractmanagement.assembler.ContractAssembler;
-import com.agency.contractmanagement.constant.ContractLogsMessage;
 import com.agency.contractmanagement.model.ContractWork;
 import com.agency.contractmanagement.repository.ContractWorkRepository;
 import com.agency.contractor.model.Contractor;
@@ -17,6 +16,7 @@ import com.agency.project.model.ProjectCost;
 import com.agency.project.service.ContractNumberGenerator;
 import com.agency.project.service.CostService;
 import com.agency.service.ContractService;
+import com.agency.service.ContractWorkDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+import static com.agency.contractmanagement.constant.ContractLogsMessage.*;
+import static com.agency.contractmanagement.constant.ContractLogsMessage.REMOVING_PROCESS_STARTED;
+import static com.agency.contractmanagement.constant.ContractLogsMessage.TRY_TO_REMOVE_DOCUMENT;
 import static com.agency.contractmanagement.validator.ContractDatesValidator.isContractHasCorrectDatesForProject;
 import static com.agency.dict.project.ProjectStatus.TERMINATED;
 
@@ -35,6 +38,7 @@ public class ContractWorkServiceImpl implements ContractService {
     private final ContractWorkRepository contractWorkRepository;
     private final ContractorRepository contractorRepository;
     private final ContractNumberGenerator numberGenerator;
+    private final ContractWorkDocumentService contractWorkDocumentService;
     private final CostService costService;
 
     @Override
@@ -54,16 +58,23 @@ public class ContractWorkServiceImpl implements ContractService {
         projectForContract.addCost(projectCost);
         contractor.addNewContract(contract);
         contractorRepository.save(contractor);
-        log.info("The new contract of work for contractor no. id: {} has beed created", contractor.getId());
+        log.info("The new contract of work for contractor no. id: {} has been created", contractor.getId());
         return ContractAssembler.toContractWorkDto(contract);
     }
 
     @Override
+    @Transactional
     public void deleteContractOfWork(String publicId) {
         ContractWork contractWork = getEntity(publicId);
+        log.info(REMOVING_PROCESS_STARTED, publicId);
         contractWork.checkForDelete();
+        if(contractWork.hasGeneratedFile()){
+            log.info(TRY_TO_REMOVE_DOCUMENT, publicId);
+            contractWorkDocumentService.removeDocument(publicId);
+        }
+        costService.removeCostsByCostReference(contractWork.getContractNumber());
         contractWorkRepository.delete(contractWork);
-        log.info(ContractLogsMessage.SUCCESSFULLY_DELETED, publicId);
+        log.info(SUCCESSFULLY_DELETED, publicId);
     }
 
     private ContractWork getEntity(String publicId) {

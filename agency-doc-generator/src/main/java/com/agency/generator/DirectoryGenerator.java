@@ -24,8 +24,8 @@ public class DirectoryGenerator {
 
     private Path generate() throws IOException {
         directory = Paths.get(outputPath + contextDirectory);
-        log.info("Generate directory: {}", directory);
         if (!Files.exists(directory)) {
+            log.info("Generate directory: {}", directory);
             Path created = Files.createDirectories(directory);
             log.info("Created directory: {}", created);
         }

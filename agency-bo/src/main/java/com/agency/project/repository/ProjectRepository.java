@@ -23,4 +23,5 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
 
     @Query("SELECT pc FROM ProjectCost pc WHERE pc.project.publicId =:publicId")
     List<ProjectCost> findProjectCosts(@Param("publicId") UUID publicId);
+
 }

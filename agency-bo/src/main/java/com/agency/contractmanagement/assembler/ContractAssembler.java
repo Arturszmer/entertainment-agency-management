@@ -9,7 +9,12 @@ import com.agency.dto.contractwork.ContractWorkSearchResultDto;
 public class ContractAssembler {
 
     public static ContractShortDto toContractShortDto(ContractWork contract){
-        return new ContractShortDto(contract.getContractNumber(), contract.getStartDate(), contract.getEndDate());
+        return new ContractShortDto(
+                contract.getPublicId().toString(),
+                contract.getContractNumber(),
+                contract.getStartDate(),
+                contract.getEndDate(),
+                contract.getFilename());
     }
 
     public static ContractWorkDto toContractWorkDto(ContractWork contract) {

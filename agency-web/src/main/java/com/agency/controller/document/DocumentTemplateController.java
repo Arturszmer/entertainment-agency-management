@@ -39,7 +39,7 @@ public class DocumentTemplateController {
                                         @RequestParam("reference-id") String referenceId,
                                         @RequestParam("template-name") String templateName) {
         try {
-            templateService.updateDocumentTemplate(file, referenceId, templateName);
+            templateService.updateDocument(file, referenceId, templateName);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -62,7 +62,7 @@ public class DocumentTemplateController {
 
     @DeleteMapping("/{reference-id}")
     ResponseEntity<Void> delete(@PathVariable("reference-id") String referenceId) {
-        templateService.removeTemplateDocument(referenceId);
+        templateService.removeDocument(referenceId);
         return ResponseEntity.noContent().build();
     }
 
@@ -70,7 +70,7 @@ public class DocumentTemplateController {
     public ResponseEntity<Resource> downloadFile(
             @PathVariable("filename") String filename) {
         String encodedFileName = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
-        Resource fileResource = templateService.downloadDocumentTemplate(filename);
+        Resource fileResource = templateService.downloadDocument(filename);
 
 
         return ResponseEntity.ok()

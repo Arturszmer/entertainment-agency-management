@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @MappedSuperclass
@@ -27,4 +28,7 @@ public abstract class Cost extends BaseEntity<Long> {
 
     @Column(name = "value")
     private BigDecimal value;
+
+    @Column(name = "public_id")
+    private UUID publicId;
 }

@@ -10,18 +10,22 @@ import com.agency.project.assembler.CostAssembler;
 import com.agency.project.model.Project;
 import com.agency.project.model.ProjectCost;
 import com.agency.project.model.costcreator.CostCreator;
+import com.agency.project.repository.ProjectCostRepository;
 import com.agency.project.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CostContractServiceImpl implements CostService {
 
     private final ProjectRepository projectRepository;
+    private final ProjectCostRepository projectCostRepository;
 
     @Override
     public List<CostDto> getAllCostsForProject(String projectPublicId) {
@@ -60,6 +64,22 @@ public class CostContractServiceImpl implements CostService {
             default -> {
                 return null;
             }
+        }
+    }
+
+    @Override
+    public void removeCost(String publicId) {
+        projectCostRepository.deleteProjectCostByPublicId(UUID.fromString(publicId));
+    }
+
+    @Override
+    public void removeCostsByCostReference(String costReference) {
+        List<ProjectCost> projectCostByCostReference = projectCostRepository.findProjectCostByCostReference(costReference);
+        if(!projectCostByCostReference.isEmpty()){
+            log.info("Number of costs to remove from project number {}: {}",
+                    projectCostByCostReference.get(0).getProjectNumber(),
+                    projectCostByCostReference.size());
+            projectCostRepository.deleteAll(projectCostByCostReference);
         }
     }
 }
