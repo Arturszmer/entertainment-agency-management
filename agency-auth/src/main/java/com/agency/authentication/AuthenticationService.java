@@ -1,9 +1,13 @@
 package com.agency.authentication;
 
-import com.agency.auth.*;
+import com.agency.auth.AdminInitializerDto;
+import com.agency.auth.AuthenticationRequest;
+import com.agency.auth.AuthenticationResponse;
+import com.agency.auth.CreateUserRequest;
+import com.agency.auth.RegistrationRequest;
+import com.agency.auth.RoleType;
 import com.agency.config.JwtService;
 import com.agency.dto.userprofile.UserProfileDetailsDto;
-import com.agency.exception.AgencyException;
 import com.agency.user.assembler.UserAssembler;
 import com.agency.user.model.UserProfile;
 import com.agency.user.repository.UserProfileRepository;
@@ -49,7 +53,7 @@ public class AuthenticationService {
 
     public void resetPassword(String username) {
         UserProfile userProfile = userProfileRepository.findUserProfileByUsername(username)
-                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+                .orElseThrow(() -> new RuntimeException(String.format(USER_NOT_FOUND.getMessage(), username)));
         userProfile.setNewPassword(passwordEncoder.encode(STARTED_PASSWORD));
         userProfileRepository.save(userProfile);
         log.info("Password for user {} has been reset successfully.", username);

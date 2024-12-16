@@ -46,6 +46,6 @@ public class UserPermissionManagerServiceImpl implements UserPermissionManagerSe
 
     private UserProfile getUserProfile(String username) {
         return userProfileRepository.findUserProfileByUsername(username)
-                .orElseThrow(() -> new AgencyException(UserExceptionResult.USER_NOT_FOUND, username));
+                .orElseThrow(() -> new RuntimeException(String.format(UserExceptionResult.USER_NOT_FOUND.getMessage(), username)));
     }
 }
