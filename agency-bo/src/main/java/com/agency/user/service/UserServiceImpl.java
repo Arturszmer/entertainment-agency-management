@@ -34,8 +34,7 @@ public class UserServiceImpl implements UserService {
     public void changePassword(ChangePasswordRequest request, Principal principal) {
         String username = principal.getName();
 
-        UserProfile user = repository.findUserProfileByUsername(username)
-                .orElseThrow(() ->  new AgencyException(USER_NOT_FOUND, username));
+        UserProfile user = getUserProfileByUsername(username);
 
         isCurrentPasswordCorrect(request.currentPassword(), user);
         isNewPasswordMatches(request.newPassword(), request.confirmationPassword());
@@ -49,24 +48,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void blockUser(String usernameOrEmail) {
-        UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, usernameOrEmail));
+        UserProfile userProfile = getUserProfileByUsernameOfEmail(usernameOrEmail);
         isUserCurrentlyLogged(userProfile.getUsername());
         userProfile.lockUserAccount();
         repository.save(userProfile);
         log.info(BLOCKED_SUCCESSFULLY, userProfile.getUsername());
     }
 
-    private void isUserCurrentlyLogged(String username) {
-        if(username.equals(SecurityContextUsers.getUsernameFromAuthenticatedUser())){
-            throw new AgencyException(CANNOT_BLOCK_YOURSELF);
-        }
-    }
-
     @Override
     public void unblockUser(String usernameOrEmail) {
-        UserProfile userProfile = repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
-                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, usernameOrEmail));
+        UserProfile userProfile = getUserProfileByUsernameOfEmail(usernameOrEmail);
 
         userProfile.unblockUserAccount();
         repository.save(userProfile);
@@ -81,8 +72,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserProfileDetailsDto getUserDetails() {
         String username = SecurityContextUsers.getUsernameFromAuthenticatedUser();
-        UserProfile userProfile = repository.findUserProfileByUsername(username)
-                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+        UserProfile userProfile = getUserProfileByUsername(username);
         log.info("User details of: {} has been fetched", userProfile.getUsername());
         return UserAssembler.toUserProfileDetailsDto(userProfile);
     }
@@ -101,8 +91,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public AgencyPermissionsDto getUserPermissions(String username) {
-        UserProfile userProfile = repository.findUserProfileByUsername(username)
-                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+        UserProfile userProfile = getUserProfileByUsername(username);
 
         return new AgencyPermissionsDto(
                 Permission.getPermissionsToManage(userProfile.getRole().getName()),
@@ -111,12 +100,21 @@ public class UserServiceImpl implements UserService {
 
     @NotNull
     private UserProfileDetailsDto editUserDetails(UserProfileDetailsDto userProfileDetailsDto, String username) {
-        UserProfile userProfile = repository.findUserProfileByUsername(username)
-                .orElseThrow(() -> new AgencyException(USER_NOT_FOUND, username));
+        UserProfile userProfile = getUserProfileByUsername(username);
         userProfile.updateUser(userProfileDetailsDto);
         UserProfile updatedUser = repository.save(userProfile);
         log.info("User details of: {} has been updated", userProfile.getUsername());
         return UserAssembler.toUserProfileDetailsDto(updatedUser);
+    }
+
+    private UserProfile getUserProfileByUsername(String username) {
+        return repository.findUserProfileByUsername(username)
+                .orElseThrow(() -> new RuntimeException(String.format(USER_NOT_FOUND.getMessage(), username)));
+    }
+
+    private UserProfile getUserProfileByUsernameOfEmail(String usernameOrEmail) {
+        return repository.findUserProfileByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
+                .orElseThrow(() -> new RuntimeException(String.format(USER_NOT_FOUND.getMessage(), usernameOrEmail)));
     }
 
     private void isNewPasswordMatches(String newPassword, String confirmationPassword) {
@@ -128,6 +126,12 @@ public class UserServiceImpl implements UserService {
     private void isCurrentPasswordCorrect(String currentPassword, UserProfile user){
         if(!passwordEncoder.matches(currentPassword, user.getPassword())){
             throw new AgencyException(CURRENT_PASSWORD_DOES_NOT_MATCH);
+        }
+    }
+
+    private void isUserCurrentlyLogged(String username) {
+        if(username.equals(SecurityContextUsers.getUsernameFromAuthenticatedUser())){
+            throw new AgencyException(CANNOT_BLOCK_YOURSELF);
         }
     }
 
