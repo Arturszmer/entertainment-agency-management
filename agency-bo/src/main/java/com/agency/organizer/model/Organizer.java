@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,7 +61,7 @@ public class Organizer extends BaseEntity<Long> {
 
     public static Organizer createOrganizer(OrganizerCreate create){
         return new Organizer(create.notes(),
-                AddressAssembler.toEntity(create.addressDto()), create.telephone(), create.email(), create.organizerName());
+                AddressAssembler.toEntity(create.addressDto()), StringUtils.trimAllWhitespace(create.telephone()), create.email(), create.organizerName());
     }
 
     public void updateOrganizer(OrganizerCreate toUpdate) {

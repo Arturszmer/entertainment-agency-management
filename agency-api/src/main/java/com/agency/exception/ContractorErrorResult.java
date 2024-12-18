@@ -15,7 +15,8 @@ public enum ContractorErrorResult implements AgencyErrorResult {
     PROJECT_DOES_NOT_EXIST_EXCEPTION(HttpStatus.NOT_FOUND, "AE007","Project with contract number %s does not exist."),
     PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS(HttpStatus.BAD_REQUEST, "AE008", "Project with status SIGNED or TERMINATED cannot be change by this way. Use revert option."),
     CONTRACT_TYPE_DOES_NOT_EXIST(HttpStatus.NOT_FOUND, "AE008","Project with type %s does not exist."),
-    CANNOT_CREATE_CONTRACT_WORK_FOR_TERMINATED_PROJECT(HttpStatus.BAD_REQUEST, "AE009","Cannot create contract work for terminated Project.");
+    CANNOT_CREATE_CONTRACT_WORK_FOR_TERMINATED_PROJECT(HttpStatus.BAD_REQUEST, "AE009","Cannot create contract work for terminated Project."),
+    EXISTING_IN_PROJECTS_EXCEPTION(HttpStatus.BAD_REQUEST, "AE010","Contractor with the given ID %s is assigned into a project."),;
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class Contractor extends BaseEntity<Long> {
         this.pesel = pesel;
         this.birthDate = birthDate;
         this.address = address;
-        this.phone = phone;
+        this.phone = StringUtils.trimAllWhitespace(phone);
         this.email = email;
         this.contractorDescription = contractorType;
     }
@@ -67,7 +68,7 @@ public class Contractor extends BaseEntity<Long> {
         pesel = request.pesel();
         birthDate = request.birthDate();
         address.update(request.addressDto());
-        phone = request.phone();
+        phone = StringUtils.trimAllWhitespace(request.phone());
         email = request.email();
         contractorDescription = request.contractorDescription();
     }

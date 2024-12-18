@@ -18,6 +18,6 @@ public interface OrganizerRepository extends JpaRepository<Organizer, Long> {
     Optional<Organizer> findOrganizerByPublicId(UUID publicId);
     List<Organizer> findAllByUsername(String username);
 
-    @Query("SELECT o FROM Organizer o WHERE o.organizerName LIKE CONCAT('%', :organizerName, '%')")
+    @Query("SELECT o FROM Organizer o WHERE LOWER(o.organizerName) LIKE CONCAT('%', LOWER(:organizerName), '%')")
     Page<Organizer> findAllByOrganizerName(@Param("organizerName") String organizerName, Pageable pageable);
 }

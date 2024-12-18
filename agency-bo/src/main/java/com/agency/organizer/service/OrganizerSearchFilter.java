@@ -15,7 +15,6 @@ import lombok.Setter;
 public class OrganizerSearchFilter extends AbstractSortableConfig {
 
     private static final QOrganizer organizer = QOrganizer.organizer;
-
     @Override
     public Predicate getPredicate() {
         return null;
