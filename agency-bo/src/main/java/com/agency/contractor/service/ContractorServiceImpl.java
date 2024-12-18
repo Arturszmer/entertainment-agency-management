@@ -26,7 +26,7 @@ public class ContractorServiceImpl implements ContractorService {
 
     @Override
     public ContractorDto add(ContractorCreateRequest request) {
-        if(repository.findByPesel(request.pesel()).isPresent()){
+        if (repository.findByPesel(request.pesel()).isPresent()) {
             throw new AgencyException(CONTRACTOR_WITH_PESEL_EXISTS);
         }
 
@@ -53,12 +53,18 @@ public class ContractorServiceImpl implements ContractorService {
     @Transactional
     public void delete(String publicId) {
         repository.findContractorByPublicId(UUID.fromString(publicId)).ifPresent(contractor -> {
-            if(contractor.getContracts().isEmpty()){
-                repository.delete(contractor);
-                log.info(SUCCESSFULLY_DELETED, publicId);
-            } else {
-                throw new AgencyException(EXISTING_CONTRACT_EXCEPTION, publicId);
-            }
+            validate(contractor);
+            repository.delete(contractor);
+            log.info(SUCCESSFULLY_DELETED, publicId);
         });
+    }
+
+    private void validate(Contractor contractor) {
+        if (!contractor.getContracts().isEmpty()) {
+            throw new AgencyException(EXISTING_CONTRACT_EXCEPTION, contractor.getPublicId());
+        }
+        if (!contractor.getProjects().isEmpty()) {
+            throw new AgencyException(EXISTING_IN_PROJECTS_EXCEPTION, contractor.getPublicId());
+        }
     }
 }
