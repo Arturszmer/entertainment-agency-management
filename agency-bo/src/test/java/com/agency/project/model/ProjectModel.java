@@ -22,7 +22,7 @@ public class ProjectModel {
         BasicContractDetailsDto basicContractDetailsDto = new BasicContractDetailsDto(PROJECT_PUBLIC_ID, SIGN_DATE, START_DATE, END_DATE,
                 "Subject of the contract", BigDecimal.valueOf(3000),
                 "Additional information");
-        return new ContractWorkCreateDto(PROJECT_NUMBER, CONTRACTOR_PUBLIC_ID, basicContractDetailsDto, true);
+        return new ContractWorkCreateDto(PROJECT_NUMBER, CONTRACTOR_PUBLIC_ID, basicContractDetailsDto, true, true);
     }
 
     public static ProjectCreateDto getProjectCreateDto(){
