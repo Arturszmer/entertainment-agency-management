@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -18,15 +19,19 @@ import java.util.UUID;
 public abstract class Cost extends BaseEntity<Long> {
 
     @Column(name = "cost_type", nullable = false)
+    @Setter(AccessLevel.PROTECTED)
     private String costType;
 
     @Column(name = "cost_reference")
+    @Setter(AccessLevel.PROTECTED)
     private String costReference;
 
     @Column(name = "description")
+    @Setter(AccessLevel.PROTECTED)
     private String description;
 
     @Column(name = "value")
+    @Setter(AccessLevel.PROTECTED)
     private BigDecimal value;
 
     @Column(name = "public_id")
