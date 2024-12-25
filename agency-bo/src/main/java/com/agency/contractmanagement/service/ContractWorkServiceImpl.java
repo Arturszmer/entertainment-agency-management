@@ -25,8 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 import static com.agency.contractmanagement.constant.ContractLogsMessage.*;
-import static com.agency.contractmanagement.constant.ContractLogsMessage.REMOVING_PROCESS_STARTED;
-import static com.agency.contractmanagement.constant.ContractLogsMessage.TRY_TO_REMOVE_DOCUMENT;
 import static com.agency.contractmanagement.validator.ContractDatesValidator.isContractHasCorrectDatesForProject;
 import static com.agency.dict.project.ProjectStatus.TERMINATED;
 
@@ -46,20 +44,26 @@ public class ContractWorkServiceImpl implements ContractService {
     public ContractWorkDto createContractOfWork(ContractWorkCreateDto createDto) {
         Contractor contractor = getContractor(createDto);
 
-        Project projectForContract = getProjectForContract(createDto, contractor);
+        Project project = getProjectForContract(createDto, contractor);
 
-        isContractHasCorrectDatesForProject(projectForContract, createDto);
-        checkIsProjectTerminated(createDto, projectForContract);
+        isContractHasCorrectDatesForProject(project, createDto);
+        checkIsProjectTerminated(createDto, project);
 
         String contractNumber = numberGenerator.generateContractNumber(createDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
 
         ContractWork contract = contractWorkRepository.save(ContractWork.create(contractNumber, createDto, contractor));
-        ProjectCost projectCost = costService.addContractTypeCost(contract, projectForContract);
-        projectForContract.addCost(projectCost);
+        addProjectCost(createDto, contract, project);
         contractor.addNewContract(contract);
         contractorRepository.save(contractor);
         log.info("The new contract of work for contractor no. id: {} has been created", contractor.getId());
         return ContractAssembler.toContractWorkDto(contract);
+    }
+
+    private void addProjectCost(ContractWorkCreateDto createDto, ContractWork contract, Project project) {
+        if (createDto.generateCost()) {
+            ProjectCost projectCost = costService.addContractTypeCost(contract, project);
+            project.addCost(projectCost);
+        }
     }
 
     @Override
@@ -68,7 +72,7 @@ public class ContractWorkServiceImpl implements ContractService {
         ContractWork contractWork = getEntity(publicId);
         log.info(REMOVING_PROCESS_STARTED, publicId);
         contractWork.checkForDelete();
-        if(contractWork.hasGeneratedFile()){
+        if (contractWork.hasGeneratedFile()) {
             log.info(TRY_TO_REMOVE_DOCUMENT, publicId);
             contractWorkDocumentService.removeDocument(publicId);
         }

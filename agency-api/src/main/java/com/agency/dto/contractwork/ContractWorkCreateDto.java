@@ -7,7 +7,8 @@ public record ContractWorkCreateDto(
         String projectContractNumber,
         String contractorPublicId,
         BasicContractDetailsDto contractDetailsDto,
-        boolean withCopyrights
+        boolean withCopyrights,
+        boolean generateCost
 
 ) {
 }

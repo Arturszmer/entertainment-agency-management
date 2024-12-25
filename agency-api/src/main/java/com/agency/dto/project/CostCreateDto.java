@@ -1,12 +1,13 @@
 package com.agency.dto.project;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record CostCreateDto(
-        String projectNumber,
+        UUID projectPublicId,
         String costType,
         String costReference,
-        String costDescription,
+        String description,
         BigDecimal value
 ) {
 }

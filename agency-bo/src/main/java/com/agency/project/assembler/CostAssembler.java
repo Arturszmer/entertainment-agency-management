@@ -7,11 +7,13 @@ public class CostAssembler {
 
     public static CostDto toDto(ProjectCost projectCost) {
         return new CostDto(
-                projectCost.getPublicId().toString(),
+                projectCost.getPublicId(),
                 projectCost.getCostType(),
                 projectCost.getCostReference(),
                 projectCost.getDescription(),
-                projectCost.getValue()
+                projectCost.getModifiedBy(),
+                projectCost.getValue(),
+                projectCost.isGenerated()
         );
     }
 }

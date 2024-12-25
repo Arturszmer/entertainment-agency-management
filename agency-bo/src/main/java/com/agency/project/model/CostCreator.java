@@ -1,8 +1,9 @@
-package com.agency.project.model.costcreator;
+package com.agency.project.model;
 
 import com.agency.contractmanagement.model.ContractWork;
-import com.agency.project.model.Project;
-import com.agency.project.model.ProjectCost;
+import com.agency.dto.project.CostCreateDto;
+import com.agency.exception.AgencyException;
+import com.agency.exception.CostErrorResult;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -15,11 +16,24 @@ public class CostCreator {
     }
 
     public ProjectCost addContractWorkTypeCost(ContractWork contractWork) {
-        return new ProjectCost(
+        return ProjectCost.createGeneratedCost(
                 "CONTRACT_WORK",
                 contractWork.getContractNumber(),
                 getContractorWorkDescriptionCost(contractWork),
                 contractWork.getSalary(),
+                costOwner
+        );
+    }
+
+    public ProjectCost addCustomCost(CostCreateDto costCreateDto) {
+        if (costCreateDto.value().signum() < 0) {
+            throw new AgencyException(CostErrorResult.VALUE_CANNOT_BE_NEGATIVE);
+        }
+        return ProjectCost.createNotGeneratedCost(
+                costCreateDto.costType(),
+                costCreateDto.costReference(),
+                costCreateDto.description(),
+                costCreateDto.value(),
                 costOwner
         );
     }
