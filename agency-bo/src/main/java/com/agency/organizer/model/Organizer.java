@@ -2,7 +2,7 @@ package com.agency.organizer.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.dto.organizer.OrganizerCreate;
-import com.agency.project.model.Project;
+import com.agency.contractmanagement.project.model.Project;
 import com.agency.user.assembler.AddressAssembler;
 import com.agency.user.helper.SecurityContextUsers;
 import com.agency.user.model.Address;

@@ -1,12 +1,12 @@
 package com.agency.contractor.assembler;
 
-import com.agency.contractmanagement.assembler.ContractAssembler;
+import com.agency.contractmanagement.contractwork.assembler.ContractAssembler;
 import com.agency.contractor.model.Contractor;
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.dto.contractor.ContractorDto;
 import com.agency.dto.contractor.ContractorShortInfoDto;
-import com.agency.project.model.Project;
+import com.agency.contractmanagement.project.model.Project;
 import com.agency.user.assembler.AddressAssembler;
 
 import java.util.ArrayList;

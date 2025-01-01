@@ -2,9 +2,9 @@ package com.agency.calculate.service;
 
 import com.agency.exception.AgencyException;
 import com.agency.exception.ProjectErrorResult;
-import com.agency.project.model.Project;
-import com.agency.project.model.ProjectCost;
-import com.agency.project.repository.ProjectRepository;
+import com.agency.contractmanagement.project.model.Project;
+import com.agency.contractmanagement.project.model.ProjectCost;
+import com.agency.contractmanagement.project.repository.ProjectRepository;
 import com.agency.service.CalculateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,6 @@ import java.util.UUID;
 public class ProjectCalculateService implements CalculateService {
 
     private final ProjectRepository projectRepository;
-
 
     @Override
     @Transactional

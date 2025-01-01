@@ -2,11 +2,11 @@ package com.agency.contractor.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.common.ExcludeFromPlaceholders;
-import com.agency.contractmanagement.model.ContractWork;
+import com.agency.contractmanagement.contractwork.model.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
-import com.agency.project.model.Project;
+import com.agency.contractmanagement.project.model.Project;
 import com.agency.user.model.Address;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
