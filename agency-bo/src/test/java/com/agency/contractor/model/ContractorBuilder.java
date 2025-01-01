@@ -1,7 +1,7 @@
 package com.agency.contractor.model;
 
-import com.agency.contractmanagement.model.ContractWork;
-import com.agency.project.model.Project;
+import com.agency.contractmanagement.contractwork.model.ContractWork;
+import com.agency.contractmanagement.project.model.Project;
 import com.agency.user.model.Address;
 
 import java.time.LocalDate;

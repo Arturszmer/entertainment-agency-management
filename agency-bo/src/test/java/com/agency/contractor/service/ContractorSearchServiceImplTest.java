@@ -5,7 +5,7 @@ import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorSearchRequest;
 import com.agency.dto.contractor.ContractorShortInfoDto;
-import com.agency.project.repository.ProjectRepository;
+import com.agency.contractmanagement.project.repository.ProjectRepository;
 import com.agency.user.model.Address;
 import com.querydsl.core.types.Predicate;
 import org.junit.jupiter.api.BeforeEach;

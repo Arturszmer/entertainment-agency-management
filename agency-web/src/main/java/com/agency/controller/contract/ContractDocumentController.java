@@ -1,6 +1,6 @@
 package com.agency.controller.contract;
 
-import com.agency.contractmanagement.service.ContractWorkDocumentServiceImpl;
+import com.agency.contractmanagement.contractwork.service.ContractWorkDocumentServiceImpl;
 import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.dto.contractwork.DocumentGenerateRequest;
 import com.agency.service.ContractDocumentGeneratorService;

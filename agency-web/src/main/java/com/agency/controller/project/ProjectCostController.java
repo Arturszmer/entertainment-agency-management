@@ -2,7 +2,7 @@ package com.agency.controller.project;
 
 import com.agency.dto.project.CostCreateDto;
 import com.agency.dto.project.CostDto;
-import com.agency.project.service.CostService;
+import com.agency.contractmanagement.project.service.CostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;

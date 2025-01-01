@@ -1,8 +1,8 @@
 package com.agency.contractor.service;
 
-import com.agency.contractmanagement.model.ContractWorkBuilder;
+import com.agency.contractmanagement.contractwork.model.ContractWorkBuilder;
 import com.agency.contractor.model.ContractorBuilder;
-import com.agency.contractmanagement.model.ContractWork;
+import com.agency.contractmanagement.contractwork.model.ContractWork;
 import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dto.contractor.ContractorCreateRequest;

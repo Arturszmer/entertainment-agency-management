@@ -1,11 +1,11 @@
 package com.agency.contractor.validator;
 
-import com.agency.contractmanagement.validator.ContractDatesValidator;
+import com.agency.contractmanagement.contractwork.validator.ContractDatesValidator;
 import com.agency.dto.contractwork.BasicContractDetailsDto;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.exception.AgencyException;
-import com.agency.project.model.Project;
-import com.agency.project.model.ProjectBuilder;
+import com.agency.contractmanagement.project.model.Project;
+import com.agency.contractmanagement.project.model.ProjectBuilder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
