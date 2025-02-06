@@ -1,18 +1,17 @@
 package com.agency.controller.project;
 
 import com.agency.BaseIntegrationTestSettings;
+import com.agency.contractmanagement.project.model.Project;
+import com.agency.contractmanagement.project.repository.ProjectRepository;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.dto.project.ProjectDto;
-import com.agency.contractmanagement.project.model.Project;
-import com.agency.contractmanagement.project.repository.ProjectRepository;
+import com.agency.dto.project.ProjectStatusUpdateRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
 import java.util.Optional;
 
@@ -42,20 +41,19 @@ class ProjectControllerTest extends BaseIntegrationTestSettings {
 
         // then
         assertTrue(projectOpt.isPresent());
-        assertEquals("2024/STY/PRO2", projectOpt.get().getContractNumber());
+        assertEquals("D2024/STY/PRO2", projectOpt.get().getContractNumber());
 
     }
 
     @Test
     public void should_update_project_status() throws Exception {
         // given
-        String contractNumber = "2024/STY/PRO10";
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("contract-number", contractNumber);
-        params.add("status", ProjectStatus.PROPOSITION.name());
+        String contractNumber = "D2024/STY/PRO1";
+        ProjectStatusUpdateRequest updateRequest = new ProjectStatusUpdateRequest(contractNumber, ProjectStatus.PROPOSITION);
+        String body = mapper.writeValueAsString(updateRequest);
 
         // when
-        putRequest(urlPath + "/status", "", params);
+        putRequest(urlPath + "/status", body);
         Optional<Project> projectOpt = repository.findByContractNumber(contractNumber);
 
         // then

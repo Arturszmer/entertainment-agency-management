@@ -1,6 +1,7 @@
 package com.agency.contractmanagement.project.service;
 
 import com.agency.dict.project.ProjectStatus;
+import com.agency.dto.bill.ContractWorkBillDto;
 import com.agency.dto.project.ProjectDto;
 import com.agency.dto.project.ProjectSearchDto;
 import com.agency.dto.project.ProjectToAssignContractorDto;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -39,7 +41,7 @@ public class ProjectSearchServiceImpl implements ProjectSearchService {
 
     @Override
     @Transactional(readOnly = true)
-    public ProjectDto getProjectFullInfo(String publicId) {
+    public ProjectDto getProjectDetails(String publicId) {
         return ProjectAssembler.toDto(repository.findProjectByPublicId(UUID.fromString(publicId))
                 .orElseThrow(() -> new AgencyException(ProjectErrorResult.PROJECT_NOT_FOUND)));
     }
@@ -51,5 +53,14 @@ public class ProjectSearchServiceImpl implements ProjectSearchService {
                 .filter(project -> project.getContractors().stream().noneMatch(contractor -> contractor.getPublicId().toString().equals(assignedContractorPublicId)))
                 .map(ProjectAssembler::toProjectToAssignContractor)
                 .toList();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<ContractWorkBillDto> getProjectBills(UUID publicId) {
+        Project project = repository.findProjectByPublicId(publicId)
+                .orElseThrow(() -> new AgencyException(ProjectErrorResult.PROJECT_NOT_FOUND));
+        log.info("Project with public id: {} contract work bills fetched", publicId);
+        return ProjectAssembler.toProjectContractWorkBillDto(project);
     }
 }

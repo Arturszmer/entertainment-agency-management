@@ -1,6 +1,6 @@
 package com.agency.controller.project;
 
-import com.agency.service.CalculateService;
+import com.agency.contractmanagement.project.service.CostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,10 +17,10 @@ import java.math.BigDecimal;
 @RequiredArgsConstructor
 public class ProjectCalculatorController {
 
-    private final CalculateService calculateService;
+    private final CostService costService;
 
     @GetMapping("{public-id}")
     ResponseEntity<BigDecimal> getProjectBalance(@PathVariable("public-id") String publicId) {
-        return ResponseEntity.ok(calculateService.getBalance(publicId));
+        return ResponseEntity.ok(costService.getBalance(publicId));
     }
 }

@@ -10,7 +10,8 @@ values (40, 'admin', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '1
 
 INSERT INTO contractor (
     id, creation_timestamp, modification_timestamp, created_by,
-    public_id, first_name, last_modified, last_name, pesel, birth_date, address_id, phone, email, contractor_description)
+    public_id, first_name, last_modified, last_name, pesel, birth_date,
+                        address_id, phone, email, contractor_description)
 VALUES (40, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, 'admin', 'fb75951a-fe54-11ee-92c8-0242ac120003', 'John',
         CURRENT_TIMESTAMP, 'Doe', '64050968198', '1964-05-09', 40, '500123456', 'email@email.com', 'description');
 

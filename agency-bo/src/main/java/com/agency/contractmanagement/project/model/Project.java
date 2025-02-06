@@ -6,10 +6,19 @@ import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.project.ProjectCreateDto;
 import com.agency.exception.AgencyException;
-import com.agency.exception.ContractorErrorResult;
 import com.agency.exception.ProjectErrorResult;
 import com.agency.organizer.model.Organizer;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -75,14 +84,11 @@ public class Project extends AbstractContract implements CostRelated {
     public static Project create(String contractNumber, ProjectCreateDto createDto){
         return new Project(contractNumber, createDto.signDate(), createDto.startDate(), createDto.endDate(),
                 createDto.projectSubject(), createDto.salary(), createDto.additionalInformation(),
-                ProjectStatus.DRAFT, createDto.isInternal()
+                ProjectStatus.PROPOSITION, createDto.isInternal()
         );
     }
 
     public void updateStatus(ProjectStatus updatedStatus) {
-        if(ProjectStatus.SIGNED == status || ProjectStatus.TERMINATED == status){
-            throw new AgencyException(ContractorErrorResult.PROJECT_CANNOT_CHANGE_SIGN_OR_TERMINATE_STATUS);
-        }
         status = updatedStatus;
     }
 
@@ -103,6 +109,14 @@ public class Project extends AbstractContract implements CostRelated {
     }
 
     @Override
+    public BigDecimal getContractBalance() {
+        BigDecimal totalCosts = getProjectCosts().stream()
+                .map(ProjectCost::getValue)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return getSalary().subtract(totalCosts);
+    }
+
+    @Override
     public void checkForDelete() {
         if (status != ProjectStatus.DRAFT) {
             throw new AgencyException(ProjectErrorResult.CANNOT_DELETE_PROJECT, "Project has not in draft status");
@@ -110,5 +124,15 @@ public class Project extends AbstractContract implements CostRelated {
         if (!contractors.isEmpty()) {
             throw new AgencyException(ProjectErrorResult.CANNOT_DELETE_PROJECT, "Contractors are existed in the project");
         }
+    }
+
+    @Override
+    public boolean isWithCopyrights() {
+        return false;
+    }
+
+    @Override
+    public int getBillsNumber() {
+        return 0;
     }
 }

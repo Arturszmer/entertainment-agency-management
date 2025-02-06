@@ -6,11 +6,13 @@ import com.agency.dto.project.CostDto;
 import com.agency.contractmanagement.project.model.Project;
 import com.agency.contractmanagement.project.model.ProjectCost;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
 public interface CostService {
 
+    BigDecimal getBalance(String projectPublicId);
     List<CostDto> getAllCostsForProject(String projectPublicId);
 
     CostDto addCost(CostCreateDto costDto);

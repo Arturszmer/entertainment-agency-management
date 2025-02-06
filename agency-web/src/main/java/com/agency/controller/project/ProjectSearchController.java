@@ -34,7 +34,7 @@ public class ProjectSearchController {
 
     @GetMapping("/{public-id}")
     public ResponseEntity<ProjectDto> getProjectDetails(@PathVariable("public-id") String publicId){
-        return ResponseEntity.ok(searchService.getProjectFullInfo(publicId));
+        return ResponseEntity.ok(searchService.getProjectDetails(publicId));
     }
 
     @GetMapping("/to-assign")

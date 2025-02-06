@@ -51,6 +51,10 @@ public class AgencyDetailsService {
                 .orElseThrow(() -> new AgencyException(AGENCY_NOT_INITIALIZED_EXCEPTION));
     }
 
+    public boolean isInitialized(){
+        return repository.findAll().stream().findFirst().isPresent();
+    }
+
     private static void validatePeselIfExists(AgencyDetailsDto agencyDetailsDto) {
         if(hasText(agencyDetailsDto.pesel())){
             if(!new PeselValidator().validate(agencyDetailsDto.pesel())) {

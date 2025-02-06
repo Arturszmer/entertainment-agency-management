@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +28,14 @@ public class CostContractServiceImpl implements CostService {
 
     private final ProjectRepository projectRepository;
     private final ProjectCostRepository projectCostRepository;
+
+    @Override
+    @Transactional(readOnly = true)
+    public BigDecimal getBalance(String projectPublicId) {
+        Project project = projectRepository.findProjectByPublicId(UUID.fromString(projectPublicId))
+                .orElseThrow(() -> new AgencyException(ProjectErrorResult.PROJECT_NOT_FOUND, projectPublicId));
+        return project.getContractBalance();
+    }
 
     @Override
     public List<CostDto> getAllCostsForProject(String projectPublicId) {

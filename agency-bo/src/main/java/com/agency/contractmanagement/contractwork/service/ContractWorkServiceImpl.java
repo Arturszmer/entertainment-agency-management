@@ -1,8 +1,13 @@
 package com.agency.contractmanagement.contractwork.service;
 
+import com.agency.contractmanagement.contractnumber.model.ContractNumberStatus;
+import com.agency.contractmanagement.contractnumber.service.ContractNumberService;
 import com.agency.contractmanagement.contractwork.assembler.ContractAssembler;
 import com.agency.contractmanagement.contractwork.model.ContractWork;
 import com.agency.contractmanagement.contractwork.repository.ContractWorkRepository;
+import com.agency.contractmanagement.project.model.Project;
+import com.agency.contractmanagement.project.model.ProjectCost;
+import com.agency.contractmanagement.project.service.CostService;
 import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
@@ -11,10 +16,6 @@ import com.agency.dto.contractwork.ContractWorkDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
 import com.agency.exception.ContractorErrorResult;
-import com.agency.contractmanagement.project.model.Project;
-import com.agency.contractmanagement.project.model.ProjectCost;
-import com.agency.contractmanagement.project.service.ContractNumberGenerator;
-import com.agency.contractmanagement.project.service.CostService;
 import com.agency.service.ContractService;
 import com.agency.service.ContractWorkDocumentService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.agency.contractmanagement.contractwork.constant.ContractLogsMessage.*;
+import static com.agency.contractmanagement.contractwork.service.ContractLogsMessage.*;
 import static com.agency.contractmanagement.contractwork.validator.ContractDatesValidator.isContractHasCorrectDatesForProject;
 import static com.agency.dict.project.ProjectStatus.TERMINATED;
 
@@ -35,8 +36,8 @@ public class ContractWorkServiceImpl implements ContractService {
 
     private final ContractWorkRepository contractWorkRepository;
     private final ContractorRepository contractorRepository;
-    private final ContractNumberGenerator numberGenerator;
     private final ContractWorkDocumentService contractWorkDocumentService;
+    private final ContractNumberService contractNumberService;
     private final CostService costService;
 
     @Override
@@ -49,21 +50,13 @@ public class ContractWorkServiceImpl implements ContractService {
         isContractHasCorrectDatesForProject(project, createDto);
         checkIsProjectTerminated(createDto, project);
 
-        String contractNumber = numberGenerator.generateContractNumber(createDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
-
+        String contractNumber = contractNumberService.createContractNumber(createDto.contractDetailsDto().signDate(), ContractType.CONTRACT_WORK);
         ContractWork contract = contractWorkRepository.save(ContractWork.create(contractNumber, createDto, contractor));
         addProjectCost(createDto, contract, project);
         contractor.addNewContract(contract);
         contractorRepository.save(contractor);
         log.info("The new contract of work for contractor no. id: {} has been created", contractor.getId());
         return ContractAssembler.toContractWorkDto(contract);
-    }
-
-    private void addProjectCost(ContractWorkCreateDto createDto, ContractWork contract, Project project) {
-        if (createDto.generateCost()) {
-            ProjectCost projectCost = costService.addContractTypeCost(contract, project);
-            project.addCost(projectCost);
-        }
     }
 
     @Override
@@ -77,8 +70,44 @@ public class ContractWorkServiceImpl implements ContractService {
             contractWorkDocumentService.removeDocument(publicId);
         }
         costService.removeCostsByCostReference(contractWork.getContractNumber());
+        contractNumberService.deleteContractNumber(contractWork.getContractNumber());
         contractWorkRepository.delete(contractWork);
         log.info(SUCCESSFULLY_DELETED, publicId);
+    }
+
+    @Override
+    @Transactional
+    public void confirmContract(String publicId) {
+        ContractWork contractWork = getEntity(publicId);
+        log.info(CONFIRM_CONTRACT_PROCESS_STARTED, publicId);
+        contractWork.confirm();
+        contractNumberService.updateContractNumberStatus(contractWork.getContractNumber(), ContractNumberStatus.FINAL)
+                .ifPresent(contractWork::updateContractNumber);
+        contractWorkRepository.save(contractWork);
+        log.info(CONFIRMED_SUCCESSFULLY, publicId);
+    }
+
+    @Override
+    public void cancelConfirmation(String publicId) {
+        ContractWork contractWork = getEntity(publicId);
+        if(canBeCancelled(contractWork)){
+            contractWork.cancelConfirmation();
+            contractNumberService.updateContractNumberStatus(contractWork.getContractNumber(), ContractNumberStatus.DRAFT)
+                    .ifPresent(contractWork::updateContractNumber);
+            contractWorkRepository.save(contractWork);
+            log.info(CANCEL_CONFIRMATION, publicId);
+        }
+    }
+
+    private void addProjectCost(ContractWorkCreateDto createDto, ContractWork contract, Project project) {
+        if (createDto.generateCost()) {
+            ProjectCost projectCost = costService.addContractTypeCost(contract, project);
+            project.addCost(projectCost);
+        }
+    }
+
+    private boolean canBeCancelled(ContractWork contractWork) {
+        return contractWork.getBills().isEmpty() && !contractWork.hasGeneratedFile();
     }
 
     private ContractWork getEntity(String publicId) {

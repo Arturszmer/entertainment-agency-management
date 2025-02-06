@@ -27,7 +27,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class ContractWorkGeneratorTest {
+class ContractGeneratorTest {
 
     private ContractWorkGenerator contractWorkGenerator;
     private final ContractWorkRepository contractWorkRepository = mock(ContractWorkRepository.class);
