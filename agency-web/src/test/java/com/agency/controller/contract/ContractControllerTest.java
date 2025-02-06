@@ -1,8 +1,10 @@
 package com.agency.controller.contract;
 
 import com.agency.BaseIntegrationTestSettings;
+import com.agency.contractmanagement.contractwork.model.ContractWork;
 import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
+import com.agency.dict.contract.ContractWorkStatus;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dto.contractwork.ContractWorkDto;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,7 @@ class ContractControllerTest extends BaseIntegrationTestSettings {
     @Autowired
     private ContractorRepository repository;
     private final static String CONTRACT_URL_PATH = "/contract-work";
+    private final static String CONTRACT_WORK_NUMBER = "D2024/STY/UoD1";
 
     @Test
     @Transactional
@@ -43,7 +46,9 @@ class ContractControllerTest extends BaseIntegrationTestSettings {
         assertNotNull(contractWorkDto);
         assertTrue(contractor.isPresent());
         assertEquals(contractor.get().getContracts().size(), 1);
-
+        ContractWork contractWork = contractor.get().getContracts().get(0);
+        assertEquals(CONTRACT_WORK_NUMBER, contractWork.getContractNumber());
+        assertEquals(ContractWorkStatus.DRAFT, contractWork.getStatus());
     }
 
 }

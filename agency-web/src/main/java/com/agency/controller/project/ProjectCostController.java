@@ -31,7 +31,7 @@ public class ProjectCostController {
         return ResponseEntity.ok(costService.getAllCostsForProject(publicId));
     }
 
-    @PostMapping
+    @PostMapping // DODAc info czy ma być załącznik, źródło definiowane inaczej
     ResponseEntity<CostDto> createCost(@RequestBody CostCreateDto costCreateDto) {
         return ResponseEntity.ok(costService.addCost(costCreateDto));
     }

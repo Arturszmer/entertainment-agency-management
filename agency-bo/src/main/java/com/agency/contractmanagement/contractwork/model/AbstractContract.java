@@ -50,5 +50,14 @@ public abstract class AbstractContract extends BaseEntity<Long> {
     @Enumerated(EnumType.STRING)
     private ContractType contractType;
 
+    public abstract BigDecimal getContractBalance();
+
     public abstract void checkForDelete();
+
+    public void updateContractNumber(String completeNumber) {
+        contractNumber = completeNumber;
+    }
+
+    public abstract boolean isWithCopyrights();
+    public abstract int getBillsNumber();
 }

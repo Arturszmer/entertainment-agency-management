@@ -28,6 +28,7 @@ public class ContractAssembler {
                 contract.getSalary(),
                 contract.getAdditionalInformation(),
                 contract.getContractType(),
+                contract.getStatus(),
                 contract.isWithCopyrights()
         );
     }

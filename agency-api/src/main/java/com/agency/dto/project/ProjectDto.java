@@ -17,5 +17,4 @@ public record ProjectDto(
         boolean isInternal,
         String organizerName,
         List<ContractorShortInfoDto> contractors
-) {
-}
+) {}

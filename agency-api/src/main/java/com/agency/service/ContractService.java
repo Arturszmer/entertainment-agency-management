@@ -7,4 +7,9 @@ public interface ContractService {
 
     ContractWorkDto createContractOfWork(ContractWorkCreateDto createDto);
     void deleteContractOfWork(String publicId);
+
+    void confirmContract(String publicId);
+
+    void cancelConfirmation(String publicId);
+
 }

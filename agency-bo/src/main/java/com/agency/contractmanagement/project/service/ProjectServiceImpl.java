@@ -1,14 +1,14 @@
 package com.agency.contractmanagement.project.service;
 
+import com.agency.agencydetails.service.AgencyDetailsService;
+import com.agency.contractmanagement.contractnumber.service.ContractNumberService;
 import com.agency.contractor.model.Contractor;
 import com.agency.contractor.repository.ContractorRepository;
 import com.agency.dict.contract.ContractType;
 import com.agency.dict.project.ProjectStatus;
 import com.agency.dto.contractor.ContractorAssignDto;
 import com.agency.dto.project.*;
-import com.agency.exception.AgencyException;
-import com.agency.exception.OrganizerErrorResult;
-import com.agency.exception.ProjectErrorResult;
+import com.agency.exception.*;
 import com.agency.organizer.model.Organizer;
 import com.agency.organizer.repository.OrganizerRepository;
 import com.agency.contractmanagement.project.assembler.ProjectAssembler;
@@ -32,14 +32,16 @@ import static com.agency.exception.ProjectErrorResult.PROJECT_NOT_FOUND;
 public class ProjectServiceImpl implements ProjectService {
 
     private final ProjectRepository repository;
-    private final ContractNumberGenerator numberGenerator;
     private final OrganizerRepository organizerRepository;
     private final ContractorRepository contractorRepository;
+    private final ContractNumberService contractNumberService;
+    private final AgencyDetailsService agencyDetailsService;
 
     @Override
+    @Transactional
     public ProjectDto addProject(ProjectCreateDto projectCreateDto) {
-        // TODO: protect from creating a project before initialize agency
-        String projectNumber = numberGenerator.generateContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
+        validIsAgencyInitialized();
+        String projectNumber = contractNumberService.createContractNumber(projectCreateDto.signDate(), ContractType.PROJECT);
         Project project = Project.create(projectNumber, projectCreateDto);
         if(!projectCreateDto.isInternal()){
           project.addOrganizer(getExistingOrganizer(projectCreateDto.organizerPublicId()));
@@ -51,10 +53,10 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ProjectDto updateStatus(String contractNumber, ProjectStatus status) {
-        Project project = getProject(contractNumber);
+    public ProjectDto updateStatus(ProjectStatusUpdateRequest request) {
+        Project project = getProject(request.contractNumber());
         ProjectStatus oldStatus = project.getStatus();
-        project.updateStatus(status);
+        project.updateStatus(request.status());
         Project projectWithUpdatedStatus = repository.save(project);
         log.info("The Project status has been changed successfully, \n old status: {} \n new status: {}",
                 oldStatus, projectWithUpdatedStatus.getStatus());
@@ -88,6 +90,12 @@ public class ProjectServiceImpl implements ProjectService {
                 projectContractorRemoveDto.contractorPublicId(), projectNumber);
 
         return ProjectAssembler.toProjectContractorAssignResponse(updatedProject);
+    }
+
+    private void validIsAgencyInitialized() {
+        if(!agencyDetailsService.isInitialized()){
+            throw new AgencyException(AgencyExceptionResult.AGENCY_NOT_INITIALIZED_EXCEPTION);
+        }
     }
 
     private Project getProject(String contractNumber) {

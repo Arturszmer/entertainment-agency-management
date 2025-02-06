@@ -1,6 +1,9 @@
 package com.agency.contractmanagement.contractwork.model;
 
 import com.agency.common.ExcludeFromPlaceholders;
+import com.agency.contractmanagement.bills.model.Bill;
+import com.agency.contractmanagement.bills.model.ContractWorkBill;
+import com.agency.contractmanagement.bills.model.BillsContracts;
 import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
@@ -13,6 +16,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,9 +27,12 @@ import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.agency.dict.contract.ContractType.CONTRACT_WORK;
+import static com.agency.dict.contract.ContractWorkStatus.CONFIRMED;
 import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
 
 @Entity
@@ -33,7 +40,7 @@ import static com.agency.dict.contract.ContractWorkStatus.DRAFT;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Getter
-public class ContractWork extends AbstractContract {
+public class ContractWork extends AbstractContract implements BillsContracts<ContractWorkBill> {
 
     @Column(name = "with_copyrights")
     @Setter
@@ -57,6 +64,10 @@ public class ContractWork extends AbstractContract {
     @Setter
     @ExcludeFromPlaceholders
     private String filename;
+
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @ExcludeFromPlaceholders
+    private List<ContractWorkBill> bills = new ArrayList<>();
 
     public ContractWork(String contractNumber,
                         LocalDate signDate,
@@ -95,13 +106,43 @@ public class ContractWork extends AbstractContract {
     }
 
     @Override
+    public BigDecimal getContractBalance() {
+        BigDecimal existedBillsAmount = this.bills.stream()
+                .map(Bill::getGrossAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return getSalary().subtract(existedBillsAmount);
+    }
+
+    @Override
     public void checkForDelete() {
         if(DRAFT != status){
             throw new AgencyException(ContractErrorResult.CONTRACT_CANNOT_BE_DELETED);
         }
     }
 
+    @Override
+    public int getBillsNumber() {
+        return bills.size();
+    }
+
     public boolean hasGeneratedFile() {
         return filename != null && !filename.isEmpty();
+    }
+
+    @Override
+    public void addBill(ContractWorkBill bill) {
+        bills.add(bill);
+    }
+
+    public void confirm() {
+        if(status == DRAFT){
+            status = CONFIRMED;
+        }
+    }
+
+    public void cancelConfirmation() {
+        if(status == CONFIRMED){
+            status = DRAFT;
+        }
     }
 }

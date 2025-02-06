@@ -6,12 +6,7 @@ import com.agency.service.ContractService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @PreAuthorize("hasAuthority('CONTRACT_MANAGEMENT')")
@@ -26,11 +21,21 @@ public class ContractController {
         return ResponseEntity.ok(service.createContractOfWork(createDto));
     }
 
+    @PutMapping("/confirm/{public-id}")
+    public ResponseEntity<Void> confirmContract(@PathVariable("public-id") String publicId){
+        service.confirmContract(publicId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/cancel-confirmation/{public-id}")
+    public ResponseEntity<Void> cancelConfirmation(@PathVariable("public-id") String publicId){
+        service.cancelConfirmation(publicId);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/{public-id}")
     public ResponseEntity<Void> deleteContract(@PathVariable("public-id") String publicId){
         service.deleteContractOfWork(publicId);
         return ResponseEntity.noContent().build();
     }
-
-
 }
