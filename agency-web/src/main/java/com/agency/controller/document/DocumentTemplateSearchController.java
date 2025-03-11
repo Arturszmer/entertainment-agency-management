@@ -1,7 +1,9 @@
 package com.agency.controller.document;
 
 import com.agency.documentcontext.templatecontext.TemplateContext;
+import com.agency.documents.service.placeholdergenerator.PlaceholderGeneratorService;
 import com.agency.dto.document.TemplateDocumentDto;
+import com.agency.dto.document.TemplateSystemPlaceholdersDto;
 import com.agency.service.DocumentTemplateSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,7 @@ import java.util.Set;
 public class DocumentTemplateSearchController {
 
     private final DocumentTemplateSearchService searchService;
+    private final PlaceholderGeneratorService placeholderGeneratorService;
 
     @GetMapping
     ResponseEntity<List<TemplateDocumentDto>> getAll(){
@@ -29,5 +32,11 @@ public class DocumentTemplateSearchController {
     @GetMapping("/get-template-names/{template-context}")
     ResponseEntity<Set<String>> getTemplateNamesByContext(@PathVariable("template-context") TemplateContext templateContext){
         return ResponseEntity.ok(searchService.getTemplatesNamesByContext(templateContext));
+    }
+
+    @GetMapping(value = "/placeholders/{template-context}")
+    ResponseEntity<List<TemplateSystemPlaceholdersDto>> getAvailableVariablesForContextType(
+            @PathVariable("template-context") TemplateContext templateContext) {
+        return ResponseEntity.ok(placeholderGeneratorService.getPlaceholdersByContextType(templateContext));
     }
 }

@@ -32,7 +32,7 @@ public class TemplateDocument extends Document {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "template_context")
-    private TemplateContext templateContext ;
+    private TemplateContext templateContext;
 
     public TemplateDocument(String filename, String templateName, boolean isDefault, TemplateContext templateContext) {
         super(filename);

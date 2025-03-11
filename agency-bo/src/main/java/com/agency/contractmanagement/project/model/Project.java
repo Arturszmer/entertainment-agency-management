@@ -1,5 +1,6 @@
 package com.agency.contractmanagement.project.model;
 
+import com.agency.common.ExcludeFromPlaceholders;
 import com.agency.contractmanagement.contractwork.model.AbstractContract;
 import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
@@ -48,17 +49,21 @@ public class Project extends AbstractContract implements CostRelated {
             joinColumns = @JoinColumn(name = "project_id"),
             inverseJoinColumns = @JoinColumn(name = "contractor_id")
     )
+    @ExcludeFromPlaceholders
     private List<Contractor> contractors = new ArrayList<>();
 
     @ManyToOne
+    @ExcludeFromPlaceholders
     private Organizer organizer;
 
     /*
     If it's true organizer should be null, and the owner of the project is agency
      */
+    @ExcludeFromPlaceholders
     private boolean isInternal;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "project", cascade = CascadeType.ALL)
+    @ExcludeFromPlaceholders
     private List<ProjectCost> projectCosts = new ArrayList<>();
 
     @Override

@@ -48,6 +48,7 @@ public abstract class AbstractContract extends BaseEntity<Long> {
 
     @Column(name = "contract_type")
     @Enumerated(EnumType.STRING)
+    @ExcludeFromPlaceholders
     private ContractType contractType;
 
     public abstract BigDecimal getContractBalance();
@@ -59,5 +60,6 @@ public abstract class AbstractContract extends BaseEntity<Long> {
     }
 
     public abstract boolean isWithCopyrights();
+
     public abstract int getBillsNumber();
 }
