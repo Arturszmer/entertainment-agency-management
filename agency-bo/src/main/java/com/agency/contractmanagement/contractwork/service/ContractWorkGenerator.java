@@ -3,15 +3,14 @@ package com.agency.contractmanagement.contractwork.service;
 import com.agency.agencydetails.model.AgencyDetails;
 import com.agency.agencydetails.repository.AgencyDetailsRepository;
 import com.agency.agencydetails.service.AgencyDetailsAssembler;
-import com.agency.documentcontext.doccontext.DocContextType;
-import com.agency.documentcontext.doccontext.DocumentContext;
-import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.contractmanagement.contractwork.assembler.ContractAssembler;
 import com.agency.contractmanagement.contractwork.model.ContractWork;
 import com.agency.contractmanagement.contractwork.repository.ContractWorkRepository;
-import com.agency.contractmanagement.utils.AgencyPlaceholderGenerator;
-import com.agency.contractmanagement.utils.ContractWorkPlaceholderGenerator;
+import com.agency.contractmanagement.utils.PlaceholderResolver;
 import com.agency.contractor.assembler.ContractorAssembler;
+import com.agency.documentcontext.doccontext.DocContextType;
+import com.agency.documentcontext.doccontext.DocumentContext;
+import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.documents.model.ContractDocument;
 import com.agency.documents.model.TemplateDocument;
 import com.agency.documents.repository.ContractDocumentRepository;
@@ -76,7 +75,7 @@ public class ContractWorkGenerator implements ContractDocumentGeneratorService {
         log.info("==> Start generating document proces for contract with public id: {}", contractPublicID);
         GenerationResult generate = docGenerator.generate(documentContext);
 
-        if(generate.isSuccess()){
+        if (generate.isSuccess()) {
             ContractDocument contractDocument = new ContractDocument(generate.getFilename(), contractPublicID);
             contractDocumentRepository.save(contractDocument);
             contractWork.setFilename(generate.getFilename());
@@ -111,7 +110,7 @@ public class ContractWorkGenerator implements ContractDocumentGeneratorService {
     }
 
     private void validate(ContractWork contractWork) {
-        if(contractWork.getFilename() != null){
+        if (contractWork.getFilename() != null) {
             throw new AgencyException(ContractErrorResult.CANNOT_GENERATE_ANOTHER_CONTRACT_DOCUMENT);
         }
     }
@@ -123,9 +122,10 @@ public class ContractWorkGenerator implements ContractDocumentGeneratorService {
 
     private Map<String, Object> getPlaceholderContextFields(ContractWork contractWork, AgencyDetails agencyDetails) {
         Map<String, Object> placeholderContextFields = new HashMap<>();
-        placeholderContextFields.putAll(new ContractWorkPlaceholderGenerator().getPlaceholders(contractWork.getClass(), contractWork));
-        placeholderContextFields.putAll(new AgencyPlaceholderGenerator().getPlaceholders(agencyDetails.getClass(), agencyDetails));
-        placeholderContextFields.putAll(new ContractWorkPlaceholderGenerator().getPlaceholders(contractWork.getContractor().getClass(), contractWork.getContractor()));
+        placeholderContextFields.putAll(PlaceholderResolver.fillInPlaceholders(contractWork));
+        placeholderContextFields.putAll(PlaceholderResolver.fillInPlaceholders(agencyDetails));
+        placeholderContextFields.putAll(PlaceholderResolver.fillInPlaceholders(contractWork.getContractor()));
+
         return placeholderContextFields;
     }
 }

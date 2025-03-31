@@ -9,7 +9,10 @@ public class DocumentTemplateAssembler {
         return new TemplateDocumentDto(
                 templateDocument.getFileName(),
                 templateDocument.getContextType(),
-                templateDocument.getReferenceId().toString(),
+                templateDocument.getReferenceId() != null
+                        ? templateDocument.getReferenceId().toString()
+                        : null,
+                templateDocument.getHtmlContent(),
                 templateDocument.getTemplateName(),
                 templateDocument.isDefault(),
                 templateDocument.getTemplateContext(),

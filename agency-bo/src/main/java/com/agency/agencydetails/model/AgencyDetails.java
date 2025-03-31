@@ -2,6 +2,7 @@ package com.agency.agencydetails.model;
 
 
 import com.agency.common.BaseEntity;
+import com.agency.common.ExcludeFromPlaceholders;
 import com.agency.dto.agencydetails.AgencyDetailsDto;
 import com.agency.user.assembler.AddressAssembler;
 import com.agency.user.model.Address;
@@ -10,11 +11,18 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Entity
 @Table(name = "agency_details")
 @Getter
 @NoArgsConstructor
-public class AgencyDetails extends BaseEntity<Long> {
+public class AgencyDetails extends BaseEntity<Long> implements Serializable {
+
+    @Serial
+    @ExcludeFromPlaceholders
+    private static final long serialVersionUID = 5569323110732509331L;
 
     @Column(name = "AGENCY_NAME", nullable = false)
     private String agencyName;
@@ -69,4 +77,9 @@ public class AgencyDetails extends BaseEntity<Long> {
         krsNumber = agencyDetailsDto.krsNumber();
         address = AddressAssembler.toEntity(agencyDetailsDto.addressDto());
     }
+
+//    @Override
+//    public String getPrefix() {
+//        return "agency";
+//    }
 }

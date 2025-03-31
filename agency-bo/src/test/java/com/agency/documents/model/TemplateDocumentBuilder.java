@@ -11,6 +11,7 @@ public class TemplateDocumentBuilder {
     private String templateName;
     private boolean isDefault;
     private TemplateContext templateContext;
+    private String htmlContent;
 
     public static TemplateDocumentBuilder aTemplateDocument() {
         return new TemplateDocumentBuilder();
@@ -36,8 +37,14 @@ public class TemplateDocumentBuilder {
         this.templateContext = templateContext;
         return this;
     }
+
+    public TemplateDocumentBuilder withHtmlContent(String htmlContent) {
+        this.htmlContent = htmlContent;
+        return this;
+    }
+
     public TemplateDocument build() {
-        return new TemplateDocument(filename, referenceId, templateName, isDefault, templateContext);
+        return new TemplateDocument(filename, referenceId, templateName, isDefault, templateContext, htmlContent);
     }
 
 }

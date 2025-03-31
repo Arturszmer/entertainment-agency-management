@@ -2,27 +2,16 @@ package com.agency.contractmanagement.contractwork.model;
 
 import com.agency.common.ExcludeFromPlaceholders;
 import com.agency.contractmanagement.bills.model.Bill;
-import com.agency.contractmanagement.bills.model.ContractWorkBill;
 import com.agency.contractmanagement.bills.model.BillsContracts;
+import com.agency.contractmanagement.bills.model.ContractWorkBill;
 import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
-import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.dict.contract.ContractWorkStatus;
+import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
@@ -47,6 +36,7 @@ public class ContractWork extends AbstractContract implements BillsContracts<Con
     private boolean withCopyrights;
 
     @Column(name = "project_number", nullable = false)
+    @ExcludeFromPlaceholders
     private String projectNumber;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
@@ -88,7 +78,7 @@ public class ContractWork extends AbstractContract implements BillsContracts<Con
         this.status = status;
     }
 
-    public static ContractWork create(String contractNumber, ContractWorkCreateDto createDto, Contractor contractor){
+    public static ContractWork create(String contractNumber, ContractWorkCreateDto createDto, Contractor contractor) {
         return new ContractWork(
                 contractNumber,
                 createDto.contractDetailsDto().signDate(),
@@ -115,7 +105,7 @@ public class ContractWork extends AbstractContract implements BillsContracts<Con
 
     @Override
     public void checkForDelete() {
-        if(DRAFT != status){
+        if (DRAFT != status) {
             throw new AgencyException(ContractErrorResult.CONTRACT_CANNOT_BE_DELETED);
         }
     }
@@ -135,13 +125,13 @@ public class ContractWork extends AbstractContract implements BillsContracts<Con
     }
 
     public void confirm() {
-        if(status == DRAFT){
+        if (status == DRAFT) {
             status = CONFIRMED;
         }
     }
 
     public void cancelConfirmation() {
-        if(status == CONFIRMED){
+        if (status == CONFIRMED) {
             status = DRAFT;
         }
     }

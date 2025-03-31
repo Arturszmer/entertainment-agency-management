@@ -74,4 +74,9 @@ public class Organizer extends BaseEntity<Long> {
     public void assignNewUser(String username) {
         this.username = username;
     }
+
+//    @Override
+//    public String getPrefix() {
+//        return "organizer";
+//    }
 }

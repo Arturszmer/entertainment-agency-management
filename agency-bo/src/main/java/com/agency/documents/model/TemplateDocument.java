@@ -7,8 +7,6 @@ import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,7 +16,6 @@ import java.util.UUID;
 @Entity
 @DiscriminatorValue("TEMPLATE")
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PACKAGE)
 @Getter
 public class TemplateDocument extends Document {
 
@@ -30,22 +27,46 @@ public class TemplateDocument extends Document {
     @Setter
     private boolean isDefault;
 
+    @Column(name = "html_content", columnDefinition = "TEXT")
+    private String htmlContent;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "template_context")
-    private TemplateContext templateContext ;
+    private TemplateContext templateContext;
 
-    public TemplateDocument(String filename, String templateName, boolean isDefault, TemplateContext templateContext) {
+    public TemplateDocument(String filename,
+                            String templateName,
+                            boolean isDefault,
+                            TemplateContext templateContext) {
         super(filename);
         this.templateName = templateName;
         this.isDefault = isDefault;
         this.templateContext = templateContext;
     }
 
-    TemplateDocument(String filename, UUID referenceId, String templateName, boolean isDefault, TemplateContext templateContext) {
+    public TemplateDocument(String templateName,
+                            boolean isDefault,
+                            String htmlContent,
+                            TemplateContext templateContext) {
+        this.templateName = templateName;
+        this.isDefault = isDefault;
+        this.htmlContent = htmlContent;
+        this.templateContext = templateContext;
+    }
+
+
+
+    TemplateDocument(String filename,
+                     UUID referenceId,
+                     String templateName,
+                     boolean isDefault,
+                     TemplateContext templateContext,
+                     String htmlContent) {
         super(filename, referenceId);
         this.templateName = templateName;
         this.isDefault = isDefault;
         this.templateContext = templateContext;
+        this.htmlContent = htmlContent;
     }
 
     @Override
