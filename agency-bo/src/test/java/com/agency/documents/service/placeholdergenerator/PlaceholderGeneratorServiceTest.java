@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static com.agency.documents.model.PlaceholderModel.contractWorkPlaceholders;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class PlaceholderGeneratorServiceTest {
@@ -27,7 +28,7 @@ class PlaceholderGeneratorServiceTest {
         contractWorkContextPlaceholders.forEach(System.out::println);
         TemplateSystemPlaceholdersDto contractWork = contractWorkContextPlaceholders.get(0);
         assertEquals("ContractWork", contractWork.groupName());
-        assertEquals(PlaceholderModel.contractWorkPlaceholders, contractWork.variables());
+        assertEquals(contractWorkPlaceholders, contractWork.variables());
 
         TemplateSystemPlaceholdersDto contractor = contractWorkContextPlaceholders.get(1);
         assertEquals("Contractor", contractor.groupName());

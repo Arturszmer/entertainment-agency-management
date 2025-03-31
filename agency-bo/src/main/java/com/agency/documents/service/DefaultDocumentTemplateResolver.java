@@ -13,22 +13,20 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class DefaultDocumentTemplateResolver {
+class DefaultDocumentTemplateResolver {
 
     private final TemplateDocumentRepository templateDocumentRepository;
 
-    public void clearDefaultTemplate(TemplateContext templateContext) {
-        List<TemplateDocument> allByContextType = templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext);
-        allByContextType.stream()
-                .filter(TemplateDocument::isDefault)
-                .findFirst().ifPresent(template -> {
-                    template.setDefault(false);
-                    log.info("Default document template with reference id {} has been changed to false.", template.getReferenceId());
-                    templateDocumentRepository.save(template);
-                });
+    boolean resolveIsDefaultAttribute(boolean isDefault, TemplateContext templateContext) {
+        if(isDefault){
+            clearDefaultTemplate(templateContext);
+            return true;
+        } else {
+            return setTrueIfNoneExists(templateContext);
+        }
     }
 
-    public void setLatestModifiedTemplateAsDefault(TemplateContext templateContext) {
+    void setLatestModifiedTemplateAsDefault(TemplateContext templateContext) {
         List<TemplateDocument> allByContextType = templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext);
         boolean defaultTemplateIsNotSet = allByContextType.stream()
                 .noneMatch(TemplateDocument::isDefault);
@@ -40,5 +38,20 @@ public class DefaultDocumentTemplateResolver {
                         templateDocumentRepository.save(template);
                     });
         }
+    }
+
+    void clearDefaultTemplate(TemplateContext templateContext) {
+        List<TemplateDocument> allByContextType = templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext);
+        allByContextType.stream()
+                .filter(TemplateDocument::isDefault)
+                .findFirst().ifPresent(template -> {
+                    template.setDefault(false);
+                    log.info("Default document template with reference id {} has been changed to false.", template.getReferenceId());
+                    templateDocumentRepository.save(template);
+                });
+    }
+
+    boolean setTrueIfNoneExists(TemplateContext templateContext) {
+        return templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext).isEmpty();
     }
 }

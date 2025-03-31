@@ -6,7 +6,6 @@ public class PlaceholderModel {
 
     public static final Set<String> contractWorkPlaceholders = Set.of(
             "ContractWork_withCopyrights",
-            "ContractWork_projectNumber",
             "ContractWork_contractNumber",
             "ContractWork_signDate",
             "ContractWork_startDate",

@@ -30,7 +30,7 @@
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <owasp-dependency-check-maven.version>8.4.0</owasp-dependency-check-maven.version>
         <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
-        <querydsl.version>5.0.0</querydsl.version>
+        <querydsl.version>5.1.0</querydsl.version>
         <spring-boot-starter-web.version>3.2.4</spring-boot-starter-web.version>
         <jsonwebtoken.version>0.12.3</jsonwebtoken.version>
         <spring-cloud.version>2023.0.1</spring-cloud.version>

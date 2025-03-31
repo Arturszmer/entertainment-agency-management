@@ -11,30 +11,45 @@ import com.agency.generator.service.FileRemoveService;
 import com.agency.generator.service.FileWriterService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-class DocumentTemplateServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class DocumentTemplateServiceFileImplTest {
 
-    private final TemplateDocumentRepository documentRepository = mock(TemplateDocumentRepository.class);
-    private final DefaultDocumentTemplateResolver resolver = mock(DefaultDocumentTemplateResolver.class);
-    private final FileWriterService fileWriterService = mock(FileWriterService.class);
-    private final FileRemoveService fileRemoveService = mock(FileRemoveService.class);
-    private final FileDownloadService fileDownloadService = mock(FileDownloadService.class);
+    private DocumentTemplateFileServiceImpl documentTemplateFileService;
 
-    private DocumentTemplateServiceImpl documentTemplateService;
+    @Mock
+    private TemplateDocumentRepository documentRepository;
+    @Mock
+    private DefaultDocumentTemplateResolver resolver;
+    @Mock
+    private FileWriterService fileWriterService;
+    @Mock
+    private FileRemoveService fileRemoveService;
+    @Mock
+    private FileDownloadService fileDownloadService;
+
 
     @BeforeEach
     void setUp() {
-        documentTemplateService = new DocumentTemplateServiceImpl(documentRepository, resolver, fileWriterService, fileRemoveService, fileDownloadService);
+        documentTemplateFileService = new DocumentTemplateFileServiceImpl(documentRepository, resolver, fileWriterService, fileRemoveService, fileDownloadService);
     }
 
     @Test
@@ -53,14 +68,14 @@ class DocumentTemplateServiceImplTest {
                 .withFilename(filename)
                 .build();
 
-        when(documentRepository.findByTemplateName(templateName)).thenReturn(Optional.empty());
+        when(documentRepository.existsTemplateDocumentByTemplateName(templateName)).thenReturn(false);
         when(documentRepository.existsTemplateDocumentByFileName(anyString())).thenReturn(false);
-        when(documentRepository.saveAndFlush(any())).thenReturn(templateDocument);
+        when(documentRepository.save(any())).thenReturn(templateDocument);
         when(fileWriterService.write(DocContextType.TEMPLATE, multipartFile)).thenReturn(filename);
         when(multipartFile.getOriginalFilename()).thenReturn(filename);
 
         // when
-        TemplateDocumentDto templateDocumentDto = documentTemplateService.saveDocumentTemplate(multipartFile, templateName, true, TemplateContext.CONTRACT_WORK);
+        TemplateDocumentDto templateDocumentDto = documentTemplateFileService.saveDocumentTemplate(multipartFile, templateName, true, TemplateContext.CONTRACT_WORK);
         // then
         assertNotNull(templateDocumentDto);
         assertTrue(templateDocumentDto.isDefault());
@@ -70,7 +85,7 @@ class DocumentTemplateServiceImplTest {
     }
 
     @Test
-    public void should_update_template(){
+    public void should_update_template() {
         // given
         String filename = "Umowa o dzieło - template.docx";
         MultipartFile multipartFile = mock(MultipartFile.class);
@@ -87,13 +102,13 @@ class DocumentTemplateServiceImplTest {
                 .build();
 
         when(documentRepository.findByReferenceId(UUID.fromString(referenceId))).thenReturn(Optional.of(templateDocument));
-        when(documentRepository.existsTemplateDocumentByFileName(anyString())).thenReturn(false);
+        when(documentRepository.existsTemplateDocumentByFileNameAndReferenceIdIsNot(anyString(), any())).thenReturn(false);
         when(documentRepository.saveAndFlush(any())).thenReturn(templateDocument);
-        when(fileWriterService.write(DocContextType.TEMPLATE, multipartFile)).thenReturn(filename);
+        when(fileWriterService.update(DocContextType.TEMPLATE, multipartFile, filename)).thenReturn(filename);
         when(multipartFile.getOriginalFilename()).thenReturn(filename);
 
         // when
-        documentTemplateService.updateDocument(multipartFile, referenceId, templateName);
+        documentTemplateFileService.updateDocument(multipartFile, referenceId, templateName);
 
         // then
         ArgumentCaptor<TemplateDocument> captor = ArgumentCaptor.forClass(TemplateDocument.class);
@@ -105,7 +120,7 @@ class DocumentTemplateServiceImplTest {
     }
 
     @Test
-    public void should_remove_template(){
+    public void should_remove_template() {
         // given
         String filename = "Umowa o dzieło - template.docx";
         String templateName = "Template one";
@@ -123,7 +138,7 @@ class DocumentTemplateServiceImplTest {
         when(documentRepository.findByReferenceId(UUID.fromString(referenceId))).thenReturn(Optional.of(templateDocument));
 
         // when
-        documentTemplateService.removeDocument(referenceId);
+        documentTemplateFileService.removeDocument(referenceId);
 
         // then
         verify(fileRemoveService, times(1)).removeFile(filename, DocContextType.TEMPLATE.toString());

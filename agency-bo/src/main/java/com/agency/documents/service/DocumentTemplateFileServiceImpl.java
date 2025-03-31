@@ -11,8 +11,9 @@ import com.agency.exception.DocumentTemplateResult;
 import com.agency.generator.service.FileDownloadService;
 import com.agency.generator.service.FileRemoveService;
 import com.agency.generator.service.FileWriterService;
-import com.agency.service.DocumentTemplateService;
+import com.agency.service.DocumentTemplateFileService;
 import com.agency.user.helper.SecurityContextUsers;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -24,24 +25,14 @@ import static com.agency.documents.service.DocumentTemplateValidator.validateFil
 
 @Service
 @Slf4j
-public class DocumentTemplateServiceImpl implements DocumentTemplateService {
+@RequiredArgsConstructor
+public class DocumentTemplateFileServiceImpl implements DocumentTemplateFileService {
 
     private final TemplateDocumentRepository templateDocumentRepository;
     private final DefaultDocumentTemplateResolver defaultDocumentTemplateResolver;
     private final FileWriterService fileWriterService;
     private final FileRemoveService fileRemoveService;
     private final FileDownloadService fileDownloadService;
-
-    public DocumentTemplateServiceImpl(TemplateDocumentRepository templateDocumentRepository,
-                                       DefaultDocumentTemplateResolver defaultDocumentTemplateResolver,
-                                       FileWriterService fileWriterService,
-                                       FileRemoveService fileRemoveService, FileDownloadService fileDownloadService) {
-        this.templateDocumentRepository = templateDocumentRepository;
-        this.defaultDocumentTemplateResolver = defaultDocumentTemplateResolver;
-        this.fileWriterService = fileWriterService;
-        this.fileRemoveService = fileRemoveService;
-        this.fileDownloadService = fileDownloadService;
-    }
 
     @Override
     public TemplateDocumentDto saveDocumentTemplate(final MultipartFile file,
@@ -57,12 +48,12 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
 
         String filename = fileWriterService.write(DocContextType.TEMPLATE, file);
 
-        boolean isDefaultResolved = resolveIsDefaultAttribute(isDefault, templateContext);
+        boolean isDefaultResolved = defaultDocumentTemplateResolver.resolveIsDefaultAttribute(isDefault, templateContext);
 
         TemplateDocument templateDocument = new TemplateDocument(filename, templateName, isDefaultResolved, templateContext);
 
 
-        TemplateDocument saved = templateDocumentRepository.saveAndFlush(templateDocument);
+        TemplateDocument saved = templateDocumentRepository.save(templateDocument);
         log.info("Saved new document template with name: {} and reference id {}, for context: {}",
                 saved.getTemplateName(), saved.getReferenceId(), templateContext);
         return DocumentTemplateAssembler.toDto(saved);
@@ -120,19 +111,6 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
             templateDocumentRepository.save(templateDocument);
             log.info("Set default document template with reference id: {}", referenceId);
         });
-    }
-
-    private boolean resolveIsDefaultAttribute(boolean isDefault, TemplateContext templateContext) {
-        if(isDefault){
-            defaultDocumentTemplateResolver.clearDefaultTemplate(templateContext);
-            return true;
-        } else {
-            return setTrueIfNoneExists(templateContext);
-        }
-    }
-
-    private boolean setTrueIfNoneExists(TemplateContext templateContext) {
-        return templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext).isEmpty();
     }
 
     private void logUpdate(String referenceId) {

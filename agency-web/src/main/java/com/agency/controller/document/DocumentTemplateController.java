@@ -1,8 +1,10 @@
 package com.agency.controller.document;
 
 import com.agency.documentcontext.templatecontext.TemplateContext;
+import com.agency.dto.document.TemplateDocumentCreateRequest;
 import com.agency.dto.document.TemplateDocumentDto;
-import com.agency.service.DocumentTemplateService;
+import com.agency.service.DocumentTemplateFileService;
+import com.agency.service.DocumentTemplateHtmlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +25,8 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class DocumentTemplateController {
 
-    private final DocumentTemplateService templateService;
+    private final DocumentTemplateFileService templateService;
+    private final DocumentTemplateHtmlService templateHtmlService;
 
     @PostMapping
     ResponseEntity<TemplateDocumentDto> addTemplate(@RequestParam("file") MultipartFile file,
@@ -32,6 +35,11 @@ public class DocumentTemplateController {
                                                     @RequestParam("template-context") TemplateContext templateContext) {
 
         return ResponseEntity.ok(templateService.saveDocumentTemplate(file, templateName, isDefault, templateContext));
+    }
+
+    @PostMapping("/with-html")
+    ResponseEntity<TemplateDocumentDto> addTemplateWithHtml(@RequestBody TemplateDocumentCreateRequest request) {
+        return ResponseEntity.ok(templateHtmlService.saveDocumentTemplate(request));
     }
 
     @PutMapping
@@ -63,6 +71,12 @@ public class DocumentTemplateController {
     @DeleteMapping("/{reference-id}")
     ResponseEntity<Void> delete(@PathVariable("reference-id") String referenceId) {
         templateService.removeDocument(referenceId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping
+    ResponseEntity<Void> deleteByTemplateName(@RequestParam("template-name") String templateName) {
+        templateHtmlService.removeDocumentTemplate(templateName);
         return ResponseEntity.noContent().build();
     }
 

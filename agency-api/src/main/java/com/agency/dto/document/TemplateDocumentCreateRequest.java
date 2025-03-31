@@ -3,16 +3,11 @@ package com.agency.dto.document;
 import com.agency.documentcontext.doccontext.DocContextType;
 import com.agency.documentcontext.templatecontext.TemplateContext;
 
-import java.time.Instant;
-
-public record TemplateDocumentDto(
-        String filename,
-        DocContextType contextType,
-        String referenceId,
+public record TemplateDocumentCreateRequest(
         String htmlContent,
         String templateName,
+        DocContextType docContextType,
         boolean isDefault,
-        TemplateContext templateContext,
-        Instant updatedDate
+        TemplateContext templateContext
 ) {
 }
