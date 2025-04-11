@@ -1,6 +1,7 @@
 package com.agency.contractmanagement.project.model;
 
 import com.agency.common.ExcludeFromPlaceholders;
+import com.agency.common.PlaceholderOrder;
 import com.agency.contractmanagement.contractwork.model.AbstractContract;
 import com.agency.contractor.model.Contractor;
 import com.agency.dict.contract.ContractType;
@@ -41,6 +42,7 @@ import java.util.UUID;
 public class Project extends AbstractContract implements CostRelated {
 
     @Enumerated(EnumType.STRING)
+    @PlaceholderOrder(order = 9)
     private ProjectStatus status;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})

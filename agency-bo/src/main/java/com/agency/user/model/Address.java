@@ -1,6 +1,7 @@
 package com.agency.user.model;
 
 import com.agency.common.BaseEntity;
+import com.agency.common.PlaceholderOrder;
 import com.agency.dto.address.AddressDto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -16,11 +17,17 @@ import java.util.Objects;
 @Table(name = "user_address")
 public class Address extends BaseEntity<Long> {
 
+    @PlaceholderOrder(order = 11)
     private String city;
+    @PlaceholderOrder(order = 13)
     private String street;
+    @PlaceholderOrder(order = 12)
     private String voivodeship;
+    @PlaceholderOrder(order = 10)
     private String zipCode;
+    @PlaceholderOrder(order = 14)
     private String houseNumber;
+    @PlaceholderOrder(order = 15)
     private String apartmentNumber;
 
 

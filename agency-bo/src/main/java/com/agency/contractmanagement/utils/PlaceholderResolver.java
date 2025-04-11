@@ -9,23 +9,20 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
 
 @Slf4j
 public class PlaceholderResolver {
 
     public static Map<String, Object> fillInPlaceholders(Object instance) {
-        Set<String> placeholders = PlaceholderGenerator.generatePlaceholders(instance.getClass());
-        Map<String, Object> filledInPlaceholders = new HashMap<>();
-        for (String placeholder : placeholders) {
+        Map<String, Integer> placeholdersWithOrder = PlaceholderGenerator.generatePlaceholders(instance.getClass());
+        Map<String, Object> filledPlaceholders = new LinkedHashMap<>();
+        for (String placeholder : placeholdersWithOrder.keySet()) {
             Object value = resolvePlaceholders(placeholder, instance);
-            filledInPlaceholders.put(placeholder, Objects.requireNonNullElse(value, ""));
+            filledPlaceholders.put(placeholder, value != null ? value : "");
         }
-
-        return filledInPlaceholders;
+        return filledPlaceholders;
     }
 
     private static Object resolvePlaceholders(String placeholder, Object instance) {

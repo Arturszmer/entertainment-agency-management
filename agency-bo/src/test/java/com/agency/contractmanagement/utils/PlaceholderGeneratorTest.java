@@ -7,7 +7,7 @@ import com.agency.contractor.model.Contractor;
 import com.agency.documents.model.PlaceholderModel;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -16,17 +16,17 @@ class PlaceholderGeneratorTest {
     @Test
     public void should_generate_prefix_for_class_type() {
 
-        Set<String> contractWorkPlaceholders = PlaceholderGenerator.generatePlaceholders(ContractWork.class);
-        assertEquals(contractWorkPlaceholders, PlaceholderModel.contractWorkPlaceholders);
+        Map<String, Integer> contractWorkPlaceholders = PlaceholderGenerator.generatePlaceholders(ContractWork.class);
+        assertEquals(contractWorkPlaceholders.keySet(), PlaceholderModel.contractWorkPlaceholders);
 
-        Set<String> contractorPlaceholders = PlaceholderGenerator.generatePlaceholders(Contractor.class);
-        assertEquals(contractorPlaceholders, PlaceholderModel.contractorPlaceholders);
+        Map<String, Integer> contractorPlaceholders = PlaceholderGenerator.generatePlaceholders(Contractor.class);
+        assertEquals(contractorPlaceholders.keySet(), PlaceholderModel.contractorPlaceholders);
 
-        Set<String> projectPlaceholders = PlaceholderGenerator.generatePlaceholders(Project.class);
-        assertEquals(projectPlaceholders, PlaceholderModel.projectPlaceholders);
+        Map<String, Integer> projectPlaceholders = PlaceholderGenerator.generatePlaceholders(Project.class);
+        assertEquals(projectPlaceholders.keySet(), PlaceholderModel.projectPlaceholders);
 
-        Set<String> agencyDetailsPlaceholders = PlaceholderGenerator.generatePlaceholders(AgencyDetails.class);
-        assertEquals(agencyDetailsPlaceholders, PlaceholderModel.agencyDetailsPlaceholders);
+        Map<String, Integer> agencyDetailsPlaceholders = PlaceholderGenerator.generatePlaceholders(AgencyDetails.class);
+        assertEquals(agencyDetailsPlaceholders.keySet(), PlaceholderModel.agencyDetailsPlaceholders);
 
     }
 

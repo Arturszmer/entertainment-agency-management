@@ -1,6 +1,7 @@
 package com.agency.contractmanagement.contractwork.model;
 
 import com.agency.common.ExcludeFromPlaceholders;
+import com.agency.common.PlaceholderOrder;
 import com.agency.contractmanagement.bills.model.Bill;
 import com.agency.contractmanagement.bills.model.BillsContracts;
 import com.agency.contractmanagement.bills.model.ContractWorkBill;
@@ -10,8 +11,19 @@ import com.agency.dict.contract.ContractWorkStatus;
 import com.agency.dto.contractwork.ContractWorkCreateDto;
 import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
@@ -33,6 +45,7 @@ public class ContractWork extends AbstractContract implements BillsContracts<Con
 
     @Column(name = "with_copyrights")
     @Setter
+    @PlaceholderOrder(order = 6)
     private boolean withCopyrights;
 
     @Column(name = "project_number", nullable = false)

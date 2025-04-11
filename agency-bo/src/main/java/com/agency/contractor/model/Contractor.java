@@ -2,6 +2,7 @@ package com.agency.contractor.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.common.ExcludeFromPlaceholders;
+import com.agency.common.PlaceholderOrder;
 import com.agency.contractmanagement.contractwork.model.ContractWork;
 import com.agency.dto.contractor.ContractorCreateRequest;
 import com.agency.exception.AgencyException;
@@ -31,17 +32,25 @@ public class Contractor extends BaseEntity<Long> {
     @Column(name = "public_id", nullable = false, unique = true)
     @ExcludeFromPlaceholders
     private UUID publicId;
+    @PlaceholderOrder
     private String firstName;
+    @PlaceholderOrder(order = 1)
     private String lastName;
     @Column(name = "pesel", nullable = false, unique = true)
+    @PlaceholderOrder(order = 2)
     private String pesel;
+    @PlaceholderOrder(order = 3)
     private LocalDate birthDate;
     @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @Setter
+    @PlaceholderOrder(order = 7)
     private Address address;
+    @PlaceholderOrder(order = 4)
     private String phone;
+    @PlaceholderOrder(order = 5)
     private String email;
     @Column(name = "contractor_description")
+    @PlaceholderOrder(order = 6)
     private String contractorDescription;
     @OneToMany(mappedBy = "contractor", cascade = CascadeType.PERSIST)
     @ExcludeFromPlaceholders
