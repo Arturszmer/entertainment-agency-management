@@ -1,6 +1,7 @@
 package com.agency.contractmanagement.utils;
 
 import com.agency.common.ExcludeFromPlaceholders;
+import com.agency.common.PlaceholderOrder;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.StringUtils;
@@ -9,32 +10,32 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 public class PlaceholderGenerator {
 
-    public static Set<String> generatePlaceholders(Class<?> clazz) {
+    public static Map<String, Integer> generatePlaceholders(Class<?> clazz) {
         String prefix = clazz.getSimpleName();
         return generate(clazz, prefix);
     }
 
-    private static Set<String> generatePlaceholders(Class<?> clazz, String prefix) {
+    private static Map<String, Integer> generatePlaceholders(Class<?> clazz, String prefix) {
         return generate(clazz, prefix);
     }
 
-    private static Set<String> generate(Class<?> clazz, String prefix) {
-        Set<String> placeholders = new HashSet<>();
+    private static Map<String, Integer> generate(Class<?> clazz, String prefix) {
+        Map<String, Integer> placeholders = new HashMap<>();
         Field[] fields = clazz.getDeclaredFields();
         addPlaceholders(placeholders, fields, "", prefix);
         if (clazz.getSuperclass() != null) {
-            placeholders.addAll(generatePlaceholders(clazz.getSuperclass(), prefix));
+            placeholders.putAll(generatePlaceholders(clazz.getSuperclass(), prefix));
         }
         return placeholders;
     }
 
-    private static void addPlaceholders(Set<String> placeholders,
+    private static void addPlaceholders(Map<String, Integer> placeholders,
                                         Field[] fields,
                                         String nestedFieldName,
                                         String prefix) {
@@ -50,12 +51,16 @@ public class PlaceholderGenerator {
         }
     }
 
-    private static void build(Set<String> placeholders,
+    private static void build(Map<String, Integer> placeholders,
                               Field field,
                               String nestedField,
                               String prefix) {
         if (isNotNestedField(field.getType())) {
-            placeholders.add(buildPrefix(field.getName(), nestedField, prefix));
+            int order = 999;
+            if(field.getAnnotation(PlaceholderOrder.class) != null) {
+                order = field.getAnnotation(PlaceholderOrder.class).order();
+            }
+            placeholders.put(buildPrefix(field.getName(), nestedField, prefix), order);
         } else {
             addPlaceholders(placeholders, field.getType().getDeclaredFields(), field.getName(), prefix);
         }

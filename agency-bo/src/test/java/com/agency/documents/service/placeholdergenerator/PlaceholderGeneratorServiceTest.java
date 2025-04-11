@@ -28,15 +28,15 @@ class PlaceholderGeneratorServiceTest {
         contractWorkContextPlaceholders.forEach(System.out::println);
         TemplateSystemPlaceholdersDto contractWork = contractWorkContextPlaceholders.get(0);
         assertEquals("ContractWork", contractWork.groupName());
-        assertEquals(contractWorkPlaceholders, contractWork.variables());
+        assertEquals(contractWorkPlaceholders, contractWork.variables().keySet());
 
         TemplateSystemPlaceholdersDto contractor = contractWorkContextPlaceholders.get(1);
         assertEquals("Contractor", contractor.groupName());
-        assertEquals(PlaceholderModel.contractorPlaceholders, contractor.variables());
+        assertEquals(PlaceholderModel.contractorPlaceholders, contractor.variables().keySet());
 
         TemplateSystemPlaceholdersDto agencyDetails = contractWorkContextPlaceholders.get(2);
         assertEquals("AgencyDetails", agencyDetails.groupName());
-        assertEquals(PlaceholderModel.agencyDetailsPlaceholders, agencyDetails.variables());
+        assertEquals(PlaceholderModel.agencyDetailsPlaceholders, agencyDetails.variables().keySet());
     }
 
 
