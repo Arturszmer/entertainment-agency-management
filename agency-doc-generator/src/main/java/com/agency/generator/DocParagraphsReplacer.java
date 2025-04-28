@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-public class DocParagraphsReplacer {
+class DocParagraphsReplacer {
 
     private final GenerationResult generationResult;
 

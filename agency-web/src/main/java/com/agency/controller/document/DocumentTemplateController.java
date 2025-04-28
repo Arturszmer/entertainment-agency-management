@@ -3,6 +3,7 @@ package com.agency.controller.document;
 import com.agency.documentcontext.templatecontext.TemplateContext;
 import com.agency.dto.document.TemplateDocumentCreateRequest;
 import com.agency.dto.document.TemplateDocumentDto;
+import com.agency.dto.document.TemplateDocumentUpdateRequest;
 import com.agency.service.DocumentTemplateFileService;
 import com.agency.service.DocumentTemplateHtmlService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,11 @@ public class DocumentTemplateController {
         return ResponseEntity.ok(templateHtmlService.saveDocumentTemplate(request));
     }
 
+    @PutMapping("/with-html")
+    ResponseEntity<TemplateDocumentDto> updateTemplateWithHtml(@RequestBody TemplateDocumentUpdateRequest request) {
+        return ResponseEntity.ok(templateHtmlService.updateDocumentTemplate(request));
+    }
+
     @PutMapping
     ResponseEntity<Void> updateTemplate(@RequestParam("file") MultipartFile file,
                                         @RequestParam("reference-id") String referenceId,
@@ -78,6 +84,12 @@ public class DocumentTemplateController {
     ResponseEntity<Void> deleteByTemplateName(@RequestParam("template-name") String templateName) {
         templateHtmlService.removeDocumentTemplate(templateName);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/details")
+    ResponseEntity<String> getTemplateDetails(@RequestParam("template-name") String templateName) {
+        return ResponseEntity.ok(templateHtmlService.getDocumentTemplateDetails(templateName));
+
     }
 
     @GetMapping(value = "/download/{filename}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)

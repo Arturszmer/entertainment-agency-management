@@ -7,10 +7,12 @@ import com.agency.documents.repository.TemplateDocumentRepository;
 import com.agency.documents.utils.TemplateSanitizer;
 import com.agency.dto.document.TemplateDocumentCreateRequest;
 import com.agency.dto.document.TemplateDocumentDto;
+import com.agency.dto.document.TemplateDocumentUpdateRequest;
 import com.agency.service.DocumentTemplateHtmlService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.util.Assert.notNull;
 
@@ -24,6 +26,7 @@ public class DocumentTemplateHtmlServiceImpl implements DocumentTemplateHtmlServ
 
 
     @Override
+    @Transactional
     public TemplateDocumentDto saveDocumentTemplate(TemplateDocumentCreateRequest request) {
         String templateName = request.templateName();
         TemplateContext templateContext = request.templateContext();
@@ -45,8 +48,14 @@ public class DocumentTemplateHtmlServiceImpl implements DocumentTemplateHtmlServ
     }
 
     @Override
-    public TemplateDocumentDto updateDocumentTemplate(TemplateDocumentCreateRequest request) {
-        return null;
+    @Transactional
+    public TemplateDocumentDto updateDocumentTemplate(TemplateDocumentUpdateRequest request) {
+        TemplateDocument templateDocument = templateDocumentRepository.findByReferenceId(request.referenceId())
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+        defaultDocumentTemplateResolver.resolveIsDefaultAttribute(request.isDefault(), templateDocument.getTemplateContext());
+        templateDocument.update(request);
+        log.info("Template with reference id: {} has been updated.", request.referenceId());
+        return DocumentTemplateAssembler.toDto(templateDocument);
     }
 
     @Override
@@ -58,6 +67,13 @@ public class DocumentTemplateHtmlServiceImpl implements DocumentTemplateHtmlServ
         templateDocumentRepository.flush();
         defaultDocumentTemplateResolver.setLatestModifiedTemplateAsDefault(templateDocument.getTemplateContext());
         log.info("Removed template with name: {}", templateName);
+    }
+
+    @Override
+    public String getDocumentTemplateDetails(String templateName) {
+        TemplateDocument templateDocument = templateDocumentRepository.findByTemplateName(templateName)
+                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+        return templateDocument.getHtmlContent();
     }
 
     @Override

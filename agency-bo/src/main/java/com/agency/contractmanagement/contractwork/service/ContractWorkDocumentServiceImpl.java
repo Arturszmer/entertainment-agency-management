@@ -7,7 +7,7 @@ import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
 import com.agency.generator.service.FileDownloadService;
 import com.agency.generator.service.FileRemoveService;
-import com.agency.service.ContractWorkDocumentService;
+import com.agency.service.DocumentFileService;
 import com.agency.user.helper.SecurityContextUsers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +19,7 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ContractWorkDocumentServiceImpl implements ContractWorkDocumentService {
+public class ContractWorkDocumentServiceImpl implements DocumentFileService {
 
     private final ContractDocumentRepository contractDocumentRepository;
     private final FileRemoveService fileRemoveService;
@@ -32,9 +32,9 @@ public class ContractWorkDocumentServiceImpl implements ContractWorkDocumentServ
     }
 
     @Override
-    public void removeDocument(String referenceId) {
-        ContractDocument contractDocument = contractDocumentRepository.findContractorDocumentByContractPublicId(UUID.fromString(referenceId))
-                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_DOCUMENT_DOES_NOT_EXISTS, referenceId));
+    public void removeDocument(String contractPublicId) {
+        ContractDocument contractDocument = contractDocumentRepository.findContractorDocumentByContractPublicId(UUID.fromString(contractPublicId))
+                .orElseThrow(() -> new AgencyException(ContractErrorResult.CONTRACT_DOCUMENT_DOES_NOT_EXISTS, contractPublicId));
 
         fileRemoveService.removeFile(contractDocument.getFileName(), DocContextType.CONTRACT_WORK.toString());
         contractDocumentRepository.delete(contractDocument);

@@ -2,6 +2,7 @@ package com.agency.documents.model;
 
 import com.agency.documentcontext.doccontext.DocContextType;
 import com.agency.documentcontext.templatecontext.TemplateContext;
+import com.agency.dto.document.TemplateDocumentUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -48,6 +49,7 @@ public class TemplateDocument extends Document {
                             boolean isDefault,
                             String htmlContent,
                             TemplateContext templateContext) {
+        super();
         this.templateName = templateName;
         this.isDefault = isDefault;
         this.htmlContent = htmlContent;
@@ -67,6 +69,12 @@ public class TemplateDocument extends Document {
         this.isDefault = isDefault;
         this.templateContext = templateContext;
         this.htmlContent = htmlContent;
+    }
+
+    public void update(TemplateDocumentUpdateRequest updateRequest) {
+        this.templateName = updateRequest.templateName();
+        this.isDefault = updateRequest.isDefault();
+        this.htmlContent = updateRequest.htmlContent();
     }
 
     @Override

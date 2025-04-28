@@ -4,6 +4,7 @@ import com.agency.contractmanagement.contractwork.service.ContractWorkDocumentSe
 import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.dto.contractwork.DocumentGenerateRequest;
 import com.agency.service.ContractDocumentGeneratorService;
+import com.agency.service.DocumentHtmlService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.UUID;
 
 @RestController
 @PreAuthorize("hasAuthority('CONTRACT_MANAGEMENT')")
@@ -23,6 +25,12 @@ public class ContractDocumentController {
 
     private final ContractDocumentGeneratorService generatorService;
     private final ContractWorkDocumentServiceImpl contractWorkDocumentService;
+    private final DocumentHtmlService documentHtmlService;
+
+    @GetMapping("/{public-id}")
+    ResponseEntity<String> getDetails(@PathVariable("public-id") UUID contractorPublicId) {
+        return ResponseEntity.ok(documentHtmlService.getDetails(contractorPublicId));
+    }
 
     @PostMapping("/generate")
     ResponseEntity<GenerationResult> generate(@RequestBody DocumentGenerateRequest documentGenerateRequest){
@@ -36,7 +44,7 @@ public class ContractDocumentController {
     }
 
     @GetMapping(value = "/download/{filename}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    public ResponseEntity<Resource> downloadFile(
+    ResponseEntity<Resource> downloadFile(
             @PathVariable("filename") String filename) {
         String encodedFileName = URLEncoder.encode(filename, StandardCharsets.UTF_8).replace("+", "%20");
         Resource fileResource = contractWorkDocumentService.downloadDocument(filename);

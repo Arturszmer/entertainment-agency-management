@@ -11,16 +11,15 @@ import com.agency.contractor.assembler.ContractorAssembler;
 import com.agency.documentcontext.doccontext.DocContextType;
 import com.agency.documentcontext.doccontext.DocumentContext;
 import com.agency.documentcontext.doccontext.GenerationResult;
-import com.agency.documents.model.ContractDocument;
 import com.agency.documents.model.TemplateDocument;
-import com.agency.documents.repository.ContractDocumentRepository;
-import com.agency.documents.repository.TemplateDocumentRepository;
+import com.agency.documents.service.DocumentManagementService;
 import com.agency.dto.contractwork.DocumentGenerateRequest;
 import com.agency.exception.AgencyException;
 import com.agency.exception.AgencyExceptionResult;
 import com.agency.exception.ContractErrorResult;
-import com.agency.exception.DocumentTemplateResult;
 import com.agency.generator.DocGenerator;
+import com.agency.generator.HtmlTemplateDocGenerator;
+import com.agency.generator.WordDocGenerator;
 import com.agency.generator.service.FileWriterService;
 import com.agency.service.ContractDocumentGeneratorService;
 import lombok.extern.slf4j.Slf4j;
@@ -39,20 +38,18 @@ public class ContractWorkGenerator implements ContractDocumentGeneratorService {
 
     private final ContractWorkRepository contractWorkRepository;
     private final AgencyDetailsRepository agencyDetailsRepository;
-    private final ContractDocumentRepository contractDocumentRepository;
-    private final TemplateDocumentRepository templateDocumentRepository;
+    private final DocumentManagementService documentService;
     private final FileWriterService fileWriterService;
     private final String docStaticFilePath;
 
     public ContractWorkGenerator(ContractWorkRepository contractWorkRepository,
                                  AgencyDetailsRepository agencyDetailsRepository,
-                                 ContractDocumentRepository contractDocumentRepository,
-                                 TemplateDocumentRepository templateDocumentRepository, FileWriterService fileWriterService,
+                                 FileWriterService fileWriterService,
+                                 DocumentManagementService documentService,
                                  @Value("${doc-static-file-path}") String docStaticFilePath) {
         this.contractWorkRepository = contractWorkRepository;
         this.agencyDetailsRepository = agencyDetailsRepository;
-        this.contractDocumentRepository = contractDocumentRepository;
-        this.templateDocumentRepository = templateDocumentRepository;
+        this.documentService = documentService;
         this.fileWriterService = fileWriterService;
         this.docStaticFilePath = docStaticFilePath;
     }
@@ -70,19 +67,18 @@ public class ContractWorkGenerator implements ContractDocumentGeneratorService {
 
         DocumentContext documentContext = getDocumentContext(documentGenerateRequest.docContextType(), agencyDetails, contractWork);
 
-        TemplateDocument template = getTemplate(documentGenerateRequest.templateName());
-        DocGenerator docGenerator = new DocGenerator(docStaticFilePath, template.getFileName(), fileWriterService);
+        TemplateDocument template = documentService.getTemplateDocument(documentGenerateRequest.templateName());
+        DocGenerator docGenerator = getDocGenerator(template);
         log.info("==> Start generating document proces for contract with public id: {}", contractPublicID);
         GenerationResult generate = docGenerator.generate(documentContext);
 
+
         if (generate.isSuccess()) {
-            ContractDocument contractDocument = new ContractDocument(generate.getFilename(), contractPublicID);
-            contractDocumentRepository.save(contractDocument);
+            documentService.saveGeneratedDocument(generate, contractPublicID);
             contractWork.setFilename(generate.getFilename());
             contractWorkRepository.save(contractWork);
         } else {
-            ContractDocument contractDocument = new ContractDocument(generate.getFilename(), contractPublicID, true);
-            contractDocumentRepository.save(contractDocument);
+            documentService.saveErrorDocument(generate, contractPublicID);
         }
 
         log.info("==> End of generating document proces for contractor with public id: {}, new document has been created with name: {}",
@@ -91,9 +87,12 @@ public class ContractWorkGenerator implements ContractDocumentGeneratorService {
         return generate;
     }
 
-    private TemplateDocument getTemplate(String templateName) {
-        return templateDocumentRepository.findByTemplateName(templateName)
-                .orElseThrow(() -> new AgencyException(DocumentTemplateResult.DOCUMENT_TEMPLATE_NOT_FOUND));
+    @NotNull
+    private DocGenerator getDocGenerator(TemplateDocument template) {
+        if(template.getHtmlContent() != null) {
+            return new HtmlTemplateDocGenerator(docStaticFilePath, fileWriterService, template.getHtmlContent());
+        }
+        return new WordDocGenerator(docStaticFilePath, fileWriterService, template.getFileName());
     }
 
     @NotNull

@@ -10,10 +10,8 @@ import com.agency.contractor.model.ContractorBuilder;
 import com.agency.documentcontext.doccontext.DocContextType;
 import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.documentcontext.templatecontext.TemplateContext;
-import com.agency.documents.model.ContractDocument;
 import com.agency.documents.model.TemplateDocument;
-import com.agency.documents.repository.ContractDocumentRepository;
-import com.agency.documents.repository.TemplateDocumentRepository;
+import com.agency.documents.service.DocumentManagementService;
 import com.agency.dto.contractwork.DocumentGenerateRequest;
 import com.agency.generator.service.FileWriterService;
 import org.jetbrains.annotations.NotNull;
@@ -32,11 +30,9 @@ class ContractGeneratorTest {
     private ContractWorkGenerator contractWorkGenerator;
     private final ContractWorkRepository contractWorkRepository = mock(ContractWorkRepository.class);
     private final AgencyDetailsRepository agencyDetailsRepository = mock(AgencyDetailsRepository.class);
-    private final ContractDocumentRepository contractDocumentRepository = mock(ContractDocumentRepository.class);
-    private final TemplateDocumentRepository templateDocumentRepository = mock(TemplateDocumentRepository.class);
     private final FileWriterService fileWriterService = mock(FileWriterService.class);
+    private final DocumentManagementService documentManagementService = mock(DocumentManagementService.class);
     private final ArgumentCaptor<ContractWork> contractWorkArgumentCaptor = ArgumentCaptor.forClass(ContractWork.class);
-    private final ArgumentCaptor<ContractDocument> contractDocumentArgumentCaptor = ArgumentCaptor.forClass(ContractDocument.class);
 
     @BeforeEach
     void setUp() {
@@ -44,9 +40,8 @@ class ContractGeneratorTest {
         contractWorkGenerator = new ContractWorkGenerator(
                 contractWorkRepository,
                 agencyDetailsRepository,
-                contractDocumentRepository,
-                templateDocumentRepository,
                 fileWriterService,
+                documentManagementService,
                 docStaticFilepath
         );
     }
@@ -70,7 +65,7 @@ class ContractGeneratorTest {
 
         DocumentGenerateRequest generateRequest = getGenerateRequest(contractWork, templateName);
 
-        when(templateDocumentRepository.findByTemplateName(templateName)).thenReturn(Optional.of(getTemplateDocument(fileName, templateName)));
+        when(documentManagementService.getTemplateDocument(templateName)).thenReturn(getTemplateDocument(fileName, templateName));
         when(contractWorkRepository.findContractWorkByContractNumber(contractWork.getContractNumber())).thenReturn(Optional.of(contractWork));
         when(agencyDetailsRepository.findAll()).thenReturn(List.of(agencyDetails));
 
@@ -84,12 +79,7 @@ class ContractGeneratorTest {
         assertEquals("John_Doe_", actualContractWork.getFilename().substring(0, 9));
         assertEquals(".docx", actualContractWork.getFilename().substring(actualContractWork.getFilename().length() - 5));
 
-        verify(contractDocumentRepository, times(1)).save(contractDocumentArgumentCaptor.capture());
-        ContractDocument actualContractDocument = contractDocumentArgumentCaptor.getValue();
-        assertEquals(actualContractWork.getFilename(), actualContractDocument.getFileName());
-        assertNotNull(actualContractDocument.getReferenceId());
-        assertFalse(actualContractDocument.isErrorFile());
-
+        verify(documentManagementService, times(1)).saveGeneratedDocument(any(), any());
     }
 
     @Test
@@ -105,7 +95,7 @@ class ContractGeneratorTest {
 
         DocumentGenerateRequest generateRequest = getGenerateRequest(contractWork, templateName);
 
-        when(templateDocumentRepository.findByTemplateName(templateName)).thenReturn(Optional.of(getTemplateDocument(fileName, templateName)));
+        when(documentManagementService.getTemplateDocument(templateName)).thenReturn(getTemplateDocument(fileName, templateName));
         when(contractWorkRepository.findContractWorkByContractNumber(contractWork.getContractNumber())).thenReturn(Optional.of(contractWork));
         when(agencyDetailsRepository.findAll()).thenReturn(List.of(agencyDetails));
 
@@ -116,12 +106,7 @@ class ContractGeneratorTest {
         assertFalse(generate.isSuccess());
         verify(contractWorkRepository, never()).save(any());
 
-        verify(contractDocumentRepository, times(1)).save(contractDocumentArgumentCaptor.capture());
-        ContractDocument actualContractDocument = contractDocumentArgumentCaptor.getValue();
-        assertEquals(".txt", actualContractDocument.getFileName().substring(actualContractDocument.getFileName().length() - 4));
-        assertTrue(actualContractDocument.getFileName().contains("error"));
-        assertNotNull(actualContractDocument.getReferenceId());
-        assertTrue(actualContractDocument.isErrorFile());
+        verify(documentManagementService, times(1)).saveErrorDocument(any(), any());
     }
 
     @NotNull
