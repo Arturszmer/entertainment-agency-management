@@ -2,10 +2,14 @@ package com.agency.documents.model;
 
 import com.agency.common.BaseEntity;
 import com.agency.documentcontext.doccontext.DocContextType;
-import jakarta.persistence.*;
-import lombok.AccessLevel;
+import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.DiscriminatorType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
+import jakarta.persistence.Table;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -14,9 +18,8 @@ import java.util.UUID;
 @Table(name = "document")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "document_type", discriminatorType = DiscriminatorType.STRING)
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
-abstract class Document extends BaseEntity<Long> {
+public abstract class Document extends BaseEntity<Long> {
 
     @Column(name = "file_name")
     @Setter
@@ -27,6 +30,10 @@ abstract class Document extends BaseEntity<Long> {
 
     public Document(String fileName) {
         this.fileName = fileName;
+        this.referenceId = UUID.randomUUID();
+    }
+
+    protected Document() {
         this.referenceId = UUID.randomUUID();
     }
 

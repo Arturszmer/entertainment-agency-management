@@ -17,7 +17,6 @@ import com.agency.exception.AgencyException;
 import com.agency.exception.ContractErrorResult;
 import com.agency.exception.ContractorErrorResult;
 import com.agency.service.ContractService;
-import com.agency.service.ContractWorkDocumentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +35,7 @@ public class ContractWorkServiceImpl implements ContractService {
 
     private final ContractWorkRepository contractWorkRepository;
     private final ContractorRepository contractorRepository;
-    private final ContractWorkDocumentService contractWorkDocumentService;
+    private final ContractWorkDocumentServiceImpl contractWorkDocumentService;
     private final ContractNumberService contractNumberService;
     private final CostService costService;
 
@@ -90,7 +89,7 @@ public class ContractWorkServiceImpl implements ContractService {
     @Override
     public void cancelConfirmation(String publicId) {
         ContractWork contractWork = getEntity(publicId);
-        if(canBeCancelled(contractWork)){
+        if (canBeCancelled(contractWork)) {
             contractWork.cancelConfirmation();
             contractNumberService.updateContractNumberStatus(contractWork.getContractNumber(), ContractNumberStatus.DRAFT)
                     .ifPresent(contractWork::updateContractNumber);

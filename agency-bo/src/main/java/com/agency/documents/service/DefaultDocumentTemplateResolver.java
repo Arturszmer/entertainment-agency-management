@@ -52,6 +52,8 @@ class DefaultDocumentTemplateResolver {
     }
 
     boolean setTrueIfNoneExists(TemplateContext templateContext) {
-        return templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext).isEmpty();
+        return templateDocumentRepository.findAllTemplateDocumentsByTemplateContext(templateContext)
+                .stream().filter(TemplateDocument::isDefault)
+                .findFirst().isEmpty();
     }
 }
