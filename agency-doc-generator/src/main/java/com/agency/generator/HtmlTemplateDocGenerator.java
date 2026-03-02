@@ -5,6 +5,7 @@ import com.agency.documentcontext.doccontext.DocumentContext;
 import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.generator.service.FileWriterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xwpf.usermodel.ParagraphAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -35,13 +36,7 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
     @Override
     public GenerationResult generate(DocumentContext context) {
         String replacedText = replacePlaceholdersInHTMLTemplate(context);
-        XWPFDocument document = new XWPFDocument();
-
-        // Parse the HTML
-        Document htmlDoc = Jsoup.parse(replacedText);
-
-        // Process block-level elements in the body
-        processHtmlElements(htmlDoc.body().children(), document);
+        XWPFDocument document = generateDocument(replacedText);
 
         String outputFile = createOutputFile(context, document);
         GenerationResult generationResult = new GenerationResult();
@@ -50,12 +45,23 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
         return generationResult;
     }
 
+    XWPFDocument generateDocument(String html) {
+        XWPFDocument document = new XWPFDocument();
+        // Parse the HTML
+        Document htmlDoc = Jsoup.parse(html);
+
+        // Process block-level elements in the body
+        processHtmlElements(htmlDoc.body().children(), document);
+        return document;
+    }
+
     // Process block-level (paragraphs, headings, lists) elements.
     private void processHtmlElements(Elements elements, XWPFDocument document) {
         for (Element element : elements) {
             switch (element.tagName()) {
                 case "p": {
                     XWPFParagraph paragraph = document.createParagraph();
+                    applyAlignment(element, paragraph);
                     // Process inline sub-elements with default formatting (none applied)
                     processInlineElements(element, paragraph, false, false, false);
                     break;
@@ -66,6 +72,10 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
                     for (Element li : element.children()) {
                         if (li.tagName().equalsIgnoreCase("li")) {
                             XWPFParagraph liParagraph = document.createParagraph();
+                            // Apply default indentation for list items (360 twips left, 360 hanging for the number)
+                            liParagraph.setIndentationLeft(720);
+                            liParagraph.setIndentationHanging(360);
+
                             XWPFRun numRun = liParagraph.createRun();
                             numRun.setText(counter++ + ". ");
                             processInlineElements(li, liParagraph, false, false, false);
@@ -78,6 +88,10 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
                     for (Element li : element.children()) {
                         if (li.tagName().equalsIgnoreCase("li")) {
                             XWPFParagraph liParagraph = document.createParagraph();
+                            // Apply default indentation for list items
+                            liParagraph.setIndentationLeft(720);
+                            liParagraph.setIndentationHanging(360);
+
                             XWPFRun bulletRun = liParagraph.createRun();
                             bulletRun.setText("- ");
                             processInlineElements(li, liParagraph, false, false, false);
@@ -88,6 +102,7 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
                 case "h1": {
                     XWPFParagraph h1Para = document.createParagraph();
                     h1Para.setStyle("Heading1");
+                    applyAlignment(element, h1Para);
                     // Assume headings should be bold – set bold flag to true.
                     processInlineElements(element, h1Para, true, false, false);
                     break;
@@ -96,9 +111,31 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
                 default: {
                     // If the tag is not explicitly handled as a block element, treat it as a paragraph.
                     XWPFParagraph defaultPara = document.createParagraph();
+                    applyAlignment(element, defaultPara);
                     processInlineElements(element, defaultPara, false, false, false);
                     break;
                 }
+            }
+        }
+    }
+
+    private void applyAlignment(Element element, XWPFParagraph paragraph) {
+        if (element.hasClass("ql-align-center")) {
+            paragraph.setAlignment(ParagraphAlignment.CENTER);
+        } else if (element.hasClass("ql-align-right")) {
+            paragraph.setAlignment(ParagraphAlignment.RIGHT);
+        } else if (element.hasClass("ql-align-justify")) {
+            paragraph.setAlignment(ParagraphAlignment.BOTH);
+        }
+
+        // Apply indentation (Quill uses ql-indent-1, ql-indent-2, etc.)
+        for (String className : element.classNames()) {
+            if (className.startsWith("ql-indent-")) {
+                try {
+                    int level = Integer.parseInt(className.substring("ql-indent-".length()));
+                    // Standard indentation in Word is 720 twips (0.5 inch) per level
+                    paragraph.setIndentationLeft(level * 720);
+                } catch (NumberFormatException ignored) {}
             }
         }
     }
@@ -116,20 +153,49 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
                                        boolean isBold, boolean isItalic, boolean isUnderline) {
         for (Node node : element.childNodes()) {
             if (node instanceof TextNode textNode) {
-                String text = textNode.text();
-                // Only add non-empty text
-                if (StringUtils.hasText(text)) {
-                    XWPFRun run = paragraph.createRun();
-                    run.setBold(isBold);
-                    run.setItalic(isItalic);
-                    if (isUnderline) {
-                        run.setUnderline(UnderlinePatterns.SINGLE);
+                // getWholeText() preserves literal tabs and newlines, unlike text() which normalizes spaces.
+                    String text = textNode.getWholeText();
+                    if (!text.isEmpty()) {
+                        // Word and browser collapse multiple spaces. 
+                        // Replacing some spaces with non-breaking spaces (\u00A0) ensures gaps are preserved.
+                        // We replace double spaces with one non-breaking space and one regular space repeatedly.
+                        String preservedText = text;
+                        // Replace multiple regular spaces with alternating non-breaking and regular spaces
+                        // so they don't get collapsed by Word. 
+                        // Note: TemplateSanitizer already converts &nbsp; to \u00A0.
+                        while (preservedText.contains("  ")) {
+                            preservedText = preservedText.replace("  ", "\u00A0 ");
+                        }
+                        
+                        // Handle tabs and regular text.
+                        // We use a single run for consecutive tabs if possible, or just add them to the current run.
+                        String[] parts = preservedText.split("\t", -1);
+                        XWPFRun currentRun = null;
+                        
+                        for (int i = 0; i < parts.length; i++) {
+                            if (i > 0) {
+                                if (currentRun == null) {
+                                    currentRun = paragraph.createRun();
+                                    applyFormatting(currentRun, isBold, isItalic, isUnderline);
+                                }
+                                currentRun.addTab();
+                            }
+                            
+                            if (!parts[i].isEmpty()) {
+                                currentRun = paragraph.createRun();
+                                applyFormatting(currentRun, isBold, isItalic, isUnderline);
+                                currentRun.getCTR().addNewT().setStringValue(parts[i]);
+                                currentRun.getCTR().getTList().get(currentRun.getCTR().getTList().size()-1)
+                                        .setSpace(org.apache.xmlbeans.impl.xb.xmlschema.SpaceAttribute.Space.PRESERVE);
+                            }
+                        }
                     }
-                    run.setText(text);
-                }
             } else if (node instanceof Element childElement) {
                 String tagName = childElement.tagName();
-                if (tagName.equalsIgnoreCase("strong") || tagName.equalsIgnoreCase("b")) {
+                if (tagName.equalsIgnoreCase("br")) {
+                    XWPFRun run = paragraph.createRun();
+                    run.addBreak();
+                } else if (tagName.equalsIgnoreCase("strong") || tagName.equalsIgnoreCase("b")) {
                     // New effective bold value is true regardless of current.
                     processInlineElements(childElement, paragraph, true, isItalic, isUnderline);
                 } else if (tagName.equalsIgnoreCase("i") || tagName.equalsIgnoreCase("em")) {
@@ -142,6 +208,14 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
                     processInlineElements(childElement, paragraph, isBold, isItalic, isUnderline);
                 }
             }
+        }
+    }
+
+    private void applyFormatting(XWPFRun run, boolean isBold, boolean isItalic, boolean isUnderline) {
+        run.setBold(isBold);
+        run.setItalic(isItalic);
+        if (isUnderline) {
+            run.setUnderline(UnderlinePatterns.SINGLE);
         }
     }
 
