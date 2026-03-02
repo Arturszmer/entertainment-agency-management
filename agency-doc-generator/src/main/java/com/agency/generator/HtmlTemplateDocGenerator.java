@@ -5,13 +5,17 @@ import com.agency.documentcontext.doccontext.DocumentContext;
 import com.agency.documentcontext.doccontext.GenerationResult;
 import com.agency.generator.service.FileWriterService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
+import org.springframework.util.StringUtils;
 
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
@@ -33,34 +37,112 @@ public class HtmlTemplateDocGenerator extends DocGenerator {
         String replacedText = replacePlaceholdersInHTMLTemplate(context);
         XWPFDocument document = new XWPFDocument();
 
-        // Parse HTML
+        // Parse the HTML
         Document htmlDoc = Jsoup.parse(replacedText);
 
-        // Convert HTML elements to DOCX elements
-        XWPFParagraph paragraph = document.createParagraph();
-        XWPFRun run;
+        // Process block-level elements in the body
+        processHtmlElements(htmlDoc.body().children(), document);
 
-        // Process HTML elements and add to document
-        // This is a simplified approach - you'll need to handle different HTML elements accordingly
-        Elements elements = htmlDoc.body().children();
-        for (Element element : elements) {
-            if (element.tagName().equals("p")) {
-                paragraph = document.createParagraph();
-                run = paragraph.createRun();
-                run.setText(element.text());
-            } else if (element.tagName().equals("h1")) {
-                paragraph = document.createParagraph();
-                paragraph.setStyle("Heading1");
-                run = paragraph.createRun();
-                run.setText(element.text());
-                run.setBold(true);
-            }
-            // Handle other HTML elements accordingly
-        }
         String outputFile = createOutputFile(context, document);
+        GenerationResult generationResult = new GenerationResult();
         generationResult.setFilename(outputFile);
         generationResult.setContent(replacedText);
         return generationResult;
+    }
+
+    // Process block-level (paragraphs, headings, lists) elements.
+    private void processHtmlElements(Elements elements, XWPFDocument document) {
+        for (Element element : elements) {
+            switch (element.tagName()) {
+                case "p": {
+                    XWPFParagraph paragraph = document.createParagraph();
+                    // Process inline sub-elements with default formatting (none applied)
+                    processInlineElements(element, paragraph, false, false, false);
+                    break;
+                }
+                case "ol": {
+                    int counter = 1;
+                    // For ordered lists, process each <li> and prefix with a number.
+                    for (Element li : element.children()) {
+                        if (li.tagName().equalsIgnoreCase("li")) {
+                            XWPFParagraph liParagraph = document.createParagraph();
+                            XWPFRun numRun = liParagraph.createRun();
+                            numRun.setText(counter++ + ". ");
+                            processInlineElements(li, liParagraph, false, false, false);
+                        }
+                    }
+                    break;
+                }
+                case "ul": {
+                    // For unordered lists, prefix with a bullet (or dash)
+                    for (Element li : element.children()) {
+                        if (li.tagName().equalsIgnoreCase("li")) {
+                            XWPFParagraph liParagraph = document.createParagraph();
+                            XWPFRun bulletRun = liParagraph.createRun();
+                            bulletRun.setText("- ");
+                            processInlineElements(li, liParagraph, false, false, false);
+                        }
+                    }
+                    break;
+                }
+                case "h1": {
+                    XWPFParagraph h1Para = document.createParagraph();
+                    h1Para.setStyle("Heading1");
+                    // Assume headings should be bold – set bold flag to true.
+                    processInlineElements(element, h1Para, true, false, false);
+                    break;
+                }
+                // You can handle other headings or block-level tags similarly.
+                default: {
+                    // If the tag is not explicitly handled as a block element, treat it as a paragraph.
+                    XWPFParagraph defaultPara = document.createParagraph();
+                    processInlineElements(element, defaultPara, false, false, false);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Recursively process inline HTML nodes.
+     *
+     * @param element      The current element whose children are processed.
+     * @param paragraph    The XWPFParagraph in which runs will be created.
+     * @param isBold       True if the current formatting includes bold.
+     * @param isItalic     True if the current formatting includes italic.
+     * @param isUnderline  True if the current formatting includes underline.
+     */
+    private void processInlineElements(Element element, XWPFParagraph paragraph,
+                                       boolean isBold, boolean isItalic, boolean isUnderline) {
+        for (Node node : element.childNodes()) {
+            if (node instanceof TextNode textNode) {
+                String text = textNode.text();
+                // Only add non-empty text
+                if (StringUtils.hasText(text)) {
+                    XWPFRun run = paragraph.createRun();
+                    run.setBold(isBold);
+                    run.setItalic(isItalic);
+                    if (isUnderline) {
+                        run.setUnderline(UnderlinePatterns.SINGLE);
+                    }
+                    run.setText(text);
+                }
+            } else if (node instanceof Element childElement) {
+                String tagName = childElement.tagName();
+                if (tagName.equalsIgnoreCase("strong") || tagName.equalsIgnoreCase("b")) {
+                    // New effective bold value is true regardless of current.
+                    processInlineElements(childElement, paragraph, true, isItalic, isUnderline);
+                } else if (tagName.equalsIgnoreCase("i") || tagName.equalsIgnoreCase("em")) {
+                    processInlineElements(childElement, paragraph, isBold, true, isUnderline);
+                } else if (tagName.equalsIgnoreCase("u")) {
+                    processInlineElements(childElement, paragraph, isBold, isItalic, true);
+                } else {
+                    // For other inline elements (or nested spans) without specific formatting,
+                    // continue with the parent's formatting.
+                    processInlineElements(childElement, paragraph, isBold, isItalic, isUnderline);
+                }
+            }
+        }
     }
 
     protected String createOutputFile(DocumentContext context, XWPFDocument document) {
